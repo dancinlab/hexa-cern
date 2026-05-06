@@ -1,21 +1,21 @@
-# hexa.toml — petite-cern standalone package manifest
+# hexa.toml — hexa-cern standalone package manifest
 #
 # Spec: shared/hexa-lang/hexa-toml-spec.json (version 1.0.0)
-# Distribution target: hx install petite-cern
+# Distribution target: hx install hexa-cern
 # Provenance: extracted from n6-architecture/domains/physics/{mini,particle,classical-mechanics}-accelerator/
 #             on 2026-05-06 (n6-arch SHA c0f1f570)
 
 [package]
-name = "petite-cern"
+name = "hexa-cern"
 version = "1.0.0"
-entry = "cli/petite-cern.hexa"
-description = "Petite CERN — n=6 sigma-cascade 6-order benchtop accelerator (100 MeV / 1 GeV/m, mini + parent + classical 3-pillar). 3-pillar bundle: HEXA-MINI-ACCEL (laser-plasma 100 MeV / 1 GeV/m) + HEXA-PACCEL (integrated parent) + HEXA-CLASSIC-ACCEL (classical-mechanics baseline). LHC 7 TeV/27km, DESY 1 GeV/m baselines for n=6 σ-cascade 6-order comparison. specs only, .hexa CLI TBD."
+entry = "cli/hexa-cern.hexa"
+description = "hexa-cern — n=6 sigma-cascade 6-order benchtop accelerator (100 MeV / 1 GeV/m, mini + parent + classical 3-pillar). 3-pillar bundle: HEXA-MINI-ACCEL (laser-plasma 100 MeV / 1 GeV/m) + HEXA-PACCEL (integrated parent) + HEXA-CLASSIC-ACCEL (classical-mechanics baseline). LHC 7 TeV/27km, DESY 1 GeV/m baselines for n=6 σ-cascade 6-order comparison. specs only, .hexa CLI TBD."
 license = "MIT"
 authors = ["박민우 <nerve011235@gmail.com>"]
-repository = "https://github.com/need-singularity/petite-cern"
-homepage = "https://github.com/need-singularity/petite-cern"
+repository = "https://github.com/need-singularity/hexa-cern"
+homepage = "https://github.com/need-singularity/hexa-cern"
 readme = "README.md"
-keywords = ["petite-cern", "hexa-family", "mini-accelerator", "particle-accelerator", "classical-mechanics", "laser-plasma", "n6-invariant", "sigma-cascade"]
+keywords = ["hexa-cern", "hexa-family", "mini-accelerator", "particle-accelerator", "classical-mechanics", "laser-plasma", "n6-invariant", "sigma-cascade"]
 categories = ["physics", "particle-accelerator", "benchtop-instrumentation"]
 
 [lib]
@@ -23,8 +23,8 @@ categories = ["physics", "particle-accelerator", "benchtop-instrumentation"]
 entry = "mini/doc/mini-accelerator.md"
 
 [[bin]]
-name = "petite-cern"
-path = "cli/petite-cern.hexa"
+name = "hexa-cern"
+path = "cli/hexa-cern.hexa"
 
 [test]
 runner = "hexa"

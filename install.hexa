@@ -1,39 +1,39 @@
-// install.hexa — hx build hook for petite-cern.
+// install.hexa — hx build hook for hexa-cern.
 //
-// Invoked by `hx install petite-cern` (hexa-lang package manager) right after
-// the GitHub checkout (or symlink from /Users/ghost/core/petite-cern) lands in
+// Invoked by `hx install hexa-cern` (hexa-lang package manager) right after
+// the GitHub checkout (or symlink from /Users/ghost/core/hexa-cern) lands in
 // $HX_PKG_DIR. hx passes:
 //   HX_PKG_DIR     — absolute path to the package root
 //   HX_BIN_DIR     — ~/.hx/bin
-//   HX_PKG_NAME    — "petite-cern"
+//   HX_PKG_NAME    — "hexa-cern"
 //   HX_HOOK_PHASE  — "pre" | "post" | "both" (default: "both")
 //
 // Mirrors hexa-bio/install.hexa pattern (commit 2026-05-04).
 //
 // Responsibilities (each idempotent, raw#9 STRICT — no .py creation):
 //   1. Pre-install: no-op (specs-only at v1.0.0; no python_bridge yet).
-//   2. Post-install: run `petite-cern selftest` via the freshly-staged
-//      cli/petite-cern.hexa. Selftest output captured; non-PASS = warn-only
+//   2. Post-install: run `hexa-cern selftest` via the freshly-staged
+//      cli/hexa-cern.hexa. Selftest output captured; non-PASS = warn-only
 //      (not a blocker — placeholder dispatcher always prints sentinel).
 //
 // raw#9 hexa-only, raw#11 snake_case, raw#15 no-hardcode.
-// raw#10 honest C3: see petite-cern/README.md "Status" section.
+// raw#10 honest C3: see hexa-cern/README.md "Status" section.
 
 fn run_quick_selftest(root: str) -> bool {
-    let cli = root + "/cli/petite-cern.hexa"
+    let cli = root + "/cli/hexa-cern.hexa"
     let exists = exec("[ -f \"" + cli + "\" ] && echo y || echo n").trim()
     if exists != "y" {
-        eprintln("[petite-cern/install] WARN: cli/petite-cern.hexa missing — skip selftest")
+        eprintln("[hexa-cern/install] WARN: cli/hexa-cern.hexa missing — skip selftest")
         return false
     }
-    println("[petite-cern/install] [post] running quick selftest (3-pillar sentinel sweep)")
+    println("[hexa-cern/install] [post] running quick selftest (3-pillar sentinel sweep)")
     let cmd = "PETITE_CERN_ROOT=\"" + root + "\" hexa run \"" + cli + "\" selftest 2>&1"
     let raw = exec(cmd)
     if raw.contains("__PETITE_CERN_SELFTEST__ PASS") {
-        println("[petite-cern/install]   selftest PASS — 3/3 pillar sentinels present")
+        println("[hexa-cern/install]   selftest PASS — 3/3 pillar sentinels present")
         return true
     }
-    eprintln("[petite-cern/install] WARN: selftest non-PASS (warn-only, not a blocker)")
+    eprintln("[hexa-cern/install] WARN: selftest non-PASS (warn-only, not a blocker)")
     eprintln("  hint: missing pillar dispatcher — see README §Status")
     return false
 }
@@ -44,23 +44,23 @@ fn main() -> void {
     let phase = env("HX_HOOK_PHASE")
     let mut p = phase
     if p == "" { p = "both" }
-    println("[petite-cern/install] HX_PKG_DIR=" + root + " phase=" + p)
+    println("[hexa-cern/install] HX_PKG_DIR=" + root + " phase=" + p)
 
-    let entry = root + "/cli/petite-cern.hexa"
+    let entry = root + "/cli/hexa-cern.hexa"
     let entry_ok = exec("[ -f \"" + entry + "\" ] && echo y || echo n").trim()
     if entry_ok != "y" {
-        eprintln("[petite-cern/install] ERROR: canonical entry missing: " + entry)
+        eprintln("[hexa-cern/install] ERROR: canonical entry missing: " + entry)
         exit(1)
     }
-    println("[petite-cern/install] canonical entry OK: cli/petite-cern.hexa")
+    println("[hexa-cern/install] canonical entry OK: cli/hexa-cern.hexa")
 
     if p == "pre" || p == "both" {
-        println("[petite-cern/install] [pre] specs-only at v1.0.0 — no deps to install")
+        println("[hexa-cern/install] [pre] specs-only at v1.0.0 — no deps to install")
     }
 
     if p == "post" || p == "both" {
         let _ = run_quick_selftest(root)  // warn-only
     }
 
-    println("[petite-cern/install] done — hx will generate " + env("HX_BIN_DIR") + "/petite-cern shim")
+    println("[hexa-cern/install] done — hx will generate " + env("HX_BIN_DIR") + "/hexa-cern shim")
 }

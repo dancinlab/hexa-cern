@@ -1,4 +1,4 @@
-# .roadmap.petite_cern — repo-overall tracker
+# .roadmap.hexa_cern — repo-overall tracker
 
 > Cross-cutting state: invariant lattice, release cadence, cycle history,
 > deadlines, pointers. Sister of `hexa-fusion` / `hexa-ufo` / `hexa-antimatter` /
@@ -10,7 +10,7 @@
 
 ## §0 Terminal goal — benchtop CERN (1 GeV/m wakefield + σ-cascade 6-order)
 
-petite-cern 도착지 = **벤치톱 1 GeV/m laser-plasma wakefield 가속 실증 + σ-cascade 6-order accelerator 100 MeV → 7 TeV (LHC parity) 경로 closed-form**.
+hexa-cern 도착지 = **벤치톱 1 GeV/m laser-plasma wakefield 가속 실증 + σ-cascade 6-order accelerator 100 MeV → 7 TeV (LHC parity) 경로 closed-form**.
 
 DoD:
 1. `mini` (HEXA-MINI-ACCEL) 100 MeV 벤치톱 실증 (외부 collab 또는 simulation parity).

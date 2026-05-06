@@ -1,7 +1,7 @@
 #!hexa strict
-// petite-cern/cli/petite-cern.hexa — standalone petite-cern CLI router (placeholder)
+// hexa-cern/cli/hexa-cern.hexa — standalone hexa-cern CLI router (placeholder)
 //
-// 3-pillar Petite CERN bundle (HEXA family) router:
+// 3-pillar hexa-cern bundle (HEXA family) router:
 //   mini        — HEXA-MINI-ACCEL (benchtop laser-plasma 100 MeV / 1 GeV/m)  [SPEC-ONLY]
 //   parent      — HEXA-PACCEL (integrated parent particle accelerator)        [SPEC-ONLY]
 //   classical   — HEXA-CLASSIC-ACCEL (classical-mechanics baseline)            [SPEC-ONLY]
@@ -30,20 +30,20 @@ let VERSION = "1.0.0"
 let HOME = env("HOME")
 let PETITE_CERN_ROOT_ENV = env("PETITE_CERN_ROOT")
 
-fn petite_cern_root() -> str {
+fn hexa_cern_root() -> str {
     if PETITE_CERN_ROOT_ENV.len() > 0 { return PETITE_CERN_ROOT_ENV }
     let inferred = exec("dirname \"$(dirname \"$0\")\" 2>/dev/null || true").trim()
     if inferred.len() > 0 { return inferred }
-    return HOME + "/.petite-cern"  // @allow-devpath
+    return HOME + "/.hexa-cern"  // @allow-devpath
 }
 
-let PC = petite_cern_root()
+let PC = hexa_cern_root()
 
 let DOC_MINI      = PC + "/mini/doc/mini-accelerator.md"
 let DOC_PARENT    = PC + "/parent/doc/particle-accelerator.md"
 let DOC_CLASSICAL = PC + "/classical/doc/classical-mechanics-accelerator.md"
 
-let LOG_PATH = PC + "/state/petite_cern_cli.log"
+let LOG_PATH = PC + "/state/hexa_cern_cli.log"
 
 // ─── arg helpers ───
 
@@ -69,7 +69,7 @@ fn _ts_now() -> str {
 }
 
 fn _audit(subcmd: str, args_str: str, exit_code: int) {
-    let line = "{\"ts\":\"" + _ts_now() + "\",\"caller\":\"petite_cern_standalone\",\"subcmd\":\"petite-cern " +
+    let line = "{\"ts\":\"" + _ts_now() + "\",\"caller\":\"hexa_cern_standalone\",\"subcmd\":\"hexa-cern " +
                subcmd + "\",\"args\":\"" + args_str.replace("\"", "\\\"") +
                "\",\"exit_code\":" + str(exit_code) + ",\"version\":\"" + VERSION + "\"}"
     exec("mkdir -p " + shq(PC + "/state") + " 2>/dev/null")
@@ -100,7 +100,7 @@ fn _print_caveats() {
 // ─── subcommand: mini ───
 
 fn cmd_mini(a: [str]) {
-    println("petite-cern mini — HEXA-MINI-ACCEL (benchtop laser-plasma 100 MeV / 1 GeV/m)")
+    println("hexa-cern mini — HEXA-MINI-ACCEL (benchtop laser-plasma 100 MeV / 1 GeV/m)")
     println("  status: spec-only — TBD")
     let exists = _file_exists(DOC_MINI)
     if exists {
@@ -109,7 +109,7 @@ fn cmd_mini(a: [str]) {
         println("  spec:   MISSING — expected at " + DOC_MINI)
     }
     if json_mode(a) {
-        println("{\"petite_cern\":\"" + VERSION + "\",\"subcmd\":\"mini\",\"status\":\"spec_only\",\"spec_present\":" + (if exists { "true" } else { "false" }) + "}")
+        println("{\"hexa_cern\":\"" + VERSION + "\",\"subcmd\":\"mini\",\"status\":\"spec_only\",\"spec_present\":" + (if exists { "true" } else { "false" }) + "}")
     }
     _audit("mini", "", 0)
 }
@@ -117,7 +117,7 @@ fn cmd_mini(a: [str]) {
 // ─── subcommand: parent ───
 
 fn cmd_parent(a: [str]) {
-    println("petite-cern parent — HEXA-PACCEL (integrated parent particle accelerator)")
+    println("hexa-cern parent — HEXA-PACCEL (integrated parent particle accelerator)")
     println("  status: spec-only — TBD")
     let exists = _file_exists(DOC_PARENT)
     if exists {
@@ -126,7 +126,7 @@ fn cmd_parent(a: [str]) {
         println("  spec:   MISSING — expected at " + DOC_PARENT)
     }
     if json_mode(a) {
-        println("{\"petite_cern\":\"" + VERSION + "\",\"subcmd\":\"parent\",\"status\":\"spec_only\",\"spec_present\":" + (if exists { "true" } else { "false" }) + "}")
+        println("{\"hexa_cern\":\"" + VERSION + "\",\"subcmd\":\"parent\",\"status\":\"spec_only\",\"spec_present\":" + (if exists { "true" } else { "false" }) + "}")
     }
     _audit("parent", "", 0)
 }
@@ -134,7 +134,7 @@ fn cmd_parent(a: [str]) {
 // ─── subcommand: classical ───
 
 fn cmd_classical(a: [str]) {
-    println("petite-cern classical — HEXA-CLASSIC-ACCEL (classical-mechanics baseline)")
+    println("hexa-cern classical — HEXA-CLASSIC-ACCEL (classical-mechanics baseline)")
     println("  status: spec-only — TBD")
     let exists = _file_exists(DOC_CLASSICAL)
     if exists {
@@ -143,7 +143,7 @@ fn cmd_classical(a: [str]) {
         println("  spec:   MISSING — expected at " + DOC_CLASSICAL)
     }
     if json_mode(a) {
-        println("{\"petite_cern\":\"" + VERSION + "\",\"subcmd\":\"classical\",\"status\":\"spec_only\",\"spec_present\":" + (if exists { "true" } else { "false" }) + "}")
+        println("{\"hexa_cern\":\"" + VERSION + "\",\"subcmd\":\"classical\",\"status\":\"spec_only\",\"spec_present\":" + (if exists { "true" } else { "false" }) + "}")
     }
     _audit("classical", "", 0)
 }
@@ -152,7 +152,7 @@ fn cmd_classical(a: [str]) {
 
 fn cmd_status(a: [str]) {
     if json_mode(a) {
-        let mut js = "{\"petite_cern\":\"" + VERSION + "\",\"subcmd\":\"status\","
+        let mut js = "{\"hexa_cern\":\"" + VERSION + "\",\"subcmd\":\"status\","
         js = js + "\"pillars_total\":3,\"pillars_wired\":0,\"pillars_spec_only\":3,"
         js = js + "\"verdict\":\"SPECS_ONLY\","
         js = js + "\"pillars\":[\"mini:spec_only\",\"parent:spec_only\",\"classical:spec_only\"]"
@@ -161,7 +161,7 @@ fn cmd_status(a: [str]) {
         return
     }
 
-    println("petite-cern " + VERSION + " status — 3-pillar Petite CERN bundle (HEXA family)")
+    println("hexa-cern " + VERSION + " status — 3-pillar hexa-cern bundle (HEXA family)")
     println("")
     println("  pillar       status              n=6 lattice              empirical sandbox")
     println("  ------------ ------------------- ------------------------ --------------------------")
@@ -172,17 +172,17 @@ fn cmd_status(a: [str]) {
     println("  verdict: SPECS_ONLY (3/3 pillar specs imported; .hexa CLI TBD)")
     println("")
     println("  to inspect a pillar:")
-    println("    petite-cern mini       (HEXA-MINI-ACCEL spec)")
-    println("    petite-cern parent     (HEXA-PACCEL spec)")
-    println("    petite-cern classical  (HEXA-CLASSIC-ACCEL spec)")
-    println("    petite-cern selftest   (3-pillar sentinel sweep)")
+    println("    hexa-cern mini       (HEXA-MINI-ACCEL spec)")
+    println("    hexa-cern parent     (HEXA-PACCEL spec)")
+    println("    hexa-cern classical  (HEXA-CLASSIC-ACCEL spec)")
+    println("    hexa-cern selftest   (3-pillar sentinel sweep)")
     _print_caveats()
 }
 
 // ─── subcommand: selftest ───
 
 fn cmd_selftest(a: [str]) {
-    println("petite-cern selftest — 3-pillar sentinel sweep")
+    println("hexa-cern selftest — 3-pillar sentinel sweep")
     let mut count = 0
     if _file_exists(DOC_MINI)      { println("  [PASS] mini      spec present");      count = count + 1 } else { println("  [FAIL] mini      spec MISSING") }
     if _file_exists(DOC_PARENT)    { println("  [PASS] parent    spec present");      count = count + 1 } else { println("  [FAIL] parent    spec MISSING") }
@@ -194,7 +194,7 @@ fn cmd_selftest(a: [str]) {
         println("__PETITE_CERN_SELFTEST__ FAIL — " + str(count) + "/3 pillar specs detected")
     }
     if json_mode(a) {
-        println("{\"petite_cern\":\"" + VERSION + "\",\"subcmd\":\"selftest\",\"verdict\":\"" + (if pass_overall { "PASS" } else { "FAIL" }) + "\",\"pillars_present\":" + str(count) + "}")
+        println("{\"hexa_cern\":\"" + VERSION + "\",\"subcmd\":\"selftest\",\"verdict\":\"" + (if pass_overall { "PASS" } else { "FAIL" }) + "\",\"pillars_present\":" + str(count) + "}")
     }
     _print_caveats()
     _audit("selftest", "", if pass_overall { 0 } else { 1 })
@@ -204,18 +204,18 @@ fn cmd_selftest(a: [str]) {
 // ─── version ───
 
 fn cmd_version() {
-    println("petite-cern " + VERSION)
-    println("standalone Petite CERN benchtop accelerator bundle (HEXA family — extracted from n6-architecture@c0f1f570 on 2026-05-06)")
+    println("hexa-cern " + VERSION)
+    println("standalone hexa-cern benchtop accelerator bundle (HEXA family — extracted from n6-architecture@c0f1f570 on 2026-05-06)")
     println("license: MIT")
-    println("repo:    https://github.com/need-singularity/petite-cern")
+    println("repo:    https://github.com/need-singularity/hexa-cern")
 }
 
 // ─── help ───
 
 fn cmd_help() {
-    println("petite-cern " + VERSION + " — standalone Petite CERN CLI (placeholder dispatcher)")
+    println("hexa-cern " + VERSION + " — standalone hexa-cern CLI (placeholder dispatcher)")
     println("")
-    println("usage: petite-cern <subcmd> [flags...]")
+    println("usage: hexa-cern <subcmd> [flags...]")
     println("")
     println("pillar subcommands (3-pillar bundle — n=6 σ-cascade 6-order):")
     println("  mini            HEXA-MINI-ACCEL (benchtop laser-plasma 100 MeV / 1 GeV/m)  [SPEC-ONLY]")
@@ -252,7 +252,7 @@ fn main() {
     let mut _user_start = 2
     if _sidx >= 0 { _user_start = _sidx + 1 }
 
-    let mut a: [str] = ["petite_cern_cli", "petite_cern_router"]
+    let mut a: [str] = ["hexa_cern_cli", "hexa_cern_router"]
     let mut _ua = _user_start
     while _ua < _raw.len() {
         a = a + [_raw[_ua]]
@@ -290,8 +290,8 @@ fn main() {
     } else if sub == "selftest" {
         cmd_selftest(a)
     } else {
-        eprintln("petite-cern: unknown subcommand '" + sub + "'")
-        eprintln("run 'petite-cern help' for usage")
+        eprintln("hexa-cern: unknown subcommand '" + sub + "'")
+        eprintln("run 'hexa-cern help' for usage")
         _audit(sub, "", 2)
         exit(2)
     }

@@ -1,4 +1,4 @@
-# Changelog — petite-cern
+# Changelog — hexa-cern
 
 All notable changes to this project will be documented in this file.
 
@@ -15,9 +15,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - `mini/doc/mini-accelerator.md`        — HEXA-MINI-ACCEL (benchtop laser-plasma 100 MeV / 1 GeV/m)
   - `parent/doc/particle-accelerator.md`  — HEXA-PACCEL (integrated parent accelerator)
   - `classical/doc/classical-mechanics-accelerator.md` — HEXA-CLASSIC-ACCEL (classical-mechanics baseline)
-- `cli/petite-cern.hexa` placeholder dispatcher with verbs: `mini` / `parent` / `classical` / `status` / `selftest` / `help` / `--version`.
+- `cli/hexa-cern.hexa` placeholder dispatcher with verbs: `mini` / `parent` / `classical` / `status` / `selftest` / `help` / `--version`.
   - Each pillar verb prints `status: spec-only — TBD` and the path to its `.md` spec.
-- `hexa.toml` package manifest (MIT, entry `cli/petite-cern.hexa`, repo `need-singularity/petite-cern`).
+- `hexa.toml` package manifest (MIT, entry `cli/hexa-cern.hexa`, repo `need-singularity/hexa-cern`).
 - `install.hexa` hx package-manager hook (post-install warn-only selftest).
 - `tests/test_selftest.hexa` 3-pillar verb-count smoke check.
 - `docs/cern_baseline.md` — LHC 7 TeV/27 km vs DESY 1 GeV/m vs HEXA σ-φ=10 GeV/m comparison table.
@@ -33,4 +33,4 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - cousin (PET cyclotron, antimatter factory): [`need-singularity/hexa-antimatter`](https://github.com/need-singularity/hexa-antimatter)
 - Stage-3 propulsion dependent: [`need-singularity/hexa-ufo`](https://github.com/need-singularity/hexa-ufo)
 
-[1.0.0]: https://github.com/need-singularity/petite-cern/releases/tag/v1.0.0
+[1.0.0]: https://github.com/need-singularity/hexa-cern/releases/tag/v1.0.0

@@ -1,7 +1,7 @@
-# petite-cern v1.0.0 — initial extraction 💫
+# hexa-cern v1.0.0 — initial extraction 💫
 
 **Released:** 2026-05-06
-**Provenance:** `need-singularity/n6-architecture@c0f1f570` → `need-singularity/petite-cern@v1.0.0`
+**Provenance:** `need-singularity/n6-architecture@c0f1f570` → `need-singularity/hexa-cern@v1.0.0`
 **Sister extraction:** `need-singularity/lumiere` (peer)
 **License:** MIT
 **Verdict:** SPECS_ONLY (3/3 pillar specs imported; .hexa CLI TBD)
@@ -22,8 +22,8 @@ A petite, peer-of-Lumière standalone bundle distilling the n6-architecture **ac
 
 ### Tooling
 
-- `cli/petite-cern.hexa` — placeholder dispatcher (`mini` / `parent` / `classical` each prints `spec-only — TBD`).
-- `hexa.toml` — MIT package manifest (entry `cli/petite-cern.hexa`).
+- `cli/hexa-cern.hexa` — placeholder dispatcher (`mini` / `parent` / `classical` each prints `spec-only — TBD`).
+- `hexa.toml` — MIT package manifest (entry `cli/hexa-cern.hexa`).
 - `install.hexa` — hx package-manager hook (post-install warn-only selftest).
 - `tests/test_selftest.hexa` — 3-pillar verb-count smoke check.
 - `docs/cern_baseline.md` — LHC 7 TeV/27 km vs DESY 1 GeV/m vs HEXA σ-φ=10 GeV/m comparison.
