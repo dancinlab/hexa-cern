@@ -1,4 +1,4 @@
-# petite-cern 💫
+# 💫 petite-cern
 
 > Petite CERN — n=6 sigma-cascade 6-order benchtop accelerator (100 MeV / 1 GeV/m, mini + parent + classical 3-pillar).
 
