@@ -1,3 +1,6 @@
+<!-- @canonical: n6-architecture@0570a835:domains/physics/particle-accelerator/particle-accelerator.md -->
+<!-- @extracted: 2026-05-06 -->
+<!-- @md5_at_extraction: 0fb6a1813dbf2d6b37f1188e9fb15e5f -->
 <!-- gold-standard: shared/harness/sample.md -->
 ---
 domain: particle-accelerator
