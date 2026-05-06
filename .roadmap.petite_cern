@@ -1,0 +1,57 @@
+# .roadmap.petite_cern — repo-overall tracker
+
+> Cross-cutting state: invariant lattice, release cadence, cycle history,
+> deadlines, pointers. Sister of `hexa-fusion` / `hexa-ufo` / `hexa-antimatter` /
+> `hexa-rtsc` under `need-singularity` org.
+
+**Last sync**: 2026-05-06 · **Current release**: v1.0.0 · **Branch**: `main`
+
+---
+
+## §0 Terminal goal — benchtop CERN (1 GeV/m wakefield + σ-cascade 6-order)
+
+petite-cern 도착지 = **벤치톱 1 GeV/m laser-plasma wakefield 가속 실증 + σ-cascade 6-order accelerator 100 MeV → 7 TeV (LHC parity) 경로 closed-form**.
+
+DoD:
+1. `mini` (HEXA-MINI-ACCEL) 100 MeV 벤치톱 실증 (외부 collab 또는 simulation parity).
+2. `parent` (HEXA-PACCEL) σ-cascade 6-order integration 이론 spec 완성.
+3. `classical` (HEXA-CLASSIC-ACCEL) Lagrangian/Hamiltonian τ=4 phase 가속 모드 검증.
+
+## §A.1 Invariant lattice (n=6)
+
+```
+σ(6) · φ(6) = n · τ(6) = J₂ = 24
+   12   ·   2  =  6  ·   4  = 24
+```
+
+| Symbol | Value | Role | Accelerator projection |
+|--------|-------|------|------------------------|
+| σ(6)   | 12    | sigma — cardinality bin | σ-cascade 6-order = 7 TeV (12·σ·... LHC parity) |
+| τ(6)   | 4     | tau — state quartet | 4 acceleration phases (laser pump / wakefield bubble / electron capture / extraction) |
+| φ(6)   | 2     | phi — verdict bit | electron / positron beam |
+| J₂     | 24    | Mathieu / Leech | benchtop 1 GeV/m × σ·φ = 24 GeV ceiling per stage |
+
+## §A.2 Release cadence
+
+| Version | Date | Status | Highlights |
+|---------|------|--------|------------|
+| v1.0.0 | 2026-05-06 | RELEASED | 3-pillar 시드 (mini + parent + classical) + cli placeholder + cern_baseline 비교 표 |
+| v1.1.0 | ~2026-08 (TARGET) | planned | `mini` .hexa CLI wired (laser pulse → electron energy 계산) |
+| v1.2.0 | ~2026-10 | planned | `parent` σ-cascade 6-order 분석 spec |
+| v2.0.0 | ~2027-Q1 | ASPIRATIONAL | 1 GeV/m wakefield 외부 collab 실험적 검증 |
+
+## §A.3 Cycle history
+
+- **Cycle 0 (2026-05-06)** — v1.0.0 initial extraction from n6-architecture@c0f1f570. Commit `ec15584`. 13 files.
+
+## §A.4 Falsifier preregister
+
+- **F-PCERN-1** — σ-cascade 6-order = LHC 7 TeV 도달 closed-form expression, LHC 측정과 일치?
+- **F-PCERN-2** — classical Hamiltonian-Lagrangian τ=4 phase 가속 모드 실증 (mini accelerator simulation)?
+- **F-PCERN-3** — 1 GeV/m laser-plasma wakefield (DESY/SLAC ref) closed-form fit?
+
+## §A.5 Pending decisions
+
+- mini → parent → classical 3-pillar 의 .hexa CLI dispatch order.
+- hexa-antimatter cross-link (PET-cyclotron 실증 가속기 cousin 으로 연계 강도).
+- hexa-ufo Stage-3 propulsion 의존 spec 시점.
