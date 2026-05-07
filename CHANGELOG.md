@@ -9,6 +9,27 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased] — v1.1.0-pre on `main`
 
+### Added (2026-05-07 — seventeenth iteration · RSC saturated)
+
+- `verify/saturation_check.hexa` — recipe §7.4 priority 15 self-stop
+  signal. Confirms both saturation conditions hold:
+    sat-1: every F-PCERN-1/2/3 has T2 stack ≥ 3 (all on disk)
+    sat-2: numerics_*.hexa inventory ≥ 9 + lint_numerics passes
+  Plus: required-script presence audit (9 backbone scripts).
+  14/14 PASS — emits `__HEXA_CERN_RSC_SATURATED__ STOP`.
+- `cli/hexa-cern.hexa verify` — new `saturation` sub. The `verify all`
+  aggregator now runs **19/19** scripts (was 18/18).
+
+**v1.1.0-pre RSC saturated** — T1+T2 closure complete across all 3
+falsifiers; T3 (empirical) awaits Stage-1+ benchtop build per
+roadmap §A.2 v2.0.0 ASPIRATIONAL milestone.
+
+Final inventory:
+  16 verify scripts (recipe §1 backbone) + 3 extra T2 (bending, se3, solver)
+  4 tests (4/4 PASS aggregator)
+  3 PDFs (mini + parent + classical, all clean build)
+  Total: 19/19 verify + 4/4 tests, all green.
+
 ### Added (2026-05-07 — sixteenth iteration)
 
 - `verify/numerics_bending.hexa` — F-PCERN-1's third T2 stub

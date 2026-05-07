@@ -198,6 +198,7 @@ let VERIFY_SUBS = [
     "numerics-lwfa",
     "numerics-lattice",
     "lint-numerics",
+    "saturation",
     "falsifier",
 ]
 
@@ -219,6 +220,7 @@ fn _verify_script(sub: str) -> str {
     if sub == "numerics-lwfa"      { return VERIFY_DIR + "/numerics_lwfa_parity.hexa" }
     if sub == "numerics-lattice"   { return VERIFY_DIR + "/numerics_lattice_arithmetic.hexa" }
     if sub == "lint-numerics"      { return VERIFY_DIR + "/lint_numerics.hexa" }
+    if sub == "saturation"         { return VERIFY_DIR + "/saturation_check.hexa" }
     if sub == "falsifier"          { return VERIFY_DIR + "/falsifier_check.hexa" }
     return ""
 }
@@ -278,6 +280,7 @@ fn cmd_verify(a: [str]) {
         println("  numerics-lwfa       F-PCERN-3 LWFA parity numerics (BELLA/FACET/ATHENA/FLASHFwd)")
         println("  numerics-lattice    n=6 lattice float-arithmetic cross-check (math_pure stability)")
         println("  lint-numerics       meta-lint: every numerics_*.hexa follows regression conventions")
+        println("  saturation          RSC saturation check (sat-1 + sat-2 → STOP signal)")
         println("  falsifier           F-PCERN-1/2/3 preregister checklist")
         println("")
         println("exit:")
@@ -402,7 +405,7 @@ fn cmd_help() {
     println("                       | sigma | numerics-sigma | numerics-bending")
     println("                       | classical | numerics-classical | numerics-liouville")
     println("                       | numerics-se3 | numerics-cross | numerics-lhc | numerics-lwfa")
-    println("                       | numerics-lattice | lint-numerics | falsifier")
+    println("                       | numerics-lattice | lint-numerics | saturation | falsifier")
     println("")
     println("global flags:")
     println("  --version       show version")
