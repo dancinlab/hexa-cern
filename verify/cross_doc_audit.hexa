@@ -31,6 +31,8 @@ let DOC_CLASSICAL   = ROOT + "/classical/doc/classical-mechanics-accelerator.md"
 let DOC_README      = ROOT + "/README.md"
 let DOC_ROADMAP     = ROOT + "/.roadmap.hexa_cern"
 let DOC_BENCHTOP_V0 = ROOT + "/mini/doc/benchtop_v0_design.md"
+let HDL_TIMING_CTRL = ROOT + "/firmware/hdl/timing_ctrl.v"
+let HDL_README      = ROOT + "/firmware/hdl/README.md"
 
 fn _read(p: str) -> str {
     if file_exists(p) == false { return "" }
@@ -176,6 +178,30 @@ fn check_release_frozen() {
     _check(ok, "roadmap §A.2: v1.0.0 RELEASED line present", "")
 }
 
+// Check 13 — §A.6.1 step D HDL skeleton (timing_ctrl.v) present +
+//             cross-anchored to firmware/sim/timing_chain.hexa
+fn check_step_d_hdl_skeleton() {
+    let v_txt = _read(HDL_TIMING_CTRL)
+    let r_txt = _read(HDL_README)
+    let ok_v_exists  = v_txt.len() > 0
+    let ok_module    = _has(v_txt, "module timing_ctrl")
+    let ok_params    = _has(v_txt, "TICK_HZ") && _has(v_txt, "D_TRIG_CYCLES") && _has(v_txt, "GATE_CYCLES")
+    let ok_interlock = _has(v_txt, "hv_ok_i") && _has(v_txt, "vacuum_ok_i") && _has(v_txt, "water_ok_i")
+    let ok_skeleton  = _has(v_txt, "SKELETON ONLY") && _has(v_txt, "NOT BUILDABLE WITHOUT")
+    let ok_r_exists  = r_txt.len() > 0
+    let ok_r_anchor  = _has(r_txt, "timing_chain.hexa") && _has(r_txt, "§A.6.1")
+    let ok = ok_v_exists && ok_module && ok_params && ok_interlock && ok_skeleton && ok_r_exists && ok_r_anchor
+    _check(ok,
+           "firmware/hdl/timing_ctrl.v skeleton present + matches sim params + skeleton-tagged",
+           "v=" + str(ok_v_exists) +
+           " module=" + str(ok_module) +
+           " params=" + str(ok_params) +
+           " interlock=" + str(ok_interlock) +
+           " skel=" + str(ok_skeleton) +
+           " readme=" + str(ok_r_exists) +
+           " readme_anchor=" + str(ok_r_anchor))
+}
+
 // Check 12 — §A.6.1 step A benchtop_v0_design.md present + cross-anchored
 //             to §X.4 (mini), §A.6.1 (roadmap), and the v0 sentinel.
 fn check_benchtop_v0_design() {
@@ -219,6 +245,7 @@ fn main() {
     check_six_order_claim()
     check_release_frozen()
     check_benchtop_v0_design()
+    check_step_d_hdl_skeleton()
 
     println("========================================================================")
     let pass_n = RUN - FAIL
