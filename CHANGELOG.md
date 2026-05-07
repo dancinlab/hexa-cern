@@ -9,6 +9,29 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased] — v1.1.0-pre on `main`
 
+### Added (2026-05-07 — second iteration)
+
+- `verify/numerics_wakefield.hexa` — first numerical solver stub. Uses
+  `self/runtime/math_pure` (sqrt / pow / pi) for the cold-plasma
+  closed-form: given E_peak = 120 GV/m it computes
+  ω_p, n_e ≈ 1.56·10¹⁸ cm⁻³ (inside DESY/SLAC LWFA window) and
+  L_d ≈ 1.5 cm (linear-1D dephasing). 4/4 PASS.
+- `cli/hexa-cern.hexa verify` — new `numerics-wakefield` sub. The
+  `verify all` aggregator now runs **7/7** scripts (was 6/6).
+- `RELEASE_NOTES_v1.1.0-pre.md` — packaged release notes for the
+  v1.1.0-pre cut.
+
+### Fixed
+
+- `verify/calc_wakefield.hexa` — L_acc_req unit conversion was off by
+  100×. Surfaced by `numerics_wakefield`'s L_d vs L_acc_req cross-check
+  (which initially failed against the buggy 8 cm value before the fix
+  reduced it to 0.083 cm). Math: 100 MeV / (120 GV/m · 10 MeV/cm·GV/m⁻¹)
+  = 100/1200 ≈ 0.083 cm. Fix uses tenth-mm integer arithmetic to avoid
+  losing precision. 6/6 still PASS post-fix.
+
+
+
 ### Added — `.hexa` runnable surface
 
 All new code is `.hexa` (zero `.py` added). Audits the v1.0.0 frozen specs without modifying them.

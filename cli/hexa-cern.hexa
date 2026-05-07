@@ -184,18 +184,20 @@ let VERIFY_SUBS = [
     "lattice",
     "cross-doc",
     "wakefield",
+    "numerics-wakefield",
     "sigma",
     "classical",
     "falsifier",
 ]
 
 fn _verify_script(sub: str) -> str {
-    if sub == "lattice"   { return VERIFY_DIR + "/lattice_check.hexa" }
-    if sub == "cross-doc" { return VERIFY_DIR + "/cross_doc_audit.hexa" }
-    if sub == "wakefield" { return VERIFY_DIR + "/calc_wakefield.hexa" }
-    if sub == "sigma"     { return VERIFY_DIR + "/calc_sigma_cascade.hexa" }
-    if sub == "classical" { return VERIFY_DIR + "/calc_classical.hexa" }
-    if sub == "falsifier" { return VERIFY_DIR + "/falsifier_check.hexa" }
+    if sub == "lattice"            { return VERIFY_DIR + "/lattice_check.hexa" }
+    if sub == "cross-doc"          { return VERIFY_DIR + "/cross_doc_audit.hexa" }
+    if sub == "wakefield"          { return VERIFY_DIR + "/calc_wakefield.hexa" }
+    if sub == "numerics-wakefield" { return VERIFY_DIR + "/numerics_wakefield.hexa" }
+    if sub == "sigma"              { return VERIFY_DIR + "/calc_sigma_cascade.hexa" }
+    if sub == "classical"          { return VERIFY_DIR + "/calc_classical.hexa" }
+    if sub == "falsifier"          { return VERIFY_DIR + "/falsifier_check.hexa" }
     return ""
 }
 
@@ -236,13 +238,14 @@ fn cmd_verify(a: [str]) {
         println("usage: hexa-cern verify [<sub>]")
         println("")
         println("sub:")
-        println("  all          run every verifier in sequence (default)")
-        println("  lattice      n=6 σ(6)·φ(6) = n·τ(6) = J₂ = 24 closure")
-        println("  cross-doc    cross-pillar consistency audit")
-        println("  wakefield    mini pillar — laser-wakefield n=6 derivation")
-        println("  sigma        parent pillar — σ-cascade chain (E_0..E_6)")
-        println("  classical    classical pillar — Lagrange/Hamilton τ=4 phase")
-        println("  falsifier    F-PCERN-1/2/3 preregister checklist")
+        println("  all                 run every verifier in sequence (default)")
+        println("  lattice             n=6 σ(6)·φ(6) = n·τ(6) = J₂ = 24 closure")
+        println("  cross-doc           cross-pillar consistency audit")
+        println("  wakefield           mini pillar — laser-wakefield n=6 derivation")
+        println("  numerics-wakefield  mini pillar — closed-form plasma numerics (n_e, L_d)")
+        println("  sigma               parent pillar — σ-cascade chain (E_0..E_6)")
+        println("  classical           classical pillar — Lagrange/Hamilton τ=4 phase")
+        println("  falsifier           F-PCERN-1/2/3 preregister checklist")
         println("")
         println("exit:")
         println("  0  all selected verifiers PASS")
@@ -362,7 +365,8 @@ fn cmd_help() {
     println("  selftest        full 3-pillar sentinel sweep")
     println("  verify [<sub>]  n=6 invariant + per-pillar calculators")
     println("                    sub: all (default) | lattice | cross-doc")
-    println("                       | wakefield | sigma | classical | falsifier")
+    println("                       | wakefield | numerics-wakefield")
+    println("                       | sigma | classical | falsifier")
     println("")
     println("global flags:")
     println("  --version       show version")

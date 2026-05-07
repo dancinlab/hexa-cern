@@ -72,10 +72,18 @@ let R_CHAMBER_CM    = SIGMA_PHI          // 10 cm  benchtop radius
 let L_DEPHASE_CM    = R_CHAMBER_CM * SIGMA_SQ / N  // 240 cm rough
 let E_TARGET_MEV    = 100                // mini target (100 MeV)
 
-// ΔE_e per cm = E_peak GV/m · 1 m / 100 cm = E_peak * 10 MeV/cm
-// path length to reach 100 MeV = 100 / (E_peak * 10) cm
-let DE_PER_CM_MEV   = E_PEAK_GV_PER_M * 10   // 1200 MeV/cm
-let L_ACC_REQ_CM    = E_TARGET_MEV * 100 / DE_PER_CM_MEV   // ≈ 8 cm
+// Unit chain for energy gain per unit length (electron in E-field):
+//   E_peak [GV/m] = E_peak·10⁹ V/m = E_peak·10⁹ eV/m
+//                 = E_peak·10⁹ · 10⁻⁶ MeV/m = E_peak·10³ MeV/m
+//                 = E_peak·10  MeV/cm
+//   So  ΔE per cm   = E_peak[GV/m] · 10  MeV/cm  = 1200 MeV/cm at 120 GV/m
+//   And L_acc_req   = E_target[MeV] / ΔE_per_cm  = 100/1200 ≈ 0.083 cm
+let DE_PER_CM_MEV   = E_PEAK_GV_PER_M * 10            // 1200 MeV/cm
+// integer-arithmetic trick: store path length in tenths of millimeters
+// (10⁻¹ mm = 10⁻² cm) so we don't lose precision on the 0.083 cm answer.
+let L_ACC_REQ_TENTH_MM = (E_TARGET_MEV * 1000) / DE_PER_CM_MEV   // 100·1000/1200 ≈ 83 (tenths of mm)
+// L_acc_req in mm = above / 10 ≈ 8 mm = 0.83 mm
+// L_acc_req in cm = above / 100 ≈ 0.083 cm
 
 fn print_table() {
     println("")
@@ -83,9 +91,9 @@ fn print_table() {
     println("  │  E_peak     σ·(σ-φ)         = 12·10  = " + str(E_PEAK_GV_PER_M) + " GV/m   │")
     println("  │  a_0        n               = 6                      │")
     println("  │  R_chamber  σ-φ             = " + str(R_CHAMBER_CM) + " cm                  │")
-    println("  │  L_dephase  R·σ²/n          = " + str(L_DEPHASE_CM) + " cm  (rough)         │")
+    println("  │  L_dephase  R·σ²/n          = " + str(L_DEPHASE_CM) + " cm  (algebraic)     │")
     println("  │  ΔE_e/cm    E_peak · 10     = " + str(DE_PER_CM_MEV) + " MeV/cm           │")
-    println("  │  L_acc(req) for 100 MeV     = " + str(L_ACC_REQ_CM) + " cm                  │")
+    println("  │  L_acc(req) for 100 MeV     ≈ " + str(L_ACC_REQ_TENTH_MM) + " (tenths of mm) ≈ 0.083 cm │")
     println("  └──────────────────────────────────────────────────────┘")
     println("")
 }
@@ -117,18 +125,21 @@ fn check_target_energy() {
 }
 
 fn check_path_length_feasible() {
-    // L_acc_req must fit inside the chamber radius (R_chamber * 2π for a
-    // ring or R_chamber * something for a linear track). For a benchtop
-    // LWFA it should fit within ~10× R_chamber length envelope.
-    let envelope_cm = R_CHAMBER_CM * 10
-    _check(L_ACC_REQ_CM <= envelope_cm,
+    // L_acc_req (tenths of mm) must fit inside the benchtop envelope
+    // (10 × R_chamber = 100 cm = 10000 tenths of mm). With E_peak =
+    // 120 GV/m this is trivially true — 100 MeV needs only ~ 0.83 mm.
+    let envelope_tenth_mm = R_CHAMBER_CM * 10 * 100   // 100 cm = 10000 tenth-mm
+    _check(L_ACC_REQ_TENTH_MM <= envelope_tenth_mm,
            "100 MeV reachable within 10× R_chamber path",
-           "L_acc_req = " + str(L_ACC_REQ_CM) + " cm ≤ " + str(envelope_cm) + " cm envelope")
+           "L_acc_req = " + str(L_ACC_REQ_TENTH_MM) + " tenth-mm (≈ 0.083 cm) ≤ envelope " +
+           str(envelope_tenth_mm) + " tenth-mm")
 }
 
 fn check_dephase_overshoot() {
-    // L_dephase should exceed L_acc_req with significant margin (≥ 10×)
-    let margin = L_DEPHASE_CM / L_ACC_REQ_CM
+    // L_dephase (algebraic 240 cm) should exceed L_acc_req with huge margin.
+    // Convert both to tenth-mm for integer arithmetic.
+    let L_d_tenth_mm = L_DEPHASE_CM * 100   // 240 cm = 24000 tenth-mm
+    let margin = L_d_tenth_mm / L_ACC_REQ_TENTH_MM
     _check(margin >= 10,
            "L_dephase ≥ 10× L_acc_req (no premature dephasing)",
            "ratio = " + str(margin) + "× (=L_dephase/L_acc_req)")
