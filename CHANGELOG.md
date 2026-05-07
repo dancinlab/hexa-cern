@@ -9,6 +9,24 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased] — v1.1.0-pre on `main`
 
+### Added (2026-05-07 — eighth iteration)
+
+- `verify/numerics_lwfa_parity.hexa` — F-PCERN-3 LWFA parity stub
+  (parallel to `numerics_lhc_parity` for F-PCERN-1). Compares the
+  hexa-cern design point (E_peak = 120 GV/m, n_e = 1.56·10¹⁸ cm⁻³,
+  ΔE = 1200 MeV/cm) against published LWFA experiments:
+    LBNL BELLA       400 MeV/cm  @ 3·10¹⁷ cm⁻³  → 100 GV/m
+    SLAC FACET-II    100 MeV/cm  @ 1·10¹⁷       → 50 GV/m
+    DESY ATHENA-x    500 MeV/cm  @ 1·10¹⁸       → 200 GV/m
+    DESY FLASHFwd    100 MeV/cm  @ 1·10¹⁸       → 30 GV/m
+  hexa-cern's gradient sits 2.4× above ATHENA-x (high side of the
+  band, consistent with operating at a₀ = 6 blowout regime). Density
+  in 10¹⁷..10¹⁸ window. λ_p / FACET λ_p = 0.25 (matches √n_e ratio
+  exactly, independent re-derivation). 7/7 PASS first try.
+  Closes F-PCERN-3's T2 (numerical) tier alongside numerics_wakefield.
+- `cli/hexa-cern.hexa verify` — new `numerics-lwfa` sub. The
+  `verify all` aggregator now runs **12/12** scripts (was 11/11).
+
 ### Added (2026-05-07 — seventh iteration)
 
 - `hexa.toml [package].version` bumped 1.0.0 → **1.1.0-pre** (and the

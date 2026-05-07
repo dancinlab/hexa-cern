@@ -29,6 +29,7 @@ let CASES = [
     "numerics_classical.hexa|__HEXA_CERN_NUMERICS_CLASSICAL__ PASS",
     "numerics_cross_pillar.hexa|__HEXA_CERN_NUMERICS_CROSS_PILLAR__ PASS",
     "numerics_lhc_parity.hexa|__HEXA_CERN_NUMERICS_LHC_PARITY__ PASS",
+    "numerics_lwfa_parity.hexa|__HEXA_CERN_NUMERICS_LWFA_PARITY__ PASS",
     "falsifier_check.hexa|__HEXA_CERN_FALSIFIER__ PASS",
 ]
 
