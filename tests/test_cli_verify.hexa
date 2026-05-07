@@ -30,11 +30,11 @@ fn main() {
     let r = exec_with_status(cmd)
     let out = to_string(r[0])
     let code = r[1]
-    // Expect aggregate "PASS:  12/12" (added numerics-lwfa 2026-05-07 iter 8)
-    let has_aggregate = out.find("PASS:  12/12") >= 0
+    // Expect aggregate "PASS:  13/13" (added numerics-lattice 2026-05-07 iter 10)
+    let has_aggregate = out.find("PASS:  13/13") >= 0
     let pass = code == 0 && has_aggregate
     if pass {
-        println("[test_cli_verify] PASS — verify all reports 12/12 PASS, exit 0")
+        println("[test_cli_verify] PASS — verify all reports 13/13 PASS, exit 0")
         println("__HEXA_CERN_TEST_CLI_VERIFY__ PASS")
         exit(0)
     }

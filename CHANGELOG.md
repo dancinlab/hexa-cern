@@ -9,6 +9,28 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased] — v1.1.0-pre on `main`
 
+### Added (2026-05-07 — tenth iteration)
+
+- `verify/numerics_lattice_arithmetic.hexa` — float-arithmetic
+  cross-check of the n=6 lattice anchors using `self/runtime/math_pure`
+  (sqrt, pow, log10, exp/log). Repeats every closure that
+  `lattice_check.hexa` proves with INTEGER arithmetic, but via
+  floating-point routines, and asserts agreement to rel err < 1e-9.
+  - sqrt(σ²) = σ, pow(σ, 2) = 144, pow(σ, 3) = 1728 (Ω_ACCEL)
+  - pow(σ-φ, n) = 10⁶, log10(10⁷) = 7 (chain decade ladder)
+  - log10(σ²) = 2·log10(σ) (homomorphism)
+  - exp(log(σ)) = σ at rel err 1.48·10⁻¹⁶ (machine precision)
+  - sqrt(σ³) = σ^(3/2) (cross-consistency)
+  - σ·φ = n·τ = J₂ in float (closure parity)
+  - int(pow(σ, k)) = integer anchor (float→int cast safe)
+  - σ·J₂ = 288 (Tevatron seed in float)
+  - sopfr(6)·φ(6) = σ - φ (cascade seed identity)
+  - 12/12 PASS first try.
+  Catches numerical drift on anchors used by every per-pillar
+  numerics_*.hexa — gives math_pure stability its own regression slot.
+- `cli/hexa-cern.hexa verify` — new `numerics-lattice` sub. The
+  `verify all` aggregator now runs **13/13** scripts (was 12/12).
+
 ### Added (2026-05-07 — eighth iteration)
 
 - `verify/numerics_lwfa_parity.hexa` — F-PCERN-3 LWFA parity stub
