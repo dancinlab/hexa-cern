@@ -9,6 +9,22 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased] — v1.1.0-pre on `main`
 
+### Added (2026-05-07 — fourteenth iteration)
+
+- `docs/numerics_methodology.md` — narrative documentation of the
+  verify-surface conventions accumulated across iterations 1 → 13:
+  - 3-tier evidence ladder (T1 algebraic / T2 numerical / T3 empirical)
+  - per-falsifier T2 stack (F-PCERN-1 ×2 + F-PCERN-2 ×2 + F-PCERN-3 ×3)
+  - cross-cutting + meta scripts inventory
+  - math_pure dependency + how `numerics_lattice_arithmetic.hexa`
+    serves as the stability floor
+  - aggregate state (16/16 verify, 4/4 tests, 3 PDFs)
+  - what's intentionally NOT in v1.1.0-pre (T3 empirical, full
+    relativistic LWFA, full SE(3) 6-DOF symplectic) — scope, not bugs
+  - recipe for adding a new `numerics_*.hexa` script (8-step checklist)
+- `README.md` — links to the new methodology doc from the Verification
+  section, alongside the existing `docs/cern_baseline.md` reference.
+
 ### Added (2026-05-07 — thirteenth iteration)
 
 - `verify/numerics_lwfa_solver.hexa` — first step toward the v1.1.0

@@ -122,7 +122,10 @@ make -C build all         # rebuild all 3 pillar PDFs into build/out/
 Empirical wiring (laser-plasma sandbox, parent integration, classical
 baseline solver) is deferred to Stage-1+ benchtop builds. See
 [`docs/cern_baseline.md`](docs/cern_baseline.md) for the LHC 7 TeV/27 km
-vs DESY 1 GeV/m vs HEXA σ-φ=10 GeV/m comparison table.
+vs DESY 1 GeV/m vs HEXA σ-φ=10 GeV/m comparison table, and
+[`docs/numerics_methodology.md`](docs/numerics_methodology.md) for how
+the verify surface is structured (3-tier evidence ladder, F-PCERN
+closure pct, math_pure conventions, recipe for adding new numerics).
 
 ---
 
