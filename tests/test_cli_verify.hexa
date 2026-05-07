@@ -43,13 +43,12 @@ fn main() {
         println("__HEXA_CERN_TEST_CLI_VERIFY__ PASS")
         exit(0)
     }
-    // Expect aggregate "PASS:  25/25"  (§A.6.1 step B chunk 3 added the
-    // Lu/Esarey/TD scaling-law parity T2 to F-PCERN-3, taking F3 T2 stack
-    // to ×6 and the verify-all aggregate to 25)
-    let has_aggregate = out.find("PASS:  25/25") >= 0
+    // Expect aggregate "PASS:  26/26"  (§A.6.1 step C chunk 1 added the
+    // first firmware/sim/* sub — timing_chain. Aggregate 25 → 26.)
+    let has_aggregate = out.find("PASS:  26/26") >= 0
     let pass = code == 0 && has_aggregate
     if pass {
-        println("[test_cli_verify] PASS — verify all reports 25/25 PASS, exit 0")
+        println("[test_cli_verify] PASS — verify all reports 26/26 PASS, exit 0")
         println("__HEXA_CERN_TEST_CLI_VERIFY__ PASS")
         exit(0)
     }

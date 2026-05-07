@@ -44,6 +44,7 @@ let CASES = [
     "empirical_lwfa_hepdata.hexa|__HEXA_CERN_EMPIRICAL_LWFA_HEPDATA__ PASS",
     "empirical_classical_arxiv.hexa|__HEXA_CERN_EMPIRICAL_CLASSICAL_ARXIV__ PASS",
     "falsifier_check.hexa|__HEXA_CERN_FALSIFIER__ PASS",
+    "firmware/sim/timing_chain.hexa|__HEXA_CERN_FW_TIMING_CHAIN__ PASS",
 ]
 
 fn shq(s: str) -> str {
@@ -67,7 +68,10 @@ fn run_one(case: str) -> bool {
     let parts = case.split("|")
     let fname = parts[0]
     let sentinel = parts[1]
-    let path = ROOT + "/verify/" + fname
+    // Path resolution: bare filename → verify/ default; filename with
+    // slash → resolved as ROOT-relative path (lets us reach
+    // firmware/sim/* alongside verify/*).
+    let path = if fname.find("/") >= 0 { ROOT + "/" + fname } else { ROOT + "/verify/" + fname }
     // HEXA_SHIM_NO_DARWIN_LANDING=1 RESOURCE_LOCAL_HEXA=1: bypass resource-toolkit remote routing.
     // _timeout_prefix(): 5-min cap; exit 124 → SKIP-with-reason (not FAIL).
     let cmd = "HEXA_SHIM_NO_DARWIN_LANDING=1 RESOURCE_LOCAL_HEXA=1 PETITE_CERN_ROOT=" + shq(ROOT) +
