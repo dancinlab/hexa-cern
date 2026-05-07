@@ -9,6 +9,25 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased] — v1.1.0-pre on `main`
 
+### Added (2026-05-07 — seventh iteration)
+
+- `hexa.toml [package].version` bumped 1.0.0 → **1.1.0-pre** (and the
+  matching `VERSION` constant in `cli/hexa-cern.hexa`). Reflects the
+  release-candidate state on `main`.
+- `verify/numerics_lhc_parity.hexa` — F-PCERN-1 collider parity stub.
+  Compares the σ-cascade ladder (E_3 = 100 GeV, E_4 = 1 TeV, E_5 = 10 TeV,
+  E_6 = 100 TeV) to per-beam published collider energies:
+    LEP        104.5 GeV  →  E_3  ratio 1.05  (close fit)
+    Tevatron   980 GeV    →  E_4  ratio 0.98  (close fit)
+    LHC        6.8 TeV    →  E_5  ratio 0.68  (rounded-decade ladder)
+    FCC-hh    50 TeV     →  E_6  ratio 0.50  (proposed, consistent)
+  All 4 machines stay within (σ-φ)/2 = 5× of their bucket and map to
+  4 unique E_k stages (chain is informative). 10/10 PASS.
+  This stub closes F-PCERN-1's T2 (numerical) tier; T3 (live LHC feed)
+  remains TBD per Stage-1+ roadmap.
+- `cli/hexa-cern.hexa verify` — new `numerics-lhc` sub. The
+  `verify all` aggregator now runs **11/11** scripts (was 10/10).
+
 ### Changed (2026-05-07 — sixth iteration)
 
 - `verify/falsifier_check.hexa` — closure-progress tracker. Each

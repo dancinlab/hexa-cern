@@ -23,7 +23,7 @@
 // @no-lock-needed
 // @resolver-bypass(reason="Pure local CLI placeholder; pillar specs are .md only at v1.0.0.")
 
-let VERSION = "1.0.0"
+let VERSION = "1.1.0-pre"
 
 // ─── env / path resolve ───
 
@@ -190,6 +190,7 @@ let VERIFY_SUBS = [
     "classical",
     "numerics-classical",
     "numerics-cross",
+    "numerics-lhc",
     "falsifier",
 ]
 
@@ -203,6 +204,7 @@ fn _verify_script(sub: str) -> str {
     if sub == "classical"          { return VERIFY_DIR + "/calc_classical.hexa" }
     if sub == "numerics-classical" { return VERIFY_DIR + "/numerics_classical.hexa" }
     if sub == "numerics-cross"     { return VERIFY_DIR + "/numerics_cross_pillar.hexa" }
+    if sub == "numerics-lhc"       { return VERIFY_DIR + "/numerics_lhc_parity.hexa" }
     if sub == "falsifier"          { return VERIFY_DIR + "/falsifier_check.hexa" }
     return ""
 }
@@ -254,6 +256,7 @@ fn cmd_verify(a: [str]) {
         println("  classical           classical pillar — Lagrange/Hamilton τ=4 phase")
         println("  numerics-classical  classical pillar — symplectic leapfrog (τ=4 quadrants)")
         println("  numerics-cross      cross-pillar numerical consistency (mini ↔ parent ↔ classical)")
+        println("  numerics-lhc        F-PCERN-1 collider parity numerics (LEP/Tevatron/LHC/FCC)")
         println("  falsifier           F-PCERN-1/2/3 preregister checklist")
         println("")
         println("exit:")
@@ -377,7 +380,7 @@ fn cmd_help() {
     println("                       | wakefield | numerics-wakefield")
     println("                       | sigma | numerics-sigma")
     println("                       | classical | numerics-classical")
-    println("                       | numerics-cross | falsifier")
+    println("                       | numerics-cross | numerics-lhc | falsifier")
     println("")
     println("global flags:")
     println("  --version       show version")

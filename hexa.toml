@@ -7,7 +7,7 @@
 
 [package]
 name = "hexa-cern"
-version = "1.0.0"
+version = "1.1.0-pre"
 entry = "cli/hexa-cern.hexa"
 description = "hexa-cern — n=6 sigma-cascade 6-order benchtop accelerator (100 MeV / 1 GeV/m, mini + parent + classical 3-pillar). 3-pillar bundle: HEXA-MINI-ACCEL (laser-plasma 100 MeV / 1 GeV/m) + HEXA-PACCEL (integrated parent) + HEXA-CLASSIC-ACCEL (classical-mechanics baseline). LHC 7 TeV/27km, DESY 1 GeV/m baselines for n=6 σ-cascade 6-order comparison. specs only, .hexa CLI TBD."
 license = "MIT"
