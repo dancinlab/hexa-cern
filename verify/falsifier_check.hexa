@@ -81,7 +81,7 @@ let F1_T3_DESCRIPTION = "live LHC operational feed matches closed-form chain"
 let F2_ID            = "F-PCERN-2"
 let F2_RETRACT       = "classical Hamiltonian τ=4 phase mode claim retracted"
 let F2_T1_SCRIPTS    = ["calc_classical.hexa"]
-let F2_T2_SCRIPTS    = ["numerics_classical.hexa", "numerics_liouville.hexa"]
+let F2_T2_SCRIPTS    = ["numerics_classical.hexa", "numerics_liouville.hexa", "numerics_se3_partial.hexa"]
 let F2_T3_DESCRIPTION = "real LWFA bench demonstrates 4-phase pump→bubble→capture→extract"
 
 let F3_ID            = "F-PCERN-3"

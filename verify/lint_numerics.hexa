@@ -74,6 +74,7 @@ let NUMERICS_SCRIPTS = [
     "numerics_lattice_arithmetic.hexa",
     "numerics_liouville.hexa",
     "numerics_lwfa_solver.hexa",
+    "numerics_se3_partial.hexa",
 ]
 
 // Required substrings that every numerics_*.hexa file must contain.

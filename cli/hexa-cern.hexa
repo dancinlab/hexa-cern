@@ -191,6 +191,7 @@ let VERIFY_SUBS = [
     "classical",
     "numerics-classical",
     "numerics-liouville",
+    "numerics-se3",
     "numerics-cross",
     "numerics-lhc",
     "numerics-lwfa",
@@ -210,6 +211,7 @@ fn _verify_script(sub: str) -> str {
     if sub == "classical"          { return VERIFY_DIR + "/calc_classical.hexa" }
     if sub == "numerics-classical" { return VERIFY_DIR + "/numerics_classical.hexa" }
     if sub == "numerics-liouville" { return VERIFY_DIR + "/numerics_liouville.hexa" }
+    if sub == "numerics-se3"       { return VERIFY_DIR + "/numerics_se3_partial.hexa" }
     if sub == "numerics-cross"     { return VERIFY_DIR + "/numerics_cross_pillar.hexa" }
     if sub == "numerics-lhc"       { return VERIFY_DIR + "/numerics_lhc_parity.hexa" }
     if sub == "numerics-lwfa"      { return VERIFY_DIR + "/numerics_lwfa_parity.hexa" }
@@ -267,6 +269,7 @@ fn cmd_verify(a: [str]) {
         println("  classical           classical pillar — Lagrange/Hamilton τ=4 phase")
         println("  numerics-classical  classical pillar — symplectic leapfrog (τ=4 quadrants)")
         println("  numerics-liouville  classical pillar — Liouville volume preservation (det(J)=1)")
+        println("  numerics-se3        classical pillar — 2-DOF symplectic (1-DOF→2-DOF→6-DOF)")
         println("  numerics-cross      cross-pillar numerical consistency (mini ↔ parent ↔ classical)")
         println("  numerics-lhc        F-PCERN-1 collider parity numerics (LEP/Tevatron/LHC/FCC)")
         println("  numerics-lwfa       F-PCERN-3 LWFA parity numerics (BELLA/FACET/ATHENA/FLASHFwd)")
@@ -395,7 +398,7 @@ fn cmd_help() {
     println("                       | wakefield | numerics-wakefield | numerics-solver")
     println("                       | sigma | numerics-sigma")
     println("                       | classical | numerics-classical | numerics-liouville")
-    println("                       | numerics-cross | numerics-lhc | numerics-lwfa")
+    println("                       | numerics-se3 | numerics-cross | numerics-lhc | numerics-lwfa")
     println("                       | numerics-lattice | lint-numerics | falsifier")
     println("")
     println("global flags:")

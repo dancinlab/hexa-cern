@@ -9,6 +9,28 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased] — v1.1.0-pre on `main`
 
+### Added (2026-05-07 — fifteenth iteration)
+
+- `verify/numerics_se3_partial.hexa` — F-PCERN-2's third T2 stub
+  (alongside `numerics_classical` + `numerics_liouville`). Promotes
+  the symplectic check from 1-DOF to **2-DOF** — a partial step toward
+  the full 6-DOF SE(3) target documented in roadmap §A.2 (v1.2.0+).
+  - System: two coupled harmonic oscillators
+      H = ½(p₁²+p₂²) + ½ω²(q₁²+q₂²) + ½κ(q₁−q₂)²
+  - Velocity-Verlet kick-drift-kick on (q₁, p₁, q₂, p₂)
+  - Checks: energy drift, antisymmetric-mode decoupling under
+    symmetric IC (replaces total-p which is broken by on-site
+    potential), 4×4 Jacobian determinant for Liouville volume
+  - Results: 8/8 PASS, max |ΔE/E| = 8.4·10⁻⁶, anti-mode = 0.0
+    exactly, 4-D det(J) drift = 4.9·10⁻¹¹ at origin / 8.2·10⁻¹¹
+    at offset IC.
+- `cli/hexa-cern.hexa verify` — new `numerics-se3` sub. The
+  `verify all` aggregator now runs **17/17** scripts (was 16/16).
+- `verify/falsifier_check.hexa` — F2 T2 array now has ×3 stack
+  (classical + liouville + se3_partial). All 3 falsifiers now
+  symmetric at T2 ≥ 2 (sat-1 closer; F1/F3 still ×2/×3).
+- `verify/lint_numerics.hexa` — NUMERICS_SCRIPTS extended to 10.
+
 ### Added (2026-05-07 — fourteenth iteration)
 
 - `docs/numerics_methodology.md` — narrative documentation of the
