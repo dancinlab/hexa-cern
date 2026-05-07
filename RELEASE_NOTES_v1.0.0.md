@@ -1,8 +1,8 @@
 # hexa-cern v1.0.0 — initial extraction 💫
 
 **Released:** 2026-05-06
-**Provenance:** `need-singularity/n6-architecture@c0f1f570` → `need-singularity/hexa-cern@v1.0.0`
-**Sister extraction:** `need-singularity/lumiere` (peer)
+**Provenance:** `dancinlab/n6-architecture@c0f1f570` → `dancinlab/hexa-cern@v1.0.0`
+**Sister extraction:** `dancinlab/lumiere` (peer)
 **License:** MIT
 **Verdict:** SPECS_ONLY (3/3 pillar specs imported; .hexa CLI TBD)
 
@@ -42,9 +42,9 @@ A petite, peer-of-Lumière standalone bundle distilling the n6-architecture **ac
 
 ## Cross-link
 
-- SC magnet substrate → [`need-singularity/hexa-rtsc`](https://github.com/need-singularity/hexa-rtsc)
-- Cousin (PET cyclotron / antimatter factory) → [`need-singularity/hexa-antimatter`](https://github.com/need-singularity/hexa-antimatter)
-- Stage-3 propulsion dependent → [`need-singularity/hexa-ufo`](https://github.com/need-singularity/hexa-ufo)
+- SC magnet substrate → [`dancinlab/hexa-rtsc`](https://github.com/dancinlab/hexa-rtsc)
+- Cousin (PET cyclotron / antimatter factory) → [`dancinlab/hexa-antimatter`](https://github.com/dancinlab/hexa-antimatter)
+- Stage-3 propulsion dependent → [`dancinlab/hexa-ufo`](https://github.com/dancinlab/hexa-ufo)
 
 ---
 
@@ -54,4 +54,4 @@ A petite, peer-of-Lumière standalone bundle distilling the n6-architecture **ac
 - F-gate empirical validation roadmap (paired with sister `lumiere` 2026-08-30 / 2026-09-30 cadence).
 - HEXA-RTSC SC-magnet bridge for `mini` pillar.
 
-— need-singularity (박민우 <nerve011235@gmail.com>)
+— dancinlab (박민우 <nerve011235@gmail.com>)

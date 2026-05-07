@@ -93,8 +93,8 @@ fn _print_caveats() {
     println("     energy ÷12, size ÷10, error ÷144, lifetime ×48) is design-target ceiling,")
     println("     NOT empirically validated. Stage-1+ benchtop build required.")
     println("  3. Comparison vs LHC 7 TeV/27km + DESY 1 GeV/m baseline is paper-only.")
-    println("  4. Mini pillar SC magnet substrate depends on need-singularity/hexa-rtsc.")
-    println("  5. Stage-3 propulsion crosslink to need-singularity/hexa-ufo not wired here.")
+    println("  4. Mini pillar SC magnet substrate depends on dancinlab/hexa-rtsc.")
+    println("  5. Stage-3 propulsion crosslink to dancinlab/hexa-ufo not wired here.")
 }
 
 // ─── subcommand: mini ───
@@ -372,7 +372,7 @@ fn cmd_version() {
     println("hexa-cern " + VERSION)
     println("standalone hexa-cern benchtop accelerator bundle (HEXA family — extracted from n6-architecture@c0f1f570 on 2026-05-06)")
     println("license: MIT")
-    println("repo:    https://github.com/need-singularity/hexa-cern")
+    println("repo:    https://github.com/dancinlab/hexa-cern")
 }
 
 // ─── help ───

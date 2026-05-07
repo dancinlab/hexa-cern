@@ -2,7 +2,7 @@
 
 > hexa-cern — n=6 sigma-cascade 6-order benchtop accelerator (100 MeV / 1 GeV/m, mini + parent + classical 3-pillar).
 
-A petite, peer-of-Lumière standalone repo from the `need-singularity` org. Where Lumière takes the camera/character axes, **hexa-cern** takes the *accelerator* axis: three pillars distilled from the n6-architecture physics domain into a single MIT-licensed bundle.
+A petite, peer-of-Lumière standalone repo from the `dancinlab` org. Where Lumière takes the camera/character axes, **hexa-cern** takes the *accelerator* axis: three pillars distilled from the n6-architecture physics domain into a single MIT-licensed bundle.
 
 ---
 
@@ -83,7 +83,7 @@ v1.1.0-pre adds (on `main`, 2026-05-07):
 
 **Zero `.py` was added** — the runnable surface is 100% `.hexa`. This is
 deliberate: hexa-cern is a hexa-family member, and the migration target
-across `need-singularity` repos is .hexa-native tooling.
+across `dancinlab` repos is .hexa-native tooling.
 
 What it does **not** ship: actual particle acceleration, Geant4/MAD-X bridge, real-time beam diagnostics, LHC/DESY data ingestion. The σ-cascade 6-order claim is a **design-target ceiling**, not a measurement.
 
@@ -136,7 +136,7 @@ closure pct, math_pure conventions, recipe for adding new numerics).
 hx install hexa-cern
 
 # or clone directly:
-git clone https://github.com/need-singularity/hexa-cern
+git clone https://github.com/dancinlab/hexa-cern
 cd hexa-cern
 hexa run cli/hexa-cern.hexa status
 hexa run cli/hexa-cern.hexa verify all   # 12/12 PASS expected
@@ -204,13 +204,13 @@ end-to-end (no Python, no shell-only logic).
 
 | dependency / cousin                  | repo                                                  | role                                |
 |-------------------------------------:|:------------------------------------------------------|:------------------------------------|
-| SC magnet substrate                  | [`need-singularity/hexa-rtsc`](https://github.com/need-singularity/hexa-rtsc)             | superconducting magnet primitive    |
-| cousin (PET cyclotron, antimatter)   | [`need-singularity/hexa-antimatter`](https://github.com/need-singularity/hexa-antimatter) | parallel acceleration use case      |
-| Stage-3 propulsion dependent         | [`need-singularity/hexa-ufo`](https://github.com/need-singularity/hexa-ufo)               | downstream propulsion consumer      |
+| SC magnet substrate                  | [`dancinlab/hexa-rtsc`](https://github.com/dancinlab/hexa-rtsc)             | superconducting magnet primitive    |
+| cousin (PET cyclotron, antimatter)   | [`dancinlab/hexa-antimatter`](https://github.com/dancinlab/hexa-antimatter) | parallel acceleration use case      |
+| Stage-3 propulsion dependent         | [`dancinlab/hexa-ufo`](https://github.com/dancinlab/hexa-ufo)               | downstream propulsion consumer      |
 
-Provenance: extracted from [`n6-architecture`](https://github.com/need-singularity/n6-architecture) at SHA `c0f1f570` on 2026-05-06.
+Provenance: extracted from [`n6-architecture`](https://github.com/dancinlab/n6-architecture) at SHA `c0f1f570` on 2026-05-06.
 
-Sister repo (peer extraction): [`need-singularity/lumiere`](https://github.com/need-singularity/lumiere) — camera-filter + hexa-main-character apps-axis.
+Sister repo (peer extraction): [`dancinlab/lumiere`](https://github.com/dancinlab/lumiere) — camera-filter + hexa-main-character apps-axis.
 
 ---
 
@@ -218,4 +218,4 @@ Sister repo (peer extraction): [`need-singularity/lumiere`](https://github.com/n
 
 MIT — see [`LICENSE`](LICENSE).
 
-Copyright (c) 2026 need-singularity (박민우 <nerve011235@gmail.com>)
+Copyright (c) 2026 dancinlab (박민우 <nerve011235@gmail.com>)

@@ -130,4 +130,4 @@ have a regression target.
 3. `parent/` σ-cascade chain integrator (closes F-PCERN-1).
 4. `classical/` Lagrangian/Hamiltonian τ=4 phase numerics (closes F-PCERN-2).
 
-— need-singularity (박민우 <nerve011235@gmail.com>)
+— dancinlab (박민우 <nerve011235@gmail.com>)

@@ -279,7 +279,7 @@ All new code is `.hexa` (zero `.py` added). Audits the v1.0.0 frozen specs witho
   - `classical/doc/classical-mechanics-accelerator.md` — HEXA-CLASSIC-ACCEL (classical-mechanics baseline)
 - `cli/hexa-cern.hexa` placeholder dispatcher with verbs: `mini` / `parent` / `classical` / `status` / `selftest` / `help` / `--version`.
   - Each pillar verb prints `status: spec-only — TBD` and the path to its `.md` spec.
-- `hexa.toml` package manifest (MIT, entry `cli/hexa-cern.hexa`, repo `need-singularity/hexa-cern`).
+- `hexa.toml` package manifest (MIT, entry `cli/hexa-cern.hexa`, repo `dancinlab/hexa-cern`).
 - `install.hexa` hx package-manager hook (post-install warn-only selftest).
 - `tests/test_selftest.hexa` 3-pillar verb-count smoke check.
 - `docs/cern_baseline.md` — LHC 7 TeV/27 km vs DESY 1 GeV/m vs HEXA σ-φ=10 GeV/m comparison table.
@@ -291,8 +291,8 @@ All new code is `.hexa` (zero `.py` added). Audits the v1.0.0 frozen specs witho
 - LHC 7 TeV/27 km + DESY 1 GeV/m comparison is paper-only.
 
 ### Cross-link
-- SC magnet substrate: [`need-singularity/hexa-rtsc`](https://github.com/need-singularity/hexa-rtsc)
-- cousin (PET cyclotron, antimatter factory): [`need-singularity/hexa-antimatter`](https://github.com/need-singularity/hexa-antimatter)
-- Stage-3 propulsion dependent: [`need-singularity/hexa-ufo`](https://github.com/need-singularity/hexa-ufo)
+- SC magnet substrate: [`dancinlab/hexa-rtsc`](https://github.com/dancinlab/hexa-rtsc)
+- cousin (PET cyclotron, antimatter factory): [`dancinlab/hexa-antimatter`](https://github.com/dancinlab/hexa-antimatter)
+- Stage-3 propulsion dependent: [`dancinlab/hexa-ufo`](https://github.com/dancinlab/hexa-ufo)
 
-[1.0.0]: https://github.com/need-singularity/hexa-cern/releases/tag/v1.0.0
+[1.0.0]: https://github.com/dancinlab/hexa-cern/releases/tag/v1.0.0

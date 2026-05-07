@@ -45,7 +45,7 @@ duty cycle:  pulsed (~Hz)  → continuous                     qualitative step-c
    - `mini` → Stage-1+ laser-plasma benchtop sandbox
    - `parent` → Stage-2+ integrated parent build
    - `classical` → Stage-1+ classical-mechanics baseline solver
-4. SC magnet substrate (mini pillar) depends on `need-singularity/hexa-rtsc`, which is itself a separate spec/empirical roadmap.
+4. SC magnet substrate (mini pillar) depends on `dancinlab/hexa-rtsc`, which is itself a separate spec/empirical roadmap.
 
 ---
 
@@ -54,4 +54,4 @@ duty cycle:  pulsed (~Hz)  → continuous                     qualitative step-c
 - [`mini/doc/mini-accelerator.md`](../mini/doc/mini-accelerator.md)
 - [`parent/doc/particle-accelerator.md`](../parent/doc/particle-accelerator.md)
 - [`classical/doc/classical-mechanics-accelerator.md`](../classical/doc/classical-mechanics-accelerator.md)
-- Cross-link: [`need-singularity/hexa-rtsc`](https://github.com/need-singularity/hexa-rtsc), [`need-singularity/hexa-antimatter`](https://github.com/need-singularity/hexa-antimatter), [`need-singularity/hexa-ufo`](https://github.com/need-singularity/hexa-ufo)
+- Cross-link: [`dancinlab/hexa-rtsc`](https://github.com/dancinlab/hexa-rtsc), [`dancinlab/hexa-antimatter`](https://github.com/dancinlab/hexa-antimatter), [`dancinlab/hexa-ufo`](https://github.com/dancinlab/hexa-ufo)

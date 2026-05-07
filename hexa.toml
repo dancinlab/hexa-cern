@@ -12,8 +12,8 @@ entry = "cli/hexa-cern.hexa"
 description = "hexa-cern — n=6 sigma-cascade 6-order benchtop accelerator (100 MeV / 1 GeV/m, mini + parent + classical 3-pillar). 3-pillar bundle: HEXA-MINI-ACCEL (laser-plasma 100 MeV / 1 GeV/m) + HEXA-PACCEL (integrated parent) + HEXA-CLASSIC-ACCEL (classical-mechanics baseline). LHC 7 TeV/27km, DESY 1 GeV/m baselines for n=6 σ-cascade 6-order comparison. specs only, .hexa CLI TBD."
 license = "MIT"
 authors = ["박민우 <nerve011235@gmail.com>"]
-repository = "https://github.com/need-singularity/hexa-cern"
-homepage = "https://github.com/need-singularity/hexa-cern"
+repository = "https://github.com/dancinlab/hexa-cern"
+homepage = "https://github.com/dancinlab/hexa-cern"
 readme = "README.md"
 keywords = ["hexa-cern", "hexa-family", "mini-accelerator", "particle-accelerator", "classical-mechanics", "laser-plasma", "n6-invariant", "sigma-cascade"]
 categories = ["physics", "particle-accelerator", "benchtop-instrumentation"]
@@ -93,8 +93,8 @@ n6_lattice_caveat = "n=6 invariant (σ(6)=12, τ(6)=4, φ(6)=2) threads the desi
 mac_local_default = "$0 (specs-only at v1.0.0)"
 selftest = "$0 (verb-count check)"
 
-# ── Cross-link (need-singularity ecosystem) ───────────────
+# ── Cross-link (dancinlab ecosystem) ───────────────
 [crosslink]
-sc_magnet_substrate = "need-singularity/hexa-rtsc"
-cousin_pet_cyclotron = "need-singularity/hexa-antimatter"
-stage3_propulsion_dependent = "need-singularity/hexa-ufo"
+sc_magnet_substrate = "dancinlab/hexa-rtsc"
+cousin_pet_cyclotron = "dancinlab/hexa-antimatter"
+stage3_propulsion_dependent = "dancinlab/hexa-ufo"
