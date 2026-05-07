@@ -232,6 +232,12 @@ fn _verify_script(sub: str) -> str {
 }
 
 fn _hexa_bin() -> str {
+    // Use hexa.real directly: ~/.hx/bin/hexa (and the `which hexa` alias) is
+    // a wrapper that routes through the resource-toolkit TCP shim, which is
+    // unreachable in offline / CI environments. hexa.real is the local
+    // interpreter binary and works regardless of shim state.
+    let real = HOME + "/.hx/packages/hexa/hexa.real"  // @allow-devpath
+    if _file_exists(real) { return real }
     let h = exec("which hexa 2>/dev/null").trim()
     if h.len() > 0 { return h }
     return HOME + "/.hx/bin/hexa"  // @allow-devpath

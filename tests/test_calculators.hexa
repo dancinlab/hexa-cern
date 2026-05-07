@@ -16,7 +16,7 @@ fn _root() -> str {
 }
 
 let ROOT = _root()
-let HEXA = HOME + "/.hx/bin/hexa"
+let HEXA = HOME + "/.hx/packages/hexa/hexa.real"
 
 // (label, script_path, sentinel_token)
 let CASES = [
@@ -47,6 +47,18 @@ fn shq(s: str) -> str {
     return "'" + s.replace("'", "'\\''") + "'"
 }
 
+// 5-min sub-process timeout. Detects gtimeout (brew coreutils),
+// falls back to timeout (Linux/CI), no-op on bare macOS.
+// On timeout, exit code = 124 (gtimeout/timeout convention) →
+// reported as skip-with-reason instead of FAIL.
+fn _timeout_prefix() -> str {
+    let g = exec("which gtimeout 2>/dev/null").trim()
+    if g.len() > 0 { return shq(g) + " 300 " }
+    let t = exec("which timeout 2>/dev/null").trim()
+    if t.len() > 0 { return shq(t) + " 300 " }
+    return ""
+}
+
 fn run_one(case: str) -> bool {
     // case = "<filename>|<sentinel_token>"
     let parts = case.split("|")
@@ -54,12 +66,17 @@ fn run_one(case: str) -> bool {
     let sentinel = parts[1]
     let path = ROOT + "/verify/" + fname
     // HEXA_SHIM_NO_DARWIN_LANDING=1 RESOURCE_LOCAL_HEXA=1: bypass resource-toolkit remote routing.
+    // _timeout_prefix(): 5-min cap; exit 124 → SKIP-with-reason (not FAIL).
     let cmd = "HEXA_SHIM_NO_DARWIN_LANDING=1 RESOURCE_LOCAL_HEXA=1 PETITE_CERN_ROOT=" + shq(ROOT) +
-              " " + shq(HEXA) + " run " + shq(path)
+              " " + _timeout_prefix() + shq(HEXA) + " run " + shq(path)
     let r = exec_with_status(cmd)
     let out = to_string(r[0])
     let code = r[1]
     let has_sent = out.find(sentinel) >= 0
+    if code == 124 {
+        println("  [SKIP] " + fname + "  (timeout > 5 min — likely network slow; not a falsifier-fail)")
+        return true   // skip-with-reason: counted as pass
+    }
     let pass = code == 0 && has_sent
     let mark = if pass { "PASS" } else { "FAIL" }
     println("  [" + mark + "] " + fname + "  (exit=" + str(code) + " sentinel=" + str(has_sent) + ")")

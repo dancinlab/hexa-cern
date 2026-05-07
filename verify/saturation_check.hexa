@@ -44,6 +44,11 @@ fn shq(s: str) -> str {
 }
 
 fn _hexa_bin() -> str {
+    // Use hexa.real directly: the wrapper at ~/.hx/bin/hexa (and `which hexa`
+    // alias) routes through the resource-toolkit TCP shim which is unreachable
+    // in offline/CI runs. hexa.real is the local interpreter binary.
+    let real = HOME + "/.hx/packages/hexa/hexa.real"  // @allow-devpath
+    if file_exists(real) { return real }
     let h = exec("which hexa 2>/dev/null").trim()
     if h.len() > 0 { return h }
     return HOME + "/.hx/bin/hexa"  // @allow-devpath

@@ -194,7 +194,13 @@ fn main() {
     println("  fixture dir: " + FIXTURE_DIR)
     println("")
 
-    let net_up = check_network_reachable()
+    // HEXA_CERN_OFFLINE=1 → fixture-only mode (skip API entirely).
+    let offline = env("HEXA_CERN_OFFLINE") == "1"
+    if offline {
+        _info("HEXA_CERN_OFFLINE=1 → fixture-only mode (Inspire-HEP API skipped)",
+              "no network probe, no live fetch; fixture-only path engaged")
+    }
+    let net_up = if offline { false } else { check_network_reachable() }
 
     let mut hits = 0
     let mut i = 0

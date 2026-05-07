@@ -256,22 +256,46 @@ fn main() {
     println("  Acceptance: every ATLAS per-beam ∈ (σ-φ) = 10× band of E_5")
     println("")
 
-    let net_ok = check_network_reachable()
+    // HEXA_CERN_OFFLINE=1 → fixture-only mode (skip API entirely).
+    // Saves ~10–15 s of network call per run; useful for CI / fast loops.
+    let offline = env("HEXA_CERN_OFFLINE") == "1"
+    if offline {
+        _info("HEXA_CERN_OFFLINE=1 → fixture-only mode (API skipped)",
+              "no network probe, no live fetch; fixture-only path engaged")
+    }
+    let net_ok = if offline { false } else { check_network_reachable() }
 
-    if !net_ok {
+    // dual-source policy (per dancinlife 2026-05-08):
+    //   API-first when net_ok, fixture-fallback always available, compare both.
+    let fix_text = read_fixture()
+    let fix_values = if fix_text.len() > 0 { count_known_energies(fix_text) } else { [] }
+
+    let api_text = if net_ok { fetch_api() } else { "" }
+    let api_values = if api_text.len() > 0 { count_known_energies(api_text) } else { [] }
+
+    let chosen = if api_values.len() > 0 { api_values } else { fix_values }
+    let source = if api_values.len() > 0 { "API" } else if fix_values.len() > 0 { "fixture" } else { "none" }
+
+    _info("source resolution: " + source,
+          "API values = " + str(api_values.len()) + ", fixture values = " + str(fix_values.len()))
+
+    if chosen.len() == 0 {
         println("")
-        println("  → SKIPPED downstream checks (offline). Re-run with network for T3.")
-        println("__HEXA_CERN_EMPIRICAL_LHC_API__ PASS — offline; T3 unverifiable but not failing")
+        println("  → both API and fixture cold. T3 unverifiable in this environment.")
+        println("__HEXA_CERN_EMPIRICAL_LHC_API__ PASS — offline + no fixture; T3 unverifiable")
         exit(0)
     }
 
-    let json = fetch_api()
-    check_api_responds(json)
-    let values = count_known_energies(json)
-    check_atlas_energies_present(values)
-    if values.len() > 0 {
-        check_atlas_energies_in_band(values)
-        check_run_eras_consistent_with_chain(values)
+    if api_text.len() > 0 { check_api_responds(api_text) }
+    check_atlas_energies_present(chosen)
+    if chosen.len() > 0 {
+        check_atlas_energies_in_band(chosen)
+        check_run_eras_consistent_with_chain(chosen)
+    }
+    if api_values.len() > 0 && fix_values.len() > 0 {
+        _check(api_values.len() >= fix_values.len(),
+               "API energies count ≥ fixture energies count  (monotone)",
+               "API = " + str(api_values.len()) + ", fixture = " + str(fix_values.len()))
     }
     check_parent_doc_anchors_lhc()
 
