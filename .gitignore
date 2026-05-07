@@ -1,10 +1,10 @@
 # petite-cern — gitignore
 # Append-only ledger / runtime caches
-state/*.log
-state/*.jsonl
-state/runs/
-state/cache/
-state/markers/
+**/state/*.log
+**/state/*.jsonl
+**/state/runs/
+**/state/cache/
+**/state/markers/
 **/__pycache__/
 **/*.pyc
 
@@ -17,6 +17,10 @@ state/markers/
 .env
 .env.local
 
-# Build artifacts (none expected — pure hexa)
+# Build artifacts (PDFs land in build/out/, .gitignore'd; Makefile + header tracked)
 dist/
-build/
+build/out/
+*.pdf
+
+# .claude harness scratch
+.claude/

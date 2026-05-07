@@ -148,6 +148,120 @@ fn cmd_classical(a: [str]) {
     _audit("classical", "", 0)
 }
 
+// ─── subcommand: verify ───
+//
+// Dispatches the verify/*.hexa runners. Each is a stand-alone script that
+// reads project docs and exits 0 on PASS, 1 on FAIL. `verify all` runs the
+// full sweep and aggregates exit codes (non-zero if any sub-verifier fails).
+//
+// Each verifier runs in its own `hexa run` invocation via exec(),
+// keeping stdout bit-identical to direct invocations. Exit codes
+// aggregate cleanly (any non-zero in `verify all` → exit 1).
+
+let VERIFY_DIR = PC + "/verify"
+
+let VERIFY_SUBS = [
+    "lattice",
+    "cross-doc",
+    "wakefield",
+    "sigma",
+    "classical",
+    "falsifier",
+]
+
+fn _verify_script(sub: str) -> str {
+    if sub == "lattice"   { return VERIFY_DIR + "/lattice_check.hexa" }
+    if sub == "cross-doc" { return VERIFY_DIR + "/cross_doc_audit.hexa" }
+    if sub == "wakefield" { return VERIFY_DIR + "/calc_wakefield.hexa" }
+    if sub == "sigma"     { return VERIFY_DIR + "/calc_sigma_cascade.hexa" }
+    if sub == "classical" { return VERIFY_DIR + "/calc_classical.hexa" }
+    if sub == "falsifier" { return VERIFY_DIR + "/falsifier_check.hexa" }
+    return ""
+}
+
+fn _hexa_bin() -> str {
+    let h = exec("which hexa 2>/dev/null").trim()
+    if h.len() > 0 { return h }
+    return HOME + "/.hx/bin/hexa"  // @allow-devpath
+}
+
+fn _run_one_verifier(sub: str) -> int {
+    let path = _verify_script(sub)
+    if path.len() == 0 {
+        eprintln("hexa-cern verify: unknown sub '" + sub + "'")
+        return 2
+    }
+    if _file_exists(path) == false {
+        eprintln("hexa-cern verify: script missing: " + path)
+        return 2
+    }
+    let cmd = "PETITE_CERN_ROOT=" + shq(PC) + " " +
+              shq(_hexa_bin()) + " run " + shq(path)
+    let result = exec_with_status(cmd)
+    let stdout = to_string(result[0])
+    let code = result[1]
+    println(stdout)
+    return code
+}
+
+fn cmd_verify(a: [str]) {
+    // a = ["hexa_cern_cli", "hexa_cern_router", "verify", <maybe sub>...]
+    let n = len(a)
+    let mut sub = "all"
+    if n > 3 { sub = a[3] }
+
+    if sub == "--help" || sub == "-h" || sub == "help" {
+        println("hexa-cern verify — n=6 invariant + per-pillar calculator audits")
+        println("")
+        println("usage: hexa-cern verify [<sub>]")
+        println("")
+        println("sub:")
+        println("  all          run every verifier in sequence (default)")
+        println("  lattice      n=6 σ(6)·φ(6) = n·τ(6) = J₂ = 24 closure")
+        println("  cross-doc    cross-pillar consistency audit")
+        println("  wakefield    mini pillar — laser-wakefield n=6 derivation")
+        println("  sigma        parent pillar — σ-cascade chain (E_0..E_6)")
+        println("  classical    classical pillar — Lagrange/Hamilton τ=4 phase")
+        println("  falsifier    F-PCERN-1/2/3 preregister checklist")
+        println("")
+        println("exit:")
+        println("  0  all selected verifiers PASS")
+        println("  1  ≥ 1 verifier FAIL")
+        println("  2  bad sub / missing script")
+        return
+    }
+
+    if sub == "all" {
+        let mut pass = 0
+        let mut fail = 0
+        let mut bad = 0
+        for s in VERIFY_SUBS {
+            let code = _run_one_verifier(s)
+            if code == 0 { pass = pass + 1 }
+            else if code == 1 { fail = fail + 1 }
+            else { bad = bad + 1 }
+        }
+        let total = pass + fail + bad
+        println("")
+        println("========================================================================")
+        println("  hexa-cern verify all — aggregate")
+        println("    PASS:  " + str(pass) + "/" + str(total))
+        println("    FAIL:  " + str(fail) + "/" + str(total))
+        println("    ERROR: " + str(bad)  + "/" + str(total))
+        println("========================================================================")
+        if fail + bad > 0 {
+            _audit("verify all", "", 1)
+            exit(1)
+        }
+        _audit("verify all", "", 0)
+        return
+    }
+
+    let code = _run_one_verifier(sub)
+    _audit("verify " + sub, "", code)
+    if code != 0 { exit(code) }
+}
+
 // ─── subcommand: status ───
 
 fn cmd_status(a: [str]) {
@@ -176,6 +290,7 @@ fn cmd_status(a: [str]) {
     println("    hexa-cern parent     (HEXA-PACCEL spec)")
     println("    hexa-cern classical  (HEXA-CLASSIC-ACCEL spec)")
     println("    hexa-cern selftest   (3-pillar sentinel sweep)")
+    println("    hexa-cern verify     (n=6 invariant + calculator audits)")
     _print_caveats()
 }
 
@@ -225,6 +340,9 @@ fn cmd_help() {
     println("utility subcommands:")
     println("  status          0/3-wired pillar table + verdict + caveats")
     println("  selftest        full 3-pillar sentinel sweep")
+    println("  verify [<sub>]  n=6 invariant + per-pillar calculators")
+    println("                    sub: all (default) | lattice | cross-doc")
+    println("                       | wakefield | sigma | classical | falsifier")
     println("")
     println("global flags:")
     println("  --version       show version")
@@ -272,7 +390,10 @@ fn main() {
         return
     }
 
-    if has_flag(a, "--help") || has_flag(a, "-h") {
+    // Only trigger global --help when the FIRST token is --help/-h.
+    // Sub-positioned flags (e.g. `verify --help`) are forwarded to the
+    // subcommand's own help handler.
+    if sub == "--help" || sub == "-h" {
         cmd_help()
         return
     }
@@ -289,6 +410,8 @@ fn main() {
         cmd_classical(a)
     } else if sub == "selftest" {
         cmd_selftest(a)
+    } else if sub == "verify" {
+        cmd_verify(a)
     } else {
         eprintln("hexa-cern: unknown subcommand '" + sub + "'")
         eprintln("run 'hexa-cern help' for usage")

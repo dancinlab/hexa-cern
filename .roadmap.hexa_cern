@@ -4,7 +4,7 @@
 > deadlines, pointers. Sister of `hexa-fusion` / `hexa-ufo` / `hexa-antimatter` /
 > `hexa-rtsc` under `need-singularity` org.
 
-**Last sync**: 2026-05-06 · **Current release**: v1.0.0 · **Branch**: `main`
+**Last sync**: 2026-05-07 · **Current release**: v1.0.0 (v1.1.0-pre on `main`) · **Branch**: `main`
 
 ---
 
@@ -36,13 +36,25 @@ DoD:
 | Version | Date | Status | Highlights |
 |---------|------|--------|------------|
 | v1.0.0 | 2026-05-06 | RELEASED | 3-pillar 시드 (mini + parent + classical) + cli placeholder + cern_baseline 비교 표 |
-| v1.1.0 | ~2026-08 (TARGET) | planned | `mini` .hexa CLI wired (laser pulse → electron energy 계산) |
+| v1.1.0-pre | 2026-05-07 | UNRELEASED on `main` | `.hexa` runnable surface — verify/ 6 scripts, build/ 3 PDFs, tests/ 4 cases, cli `verify` subcmd. n=6 lattice 23/23 PASS. Empirical wakefield/cascade/classical still UNVERIFIED (F-PCERN-1/2/3). |
+| v1.1.0 | ~2026-08 (TARGET) | planned | `mini` .hexa CLI wired with simulation parity (laser pulse → electron energy numerical solver) |
 | v1.2.0 | ~2026-10 | planned | `parent` σ-cascade 6-order 분석 spec |
 | v2.0.0 | ~2027-Q1 | ASPIRATIONAL | 1 GeV/m wakefield 외부 collab 실험적 검증 |
 
 ## §A.3 Cycle history
 
 - **Cycle 0 (2026-05-06)** — v1.0.0 initial extraction from n6-architecture@c0f1f570. Commit `ec15584`. 13 files.
+- **Cycle 1 (2026-05-07)** — v1.1.0-pre `.hexa` runnable surface lands. Adds:
+  - `verify/lattice_check.hexa` (23/23 PASS)
+  - `verify/cross_doc_audit.hexa` (11/11 PASS)
+  - `verify/calc_wakefield.hexa` (6/6 PASS, mini pillar)
+  - `verify/calc_sigma_cascade.hexa` (8/8 PASS, parent pillar)
+  - `verify/calc_classical.hexa` (11/11 PASS, classical pillar)
+  - `verify/falsifier_check.hexa` (3/3 falsifiers registered)
+  - `cli/hexa-cern.hexa verify [<sub>]` subcommand (6-runner aggregator)
+  - `build/Makefile` + `build/header.tex` (3-PDF rebuild — all 3 PDFs build clean)
+  - `tests/test_{lattice,calculators,cli_verify,all}.hexa` (4/4 PASS)
+  - 0 `.py` added — all new code is `.hexa`.
 
 ## §A.4 Falsifier preregister
 

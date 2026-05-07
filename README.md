@@ -43,6 +43,9 @@ Plus utility subcmds:
 ```
 hexa-cern status              0/3-wired pillar table + verdict + caveats
 hexa-cern selftest            3-pillar sentinel sweep
+hexa-cern verify [<sub>]      n=6 invariant + per-pillar calculator audits
+                                sub: all (default) | lattice | cross-doc
+                                   | wakefield | sigma | classical | falsifier
 hexa-cern --version           print version
 hexa-cern --help              full usage
 ```
@@ -59,37 +62,126 @@ Pillar specs live under `<pillar>/doc/`:
 
 ### Status
 
-> **specs only, .hexa CLI TBD.** 3-pillar bundle: HEXA-MINI-ACCEL (벤치톱 100 MeV / 1 GeV/m laser-plasma) + HEXA-PACCEL (integrated parent) + HEXA-CLASSIC-ACCEL. LHC 7 TeV/27km, DESY 1 GeV/m baseline에 대한 n=6 sigma-cascade 6-order 비교 후보.
+> **v1.0.0 specs frozen + v1.1.0-pre `.hexa` runnable surface on `main`.**
+> 3-pillar bundle: HEXA-MINI-ACCEL (벤치톱 100 MeV / 1 GeV/m laser-plasma)
+> + HEXA-PACCEL (integrated parent) + HEXA-CLASSIC-ACCEL. LHC 7 TeV/27km
+> & DESY 1 GeV/m 기준선에 대한 n=6 σ-cascade 6-order 비교가 paper-only로
+> 명시. 실증은 F-PCERN-1/2/3 falsifier가 닫힐 때까지 UNVERIFIED.
 
-v1.0.0 ships:
+v1.0.0 ships (frozen 2026-05-06):
 
 - 3 pillar specs (`.md`, extracted from `n6-architecture@c0f1f570`)
-- a placeholder `cli/hexa-cern.hexa` dispatcher (`mini` / `parent` / `classical` each prints `spec-only — TBD`)
-- a `tests/test_selftest.hexa` verb-count check (3 pillars expected)
-- this README
+- a `cli/hexa-cern.hexa` dispatcher with 3 pillar verbs + status / selftest
+
+v1.1.0-pre adds (on `main`, 2026-05-07):
+
+- `verify/` — 6 `.hexa` scripts auditing n=6 lattice + per-pillar derivations
+- `build/` — pandoc + xelatex Makefile that regenerates 3 pillar PDFs (clean)
+- `tests/` — 4 `.hexa` test cases (+ `test_all.hexa` aggregator); 4/4 PASS
+- `cli/hexa-cern.hexa verify [<sub>]` — 6-runner aggregator subcommand
+- `hexa.toml` v1.1.0-pre [closure] block: `verify_pass: 6/6`, `tests: 4/4`
+
+**Zero `.py` was added** — the runnable surface is 100% `.hexa`. This is
+deliberate: hexa-cern is a hexa-family member, and the migration target
+across `need-singularity` repos is .hexa-native tooling.
 
 What it does **not** ship: actual particle acceleration, Geant4/MAD-X bridge, real-time beam diagnostics, LHC/DESY data ingestion. The σ-cascade 6-order claim is a **design-target ceiling**, not a measurement.
 
 ### Verification
 
-- See [`docs/cern_baseline.md`](docs/cern_baseline.md) for the LHC 7 TeV/27 km vs DESY 1 GeV/m vs HEXA σ-φ=10 GeV/m comparison table.
-- Empirical wiring (laser-plasma sandbox, parent integration, classical baseline solver) is deferred to Stage-1+ benchtop builds.
+The `verify/` surface (all `.hexa`) audits n=6 closure + per-pillar derivations:
+
+| script | check | result |
+|---|---|---|
+| `verify/lattice_check.hexa`        | σ(6)·φ(6) = n·τ(6) = J₂ = 24 across roadmap + 3 pillars | 23/23 PASS |
+| `verify/cross_doc_audit.hexa`      | LHC / DESY / OEIS / BT cross-link consistency           | 11/11 PASS |
+| `verify/calc_wakefield.hexa`       | mini — E_peak = σ·(σ-φ) = 120 GV/m, a₀ = n = 6, R = 10 cm | 6/6 PASS |
+| `verify/calc_sigma_cascade.hexa`   | parent — E_0..E_6 chain (10 MeV → 100 TeV)               | 8/8 PASS |
+| `verify/calc_classical.hexa`       | classical — DOF = n = 6, phase-space dim = σ = 12        | 11/11 PASS |
+| `verify/falsifier_check.hexa`      | F-PCERN-1/2/3 preregister checklist                       | 3/3 registered (UNVERIFIED v1.0) |
+
+Run them all with the unified CLI subcommand:
+
+```bash
+hexa-cern verify all      # 6/6 PASS expected
+```
+
+Or build the 3 pillar PDFs:
+
+```bash
+make -C build check       # verify pandoc + xelatex + hexa available
+make -C build all         # rebuild all 3 pillar PDFs into build/out/
+```
+
+Empirical wiring (laser-plasma sandbox, parent integration, classical
+baseline solver) is deferred to Stage-1+ benchtop builds. See
+[`docs/cern_baseline.md`](docs/cern_baseline.md) for the LHC 7 TeV/27 km
+vs DESY 1 GeV/m vs HEXA σ-φ=10 GeV/m comparison table.
 
 ---
 
 ## § Install
 
 ```bash
-# (placeholder — hx package manager TBD)
+# package manager (recommended)
 hx install hexa-cern
 
 # or clone directly:
 git clone https://github.com/need-singularity/hexa-cern
 cd hexa-cern
 hexa run cli/hexa-cern.hexa status
+hexa run cli/hexa-cern.hexa verify all   # 6/6 PASS expected
 ```
 
-Cost (Mac local): **$0** — placeholder dispatcher and `.md` specs only.
+After `hx install hexa-cern`, the shim lands at `~/.hx/bin/hexa-cern`.
+Run `hexa-cern verify all` from anywhere — the CLI auto-resolves
+`PETITE_CERN_ROOT` from `~/.hx/packages/hexa-cern`.
+
+Cost (Mac local): **$0** — verify scripts are pure `.hexa` (file reads + arithmetic).
+
+---
+
+## § Repository layout
+
+```
+hexa-cern/
+├── README.md                     ← this file
+├── LICENSE                       ← MIT
+├── hexa.toml                     ← package manifest (hx install hexa-cern)
+├── install.hexa                  ← hx install hook (post-install selftest)
+├── .roadmap.hexa_cern            ← cross-cutting state (lattice / cycles / falsifiers)
+├── CHANGELOG.md                  ← release history
+├── RELEASE_NOTES_v1.0.0.md       ← v1.0.0 cut notes
+│
+├── mini/doc/mini-accelerator.md                            ← pillar 1 (47 KB)
+├── parent/doc/particle-accelerator.md                      ← pillar 2 (14 KB)
+├── classical/doc/classical-mechanics-accelerator.md        ← pillar 3 (47 KB)
+│
+├── cli/
+│   └── hexa-cern.hexa            ← CLI router (status/selftest/verify/mini/parent/classical)
+├── verify/                       ← v1.1.0-pre — n=6 audit surface (.hexa)
+│   ├── lattice_check.hexa        ← σ·φ = n·τ = J₂ = 24 closure   (23/23)
+│   ├── cross_doc_audit.hexa      ← LHC/DESY/OEIS/BT cross-pillar (11/11)
+│   ├── calc_wakefield.hexa       ← mini — laser-wakefield n=6   ( 6/ 6)
+│   ├── calc_sigma_cascade.hexa   ← parent — E_0..E_6 chain      ( 8/ 8)
+│   ├── calc_classical.hexa       ← classical — Lagrange/Hamilton(11/11)
+│   └── falsifier_check.hexa      ← F-PCERN-1/2/3 preregister     ( 3/ 3)
+├── build/
+│   ├── Makefile                  ← pandoc + xelatex 3-PDF rebuild
+│   ├── header.tex                ← LaTeX include (CJK + monospace; soft-guarded)
+│   └── out/*.pdf                 ← generated, .gitignore'd
+├── tests/                        ← v1.1.0-pre — regression suite (.hexa)
+│   ├── test_selftest.hexa
+│   ├── test_lattice.hexa
+│   ├── test_calculators.hexa
+│   ├── test_cli_verify.hexa
+│   └── test_all.hexa             ← runs everything above (4/4 PASS)
+└── docs/cern_baseline.md         ← LHC vs DESY vs hexa-cern comparison
+```
+
+The `verify/ + build/ + tests/` triad is the canonical runnable
+surface for hexa-cern: every audit + every PDF + every test is `.hexa`
+end-to-end (no Python, no shell-only logic).
 
 ---
 

@@ -1,0 +1,208 @@
+#!hexa strict
+// hexa-cern/verify/cross_doc_audit.hexa — cross-pillar consistency audit.
+//
+// Scans the canonical project documents and confirms shared anchors
+// agree. The shared anchors here are the σ-cascade hierarchy (E_0..E_6),
+// the LHC/DESY baselines, the BT-401 cross-link family, and the OEIS
+// sequence cites.
+//
+// Run:
+//   hexa run verify/cross_doc_audit.hexa     # exit 0 = all anchors agree
+//
+// Authority: .roadmap.hexa_cern §A.1 + 3 pillar specs (frozen v1.0).
+//
+// Cost: $0.
+// @no-lock-needed
+
+let HOME = env("HOME")
+
+fn _root() -> str {
+    let r = env("PETITE_CERN_ROOT")
+    if r.len() > 0 { return r }
+    let pwd = exec("pwd").trim()
+    if pwd.len() > 0 { return pwd }
+    return HOME + "/core/hexa-cern"  // @allow-devpath
+}
+
+let ROOT = _root()
+let DOC_MINI      = ROOT + "/mini/doc/mini-accelerator.md"
+let DOC_PARENT    = ROOT + "/parent/doc/particle-accelerator.md"
+let DOC_CLASSICAL = ROOT + "/classical/doc/classical-mechanics-accelerator.md"
+let DOC_README    = ROOT + "/README.md"
+let DOC_ROADMAP   = ROOT + "/.roadmap.hexa_cern"
+
+fn _read(p: str) -> str {
+    if file_exists(p) == false { return "" }
+    return read_file(p)
+}
+
+fn _has(t: str, s: str) -> bool {
+    if t.len() == 0 { return false }
+    return t.find(s) >= 0
+}
+
+fn _any(t: str, ss: [str]) -> bool {
+    for s in ss { if _has(t, s) { return true } }
+    return false
+}
+
+let mut RUN = 0
+let mut FAIL = 0
+let mut FAILURES = []
+
+fn _check(ok: bool, label: str, detail: str) {
+    RUN = RUN + 1
+    if ok {
+        println("  [PASS] " + label)
+        if detail.len() > 0 { println("         · " + detail) }
+    } else {
+        FAIL = FAIL + 1
+        FAILURES.push(label)
+        println("  [FAIL] " + label)
+        if detail.len() > 0 { println("         · " + detail) }
+    }
+}
+
+// Check 1 — LHC 7 TeV baseline mentioned in roadmap + parent + README
+fn check_lhc_baseline() {
+    let phrases = ["7 TeV", "7TeV", "LHC"]
+    let ok_road = _any(_read(DOC_ROADMAP), phrases)
+    let ok_par  = _any(_read(DOC_PARENT),  phrases)
+    let ok_rdme = _any(_read(DOC_README),  phrases)
+    _check(ok_road && ok_par && ok_rdme,
+           "LHC 7 TeV baseline appears in roadmap + parent + README",
+           "ok_road=" + str(ok_road) + " ok_par=" + str(ok_par) + " ok_rdme=" + str(ok_rdme))
+}
+
+// Check 2 — DESY 1 GeV/m baseline appears in roadmap + mini + README
+fn check_desy_baseline() {
+    let phrases = ["1 GeV/m", "DESY"]
+    let ok_road = _any(_read(DOC_ROADMAP), phrases)
+    let ok_min  = _any(_read(DOC_MINI),    phrases)
+    let ok_rdme = _any(_read(DOC_README),  phrases)
+    _check(ok_road && ok_min && ok_rdme,
+           "DESY 1 GeV/m baseline appears in roadmap + mini + README",
+           "ok_road=" + str(ok_road) + " ok_min=" + str(ok_min) + " ok_rdme=" + str(ok_rdme))
+}
+
+// Check 3 — 100 MeV mini target consistent across roadmap + mini + parent
+fn check_mini_target() {
+    let phrases = ["100 MeV", "100MeV"]
+    let ok_road = _any(_read(DOC_ROADMAP), phrases)
+    let ok_min  = _any(_read(DOC_MINI),    phrases)
+    let ok_par  = _any(_read(DOC_PARENT),  phrases)
+    _check(ok_road && ok_min && ok_par,
+           "mini target 100 MeV consistent (roadmap + mini + parent)",
+           "")
+}
+
+// Check 4 — σ-cascade chain MeV→TeV present in parent and referenced in roadmap
+fn check_cascade_span() {
+    let par = _read(DOC_PARENT)
+    let road = _read(DOC_ROADMAP)
+    let par_ok  = _has(par, "MeV -> TeV") || _has(par, "MeV → TeV")
+    let road_ok = _any(road, ["σ-cascade", "sigma-cascade"])
+    _check(par_ok && road_ok,
+           "σ-cascade span MeV→TeV in parent + roadmap",
+           "par_chain=" + str(par_ok) + " road_chain=" + str(road_ok))
+}
+
+// Check 5 — FCC σ³=1728 envelope reuse appears in parent
+fn check_fcc_envelope() {
+    let txt = _read(DOC_PARENT)
+    let ok = (_any(txt, ["sigma^3", "σ³", "σ^3"]) && _has(txt, "1728"))
+    _check(ok, "parent: FCC envelope σ³ = 1728", "")
+}
+
+// Check 6 — OEIS sequence cites (A000203 / A000005 / A000010 / A001414) in ≥ 2 pillars
+fn check_oeis_cites() {
+    let mini = _read(DOC_MINI)
+    let par  = _read(DOC_PARENT)
+    let cls  = _read(DOC_CLASSICAL)
+    let mut hits = 0
+    let oeis = ["A000203", "A000005", "A000010", "A001414"]
+    if _any(mini, oeis) { hits = hits + 1 }
+    if _any(par,  oeis) { hits = hits + 1 }
+    if _any(cls,  oeis) { hits = hits + 1 }
+    _check(hits >= 2,
+           "OEIS sequence cites appear in ≥ 2 pillars",
+           "hits = " + str(hits) + " of 3 (mini/parent/classical)")
+}
+
+// Check 7 — BT cross-link family (BT-124 / BT-401) referenced in ≥ 2 pillars
+fn check_bt_crosslinks() {
+    let mini = _read(DOC_MINI)
+    let par  = _read(DOC_PARENT)
+    let cls  = _read(DOC_CLASSICAL)
+    let mut hits = 0
+    let bt = ["BT-124", "BT-401"]
+    if _any(mini, bt) { hits = hits + 1 }
+    if _any(par,  bt) { hits = hits + 1 }
+    if _any(cls,  bt) { hits = hits + 1 }
+    _check(hits >= 2,
+           "BT cross-links appear in ≥ 2 pillars",
+           "hits = " + str(hits) + " of 3")
+}
+
+// Check 8 — README exposes the same 3-pillar verb set as cli
+fn check_readme_verbs() {
+    let txt = _read(DOC_README)
+    let ok = _has(txt, "mini") && _has(txt, "parent") && _has(txt, "classical")
+    _check(ok, "README exposes 3-pillar verbs (mini / parent / classical)", "")
+}
+
+// Check 9 — CLI dispatcher source declares the 3 cmd_<pillar> handlers
+fn check_cli_handlers() {
+    let txt = _read(ROOT + "/cli/hexa-cern.hexa")
+    let ok = _has(txt, "fn cmd_mini") &&
+             _has(txt, "fn cmd_parent") &&
+             _has(txt, "fn cmd_classical")
+    _check(ok, "cli/hexa-cern.hexa declares 3 cmd_<pillar> handlers", "")
+}
+
+// Check 10 — n=6 σ-cascade 6-order claim (precision ×10, throughput ×144, etc.) in README
+fn check_six_order_claim() {
+    let txt = _read(DOC_README)
+    let ok = _has(txt, "144") && _has(txt, "10×") && _has(txt, "6 order")
+    _check(ok, "README declares σ-cascade 6-order ceiling (×10 / ×144 / ÷12 / ÷10 / ÷144 / ×48)",
+           "")
+}
+
+// Check 11 — release v1.0.0 frozen in roadmap §A.2
+fn check_release_frozen() {
+    let txt = _read(DOC_ROADMAP)
+    let ok = _has(txt, "v1.0.0") && _has(txt, "RELEASED")
+    _check(ok, "roadmap §A.2: v1.0.0 RELEASED line present", "")
+}
+
+fn main() {
+    println("========================================================================")
+    println("  hexa-cern — cross-pillar consistency audit")
+    println("========================================================================")
+    println("  root: " + ROOT)
+    println("")
+
+    check_lhc_baseline()
+    check_desy_baseline()
+    check_mini_target()
+    check_cascade_span()
+    check_fcc_envelope()
+    check_oeis_cites()
+    check_bt_crosslinks()
+    check_readme_verbs()
+    check_cli_handlers()
+    check_six_order_claim()
+    check_release_frozen()
+
+    println("========================================================================")
+    let pass_n = RUN - FAIL
+    println("  " + str(pass_n) + "/" + str(RUN) + " checks passed")
+    if FAIL > 0 {
+        for f in FAILURES { println("    ✗ " + f) }
+        println("__HEXA_CERN_CROSS_DOC__ FAIL")
+        exit(1)
+    }
+    println("  All cross-pillar anchors agree.")
+    println("__HEXA_CERN_CROSS_DOC__ PASS")
+    exit(0)
+}

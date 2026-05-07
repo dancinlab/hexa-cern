@@ -1,0 +1,123 @@
+#!hexa strict
+// hexa-cern/verify/falsifier_check.hexa — preregistered falsifier checklist.
+//
+// .roadmap.hexa_cern §A.4 declares 3 falsifiers (F-PCERN-1/2/3). This script
+// surfaces them as a pre-flight checklist with status, source citation,
+// and the experiment that would close each one out. PASS = all falsifiers
+// declared in roadmap; UNVERIFIED status (v1.0 spec-only) is acceptable.
+// FAIL = falsifier missing from roadmap (someone deleted a falsifier
+// without amending §A.4).
+//
+// Run:
+//   hexa run verify/falsifier_check.hexa
+//
+// @no-lock-needed
+
+let HOME = env("HOME")
+
+fn _root() -> str {
+    let r = env("PETITE_CERN_ROOT")
+    if r.len() > 0 { return r }
+    let pwd = exec("pwd").trim()
+    if pwd.len() > 0 { return pwd }
+    return HOME + "/core/hexa-cern"
+}
+
+let ROOT = _root()
+let DOC_ROADMAP = ROOT + "/.roadmap.hexa_cern"
+
+fn _read(p: str) -> str {
+    if file_exists(p) == false { return "" }
+    return read_file(p)
+}
+
+fn _has(t: str, s: str) -> bool {
+    if t.len() == 0 { return false }
+    return t.find(s) >= 0
+}
+
+let mut RUN = 0
+let mut FAIL = 0
+
+fn _check(ok: bool, label: str, detail: str) {
+    RUN = RUN + 1
+    let mark = if ok { "PASS" } else { "FAIL" }
+    if !ok { FAIL = FAIL + 1 }
+    println("  [" + mark + "] " + label)
+    if detail.len() > 0 { println("         · " + detail) }
+}
+
+// ── falsifier registry (must match .roadmap.hexa_cern §A.4) ─────────────
+
+// Each falsifier: (id, declaration_token, retract_action, status, experiment)
+let F_PCERN_1_ID         = "F-PCERN-1"
+let F_PCERN_1_TOKEN      = "F-PCERN-1"
+let F_PCERN_1_RETRACT    = "σ-cascade 6-order LHC parity claim retracted"
+let F_PCERN_1_STATUS     = "UNVERIFIED v1.0"
+let F_PCERN_1_EXPERIMENT = "closed-form expression matches LHC 7 TeV measurement"
+
+let F_PCERN_2_ID         = "F-PCERN-2"
+let F_PCERN_2_TOKEN      = "F-PCERN-2"
+let F_PCERN_2_RETRACT    = "classical Hamiltonian τ=4 phase mode claim retracted"
+let F_PCERN_2_STATUS     = "UNVERIFIED v1.0"
+let F_PCERN_2_EXPERIMENT = "mini accelerator simulation demonstrates 4-phase pump→bubble→capture→extract"
+
+let F_PCERN_3_ID         = "F-PCERN-3"
+let F_PCERN_3_TOKEN      = "F-PCERN-3"
+let F_PCERN_3_RETRACT    = "1 GeV/m wakefield E-field claim retracted"
+let F_PCERN_3_STATUS     = "UNVERIFIED v1.0"
+let F_PCERN_3_EXPERIMENT = "DESY/SLAC LWFA reference data closed-form fit confirms 1 GeV/m envelope"
+
+fn _emit_falsifier(id: str, retract: str, status: str, experiment: str) {
+    println("    ✗ " + id + ": " + retract)
+    println("         status: " + status)
+    println("         closes when: " + experiment)
+}
+
+fn check_roadmap_declares(token: str) -> bool {
+    let txt = _read(DOC_ROADMAP)
+    return _has(txt, token)
+}
+
+fn main() {
+    println("========================================================================")
+    println("  hexa-cern — preregistered falsifier checklist (.roadmap §A.4)")
+    println("========================================================================")
+    println("  source: " + DOC_ROADMAP)
+    println("")
+
+    println("  Falsifiers declared:")
+    _emit_falsifier(F_PCERN_1_ID, F_PCERN_1_RETRACT, F_PCERN_1_STATUS, F_PCERN_1_EXPERIMENT)
+    println("")
+    _emit_falsifier(F_PCERN_2_ID, F_PCERN_2_RETRACT, F_PCERN_2_STATUS, F_PCERN_2_EXPERIMENT)
+    println("")
+    _emit_falsifier(F_PCERN_3_ID, F_PCERN_3_RETRACT, F_PCERN_3_STATUS, F_PCERN_3_EXPERIMENT)
+
+    println("")
+    println("  Roadmap registration audit:")
+    _check(check_roadmap_declares(F_PCERN_1_TOKEN),
+           F_PCERN_1_ID + " registered in roadmap §A.4",
+           DOC_ROADMAP)
+    _check(check_roadmap_declares(F_PCERN_2_TOKEN),
+           F_PCERN_2_ID + " registered in roadmap §A.4",
+           DOC_ROADMAP)
+    _check(check_roadmap_declares(F_PCERN_3_TOKEN),
+           F_PCERN_3_ID + " registered in roadmap §A.4",
+           DOC_ROADMAP)
+
+    println("")
+    println("  Note: UNVERIFIED status is correct for v1.0 (specs-only, no")
+    println("  empirical Stage-1+ benchtop build yet). Falsifiers are PRE-")
+    println("  registered to constrain the path — not invalidated until the")
+    println("  experiment runs.")
+
+    println("========================================================================")
+    let pass_n = RUN - FAIL
+    println("  " + str(pass_n) + "/" + str(RUN) + " falsifier(s) registered in roadmap")
+    if FAIL > 0 {
+        println("__HEXA_CERN_FALSIFIER__ FAIL")
+        exit(1)
+    }
+    println("__HEXA_CERN_FALSIFIER__ PASS — 3/3 falsifiers preregistered (UNVERIFIED v1.0)")
+    exit(0)
+}

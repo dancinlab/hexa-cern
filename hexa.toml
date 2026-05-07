@@ -30,6 +30,10 @@ path = "cli/hexa-cern.hexa"
 runner = "hexa"
 files = [
     "tests/test_selftest.hexa",
+    "tests/test_lattice.hexa",
+    "tests/test_calculators.hexa",
+    "tests/test_cli_verify.hexa",
+    "tests/test_all.hexa",
 ]
 
 # ── hx install hook ───────────────────────────────────────
@@ -44,7 +48,16 @@ install = "install.hexa"
 # parent     — HEXA-PACCEL (integrated parent accelerator)
 # classical  — HEXA-CLASSIC-ACCEL (classical-mechanics baseline)
 [modules]
-hexa = []  # specs-only at v1.0.0 — .hexa modules TBD
+# v1.1.0-pre: .hexa runnable surface (verify + tests + cli verify subcmd).
+hexa = [
+    "cli/hexa-cern.hexa",
+    "verify/lattice_check.hexa",
+    "verify/cross_doc_audit.hexa",
+    "verify/calc_wakefield.hexa",
+    "verify/calc_sigma_cascade.hexa",
+    "verify/calc_classical.hexa",
+    "verify/falsifier_check.hexa",
+]
 docs = [
     "mini/doc/mini-accelerator.md",
     "parent/doc/particle-accelerator.md",
@@ -57,10 +70,15 @@ hexa-lang = ">=1.0.0"
 
 # ── Closure provenance (raw#10 honest C3) ─────────────────
 # v1.0.0 closure: 3 pillar specs imported, .hexa CLI TBD.
+# v1.1.0-pre: .hexa verify + build + tests surface lands. Specs unchanged.
 [closure]
 pillars_total = 3
 pillars_specs = 3
 pillars_wired = 0
+verify_scripts = 6
+verify_pass_v110pre = "6/6 (lattice 23/23 + cross_doc 11/11 + wakefield 6/6 + sigma 8/8 + classical 11/11 + falsifier 3/3)"
+build_pdfs = 3
+tests_pass = "4/4 (selftest + lattice + calculators + cli_verify)"
 verdict = "SPECS_ONLY"
 extracted_from = "n6-architecture/domains/physics/{mini,particle,classical-mechanics}-accelerator/ @ c0f1f570"
 

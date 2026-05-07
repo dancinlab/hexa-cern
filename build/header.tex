@@ -1,0 +1,35 @@
+% hexa-cern/build/header.tex — pandoc xelatex include-in-header.
+%
+% Conservative: only load packages confirmed present on the build host.
+% Each block is wrapped in \IfFileExists{...} so the build degrades to a
+% plain pandoc-default look rather than aborting on missing optional pkgs.
+
+% Monospace font with broader Unicode coverage for ASCII-art tables.
+\IfFileExists{fontspec.sty}{%
+  \usepackage{fontspec}
+  \IfFontExistsTF{Menlo}{%
+    \setmonofont[Scale=0.85]{Menlo}
+  }{}%
+}{}
+
+% Optional CJK support — silently skipped if xeCJK not installed.
+\IfFileExists{xeCJK.sty}{%
+  \usepackage{xeCJK}
+  \setCJKmainfont{Apple SD Gothic Neo}
+}{}
+
+% Optional: tighter section spacing.
+\IfFileExists{titlesec.sty}{%
+  \usepackage{titlesec}
+  \titlespacing*{\section}{0pt}{1.2ex}{0.6ex}
+  \titlespacing*{\subsection}{0pt}{0.9ex}{0.4ex}
+}{}
+
+% Code-block coloring (xcolor + fancyvrb both ship with TeXLive default).
+\IfFileExists{xcolor.sty}{%
+  \usepackage{xcolor}
+  \definecolor{codebg}{rgb}{0.96,0.96,0.96}
+}{}
+\IfFileExists{fancyvrb.sty}{%
+  \usepackage{fancyvrb}
+}{}
