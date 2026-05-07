@@ -11,20 +11,28 @@
 
 The v1.0.0 cut shipped 3 pillar specs + a placeholder CLI. v1.1.0-pre adds the **runnable surface** that audits those specs end-to-end without modifying them. Every new artifact is `.hexa` (zero `.py` added).
 
-### `verify/` — 6 atlas-style audits
+### `verify/` — 12 atlas-style audits
+
+The runnable surface grew across iterations 1 → 9 (2026-05-07) from 6 to 12 scripts. All `.hexa`, all stdlib-only.
 
 | script                                | check                                                        | result        |
 |:--------------------------------------|:-------------------------------------------------------------|:--------------|
 | `verify/lattice_check.hexa`           | σ(6)·φ(6) = n·τ(6) = J₂ = 24 closure across roadmap + 3 pillars | **23/23 PASS** |
 | `verify/cross_doc_audit.hexa`         | LHC / DESY / OEIS / BT cross-pillar consistency             | **11/11 PASS** |
 | `verify/calc_wakefield.hexa`          | mini — E_peak = σ·(σ-φ) = 120 GV/m, a₀ = n = 6, R = σ-φ = 10 cm | **6/6 PASS** |
+| `verify/numerics_wakefield.hexa`      | mini — closed-form plasma numerics (n_e ≈ 1.6·10¹⁸ cm⁻³, L_d ≈ 1.5 cm) | **4/4 PASS** |
+| `verify/numerics_lwfa_parity.hexa`    | mini — published-LWFA parity (BELLA/FACET/ATHENA/FLASHFwd)   | **7/7 PASS** |
 | `verify/calc_sigma_cascade.hexa`      | parent — E₀..E₆ chain (10 MeV → 100 TeV, σ³ = 1728 envelope) | **8/8 PASS** |
+| `verify/numerics_sigma_cascade.hexa`  | parent — relativistic γ progression (γ_6/γ_2 ≈ 10⁵, ultrarel) | **10/10 PASS** |
+| `verify/numerics_lhc_parity.hexa`     | parent — collider parity (LEP/Tevatron/LHC/FCC vs σ-cascade) | **10/10 PASS** |
 | `verify/calc_classical.hexa`          | classical — DOF = n = 6, dim(q,p) = σ = 12, conserved = sopfr+φ = 7 | **11/11 PASS** |
-| `verify/falsifier_check.hexa`         | F-PCERN-1/2/3 preregister checklist                          | **3/3 registered** (UNVERIFIED v1.0) |
+| `verify/numerics_classical.hexa`      | classical — symplectic leapfrog (τ=4 quadrants, |ΔE/E| ≈ 10⁻⁵) | **9/9 PASS** |
+| `verify/numerics_cross_pillar.hexa`   | cross-pillar numerical consistency (mini ↔ parent ↔ classical) | **8/8 PASS** |
+| `verify/falsifier_check.hexa`         | F-PCERN-1/2/3 preregister + 3-tier closure tracker            | **11/11 PASS** (3/3 falsifiers, 67% closure) |
 
 Run them all:
 ```bash
-hexa-cern verify all      # 6/6 PASS expected, exit 0
+hexa-cern verify all      # 12/12 PASS expected, exit 0
 ```
 
 ### `cli/hexa-cern.hexa` — pillar verbs wired
@@ -78,18 +86,23 @@ LHC/DESY data ingestion. v1.1.0-pre intentionally lands the audit
 surface BEFORE the numerical solver so that future Stage-1 results
 have a regression target.
 
-| component                          | v1.0.0 | v1.1.0-pre | v1.1.0 (target) |
-|:-----------------------------------|:------:|:----------:|:---------------:|
-| 3 pillar specs                     |   ✅   |     ✅     |        ✅       |
-| placeholder CLI dispatcher         |   ✅   |     ✅     |        ✅       |
-| n=6 algebraic audit                |   ✗    |     ✅     |        ✅       |
-| cross-doc consistency check        |   ✗    |     ✅     |        ✅       |
-| 3-PDF rebuild                      |   ✗    |     ✅     |        ✅       |
-| pillar n=6 derivation in CLI       |   ✗    |     ✅     |        ✅       |
-| **numerical wakefield solver**     |   ✗    |     ✗      |        🎯       |
-| **σ-cascade integration**          |   ✗    |     ✗      |        🎯       |
-| **classical Hamiltonian numerics** |   ✗    |     ✗      |        🎯       |
-| **F-PCERN-1/2/3 closure**          |   ✗    |     ✗      |  empirical TBD  |
+| component                              | v1.0.0 | v1.1.0-pre | v1.1.0 (target) |
+|:---------------------------------------|:------:|:----------:|:---------------:|
+| 3 pillar specs                         |   ✅   |     ✅     |        ✅       |
+| placeholder CLI dispatcher             |   ✅   |     ✅     |        ✅       |
+| n=6 algebraic audit                    |   ✗    |     ✅     |        ✅       |
+| cross-doc consistency check            |   ✗    |     ✅     |        ✅       |
+| 3-PDF rebuild                          |   ✗    |     ✅     |        ✅       |
+| pillar n=6 derivation in CLI           |   ✗    |     ✅     |        ✅       |
+| numerical wakefield solver (mini)      |   ✗    |     ✅     |        ✅       |
+| numerical σ-cascade γ (parent)         |   ✗    |     ✅     |        ✅       |
+| symplectic leapfrog (classical 1-DOF)  |   ✗    |     ✅     |        ✅       |
+| cross-pillar numerical consistency     |   ✗    |     ✅     |        ✅       |
+| collider parity (F-PCERN-1 T2)         |   ✗    |     ✅     |        ✅       |
+| LWFA parity (F-PCERN-3 T2)             |   ✗    |     ✅     |        ✅       |
+| **F-PCERN-1/2/3 T3 (empirical) closure** | ✗    |     ✗      |  empirical TBD  |
+| **full SE(3) 6-DOF symplectic**        |   ✗    |     ✗      |        🎯       |
+| **Stage-1+ benchtop wiring**           |   ✗    |     ✗      |  hardware TBD  |
 
 ---
 

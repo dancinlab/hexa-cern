@@ -65,34 +65,40 @@ fn _check(ok: bool, label: str, detail: str) {
 
 // ── falsifier registry (must match .roadmap.hexa_cern §A.4) ─────────────
 //
-// For each F-PCERN: (id, retract, T1 algebra script, T2 numerics script,
-// T3 empirical action). T3 is always TBD at v1.1.0-pre.
+// For each F-PCERN: (id, retract, T1 scripts[], T2 scripts[], T3 description).
+// Multi-script T1/T2 support: F-PCERN-1 and F-PCERN-3 each gained a
+// second T2 script (numerics_lhc_parity / numerics_lwfa_parity) in
+// iter 7/8 — published-experiment comparison alongside the closed-form
+// wakefield / cascade derivation.
+// T3 (empirical) is always TBD at v1.1.0-pre.
 
 let F1_ID            = "F-PCERN-1"
 let F1_RETRACT       = "σ-cascade 6-order LHC parity claim retracted"
-let F1_T1_SCRIPT     = "calc_sigma_cascade.hexa"
-let F1_T2_SCRIPT     = "numerics_sigma_cascade.hexa"
-let F1_T3_DESCRIPTION = "closed-form expression matches LHC 7 TeV measurement"
+let F1_T1_SCRIPTS    = ["calc_sigma_cascade.hexa"]
+let F1_T2_SCRIPTS    = ["numerics_sigma_cascade.hexa", "numerics_lhc_parity.hexa"]
+let F1_T3_DESCRIPTION = "live LHC operational feed matches closed-form chain"
 
 let F2_ID            = "F-PCERN-2"
 let F2_RETRACT       = "classical Hamiltonian τ=4 phase mode claim retracted"
-let F2_T1_SCRIPT     = "calc_classical.hexa"
-let F2_T2_SCRIPT     = "numerics_classical.hexa"
+let F2_T1_SCRIPTS    = ["calc_classical.hexa"]
+let F2_T2_SCRIPTS    = ["numerics_classical.hexa"]
 let F2_T3_DESCRIPTION = "real LWFA bench demonstrates 4-phase pump→bubble→capture→extract"
 
 let F3_ID            = "F-PCERN-3"
 let F3_RETRACT       = "1 GeV/m wakefield E-field claim retracted"
-let F3_T1_SCRIPT     = "calc_wakefield.hexa"
-let F3_T2_SCRIPT     = "numerics_wakefield.hexa"
-let F3_T3_DESCRIPTION = "DESY/SLAC LWFA reference data closed-form fit"
+let F3_T1_SCRIPTS    = ["calc_wakefield.hexa"]
+let F3_T2_SCRIPTS    = ["numerics_wakefield.hexa", "numerics_lwfa_parity.hexa"]
+let F3_T3_DESCRIPTION = "live DESY/SLAC LWFA bench feed within order of magnitude"
 
 fn check_roadmap_declares(token: str) -> bool {
     return _has(_read(DOC_ROADMAP), token)
 }
 
-fn _tier_status(script_name: str) -> str {
-    if _exists(VERIFY_DIR + "/" + script_name) { return "✓" }
-    return "✗"
+fn _all_present(scripts: [str]) -> bool {
+    for s in scripts {
+        if _exists(VERIFY_DIR + "/" + s) == false { return false }
+    }
+    return scripts.len() > 0
 }
 
 fn _closure_pct(t1_ok: bool, t2_ok: bool, t3_ok: bool) -> int {
@@ -107,27 +113,44 @@ fn _closure_pct(t1_ok: bool, t2_ok: bool, t3_ok: bool) -> int {
     return 100
 }
 
+fn _emit_tier_line(label: str, scripts: [str]) {
+    let ok = _all_present(scripts)
+    let mark = if ok { "✓" } else { "✗" }
+    let mut paths = ""
+    let mut i = 0
+    while i < scripts.len() {
+        if i > 0 { paths = paths + " + " }
+        paths = paths + "verify/" + scripts[i]
+        i = i + 1
+    }
+    println("         " + label + " " + mark + "  " + paths)
+}
+
 fn _emit_falsifier(id: str, retract: str,
-                   t1_script: str, t2_script: str, t3_desc: str) {
-    let t1_ok = _exists(VERIFY_DIR + "/" + t1_script)
-    let t2_ok = _exists(VERIFY_DIR + "/" + t2_script)
-    let t3_ok = false   // empirical tier always TBD at v1.1.0-pre
+                   t1_scripts: [str], t2_scripts: [str], t3_desc: str) {
+    let t1_ok = _all_present(t1_scripts)
+    let t2_ok = _all_present(t2_scripts)
+    let t3_ok = false
     let pct = _closure_pct(t1_ok, t2_ok, t3_ok)
     let status_str = if pct >= 67 { "PARTIAL closure (algebra + numerics)" }
                      else if pct >= 33 { "EARLY closure (algebra only)" }
                      else { "UNVERIFIED" }
+    let t2_count = t2_scripts.len()
     println("    ✗ " + id + ": " + retract)
-    println("         closure:  " + str(pct) + "%   (" + status_str + ")")
-    println("         T1 algebra:   " + _tier_status(t1_script) + "  verify/" + t1_script)
-    println("         T2 numerics:  " + _tier_status(t2_script) + "  verify/" + t2_script)
-    println("         T3 empirical: " + _tier_status("__never__") + "  " + t3_desc)
+    println("         closure:  " + str(pct) + "%   (" + status_str + ")  [" +
+            str(t2_count) + " T2 script(s)]")
+    _emit_tier_line("T1 algebra:  ", t1_scripts)
+    _emit_tier_line("T2 numerics: ", t2_scripts)
+    println("         T3 empirical: ✗  " + t3_desc)
 }
 
-fn check_tier_script_present(fid: str, script_name: str) {
-    let path = VERIFY_DIR + "/" + script_name
-    let ok = _exists(path)
-    _check(ok, fid + " — " + script_name + " present on disk",
-           "expected at " + path)
+fn check_tier_scripts_present(fid: str, label: str, scripts: [str]) {
+    for s in scripts {
+        let path = VERIFY_DIR + "/" + s
+        let ok = _exists(path)
+        _check(ok, fid + " " + label + " — " + s + " present on disk",
+               "expected at " + path)
+    }
 }
 
 fn main() {
@@ -146,11 +169,11 @@ fn main() {
     println("")
 
     println("  Falsifiers declared:")
-    _emit_falsifier(F1_ID, F1_RETRACT, F1_T1_SCRIPT, F1_T2_SCRIPT, F1_T3_DESCRIPTION)
+    _emit_falsifier(F1_ID, F1_RETRACT, F1_T1_SCRIPTS, F1_T2_SCRIPTS, F1_T3_DESCRIPTION)
     println("")
-    _emit_falsifier(F2_ID, F2_RETRACT, F2_T1_SCRIPT, F2_T2_SCRIPT, F2_T3_DESCRIPTION)
+    _emit_falsifier(F2_ID, F2_RETRACT, F2_T1_SCRIPTS, F2_T2_SCRIPTS, F2_T3_DESCRIPTION)
     println("")
-    _emit_falsifier(F3_ID, F3_RETRACT, F3_T1_SCRIPT, F3_T2_SCRIPT, F3_T3_DESCRIPTION)
+    _emit_falsifier(F3_ID, F3_RETRACT, F3_T1_SCRIPTS, F3_T2_SCRIPTS, F3_T3_DESCRIPTION)
 
     println("")
     println("  Roadmap registration audit:")
@@ -160,12 +183,12 @@ fn main() {
 
     println("")
     println("  Tier-script presence audit (T1 + T2 must exist for 67% closure):")
-    check_tier_script_present(F1_ID, F1_T1_SCRIPT)
-    check_tier_script_present(F1_ID, F1_T2_SCRIPT)
-    check_tier_script_present(F2_ID, F2_T1_SCRIPT)
-    check_tier_script_present(F2_ID, F2_T2_SCRIPT)
-    check_tier_script_present(F3_ID, F3_T1_SCRIPT)
-    check_tier_script_present(F3_ID, F3_T2_SCRIPT)
+    check_tier_scripts_present(F1_ID, "T1", F1_T1_SCRIPTS)
+    check_tier_scripts_present(F1_ID, "T2", F1_T2_SCRIPTS)
+    check_tier_scripts_present(F2_ID, "T1", F2_T1_SCRIPTS)
+    check_tier_scripts_present(F2_ID, "T2", F2_T2_SCRIPTS)
+    check_tier_scripts_present(F3_ID, "T1", F3_T1_SCRIPTS)
+    check_tier_scripts_present(F3_ID, "T2", F3_T2_SCRIPTS)
 
     println("")
     println("  Note: claimed closure pct here is BOOK-KEEPING ONLY — it asserts")

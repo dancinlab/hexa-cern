@@ -75,7 +75,7 @@ v1.0.0 ships (frozen 2026-05-06):
 
 v1.1.0-pre adds (on `main`, 2026-05-07):
 
-- `verify/` — 6 `.hexa` scripts auditing n=6 lattice + per-pillar derivations
+- `verify/` — 12 `.hexa` scripts auditing n=6 lattice + per-pillar derivations + numerical solvers
 - `build/` — pandoc + xelatex Makefile that regenerates 3 pillar PDFs (clean)
 - `tests/` — 4 `.hexa` test cases (+ `test_all.hexa` aggregator); 4/4 PASS
 - `cli/hexa-cern.hexa verify [<sub>]` — 6-runner aggregator subcommand
@@ -102,12 +102,14 @@ The `verify/` surface (all `.hexa`) audits n=6 closure + per-pillar derivations:
 | `verify/calc_classical.hexa`       | classical — DOF = n = 6, phase-space dim = σ = 12        | 11/11 PASS |
 | `verify/numerics_classical.hexa`   | classical — symplectic leapfrog (τ=4 quadrants, 1-DOF, |Δstate| ≈ 10⁻⁵) | 9/9 PASS |
 | `verify/numerics_cross_pillar.hexa` | cross-pillar numerical consistency (mini ↔ parent ↔ classical, λ_p / λ_laser, γ@100 MeV) | 8/8 PASS |
+| `verify/numerics_lhc_parity.hexa`  | F-PCERN-1 collider parity (LEP/Tevatron/LHC/FCC vs σ-cascade) | 10/10 PASS |
+| `verify/numerics_lwfa_parity.hexa` | F-PCERN-3 LWFA parity (BELLA/FACET/ATHENA/FLASHFwd vs hexa-cern design point) | 7/7 PASS |
 | `verify/falsifier_check.hexa`      | F-PCERN-1/2/3 preregister checklist                       | 3/3 registered (UNVERIFIED v1.0) |
 
 Run them all with the unified CLI subcommand:
 
 ```bash
-hexa-cern verify all      # 10/10 PASS expected
+hexa-cern verify all      # 12/12 PASS expected
 ```
 
 Or build the 3 pillar PDFs:
@@ -134,7 +136,7 @@ hx install hexa-cern
 git clone https://github.com/need-singularity/hexa-cern
 cd hexa-cern
 hexa run cli/hexa-cern.hexa status
-hexa run cli/hexa-cern.hexa verify all   # 10/10 PASS expected
+hexa run cli/hexa-cern.hexa verify all   # 12/12 PASS expected
 ```
 
 After `hx install hexa-cern`, the shim lands at `~/.hx/bin/hexa-cern`.
@@ -164,12 +166,18 @@ hexa-cern/
 ├── cli/
 │   └── hexa-cern.hexa            ← CLI router (status/selftest/verify/mini/parent/classical)
 ├── verify/                       ← v1.1.0-pre — n=6 audit surface (.hexa)
-│   ├── lattice_check.hexa        ← σ·φ = n·τ = J₂ = 24 closure   (23/23)
-│   ├── cross_doc_audit.hexa      ← LHC/DESY/OEIS/BT cross-pillar (11/11)
-│   ├── calc_wakefield.hexa       ← mini — laser-wakefield n=6   ( 6/ 6)
-│   ├── calc_sigma_cascade.hexa   ← parent — E_0..E_6 chain      ( 8/ 8)
-│   ├── calc_classical.hexa       ← classical — Lagrange/Hamilton(11/11)
-│   └── falsifier_check.hexa      ← F-PCERN-1/2/3 preregister     ( 3/ 3)
+│   ├── lattice_check.hexa            ← σ·φ = n·τ = J₂ = 24 closure   (23/23)
+│   ├── cross_doc_audit.hexa          ← LHC/DESY/OEIS/BT cross-pillar (11/11)
+│   ├── calc_wakefield.hexa           ← mini — laser-wakefield n=6   ( 6/ 6)
+│   ├── numerics_wakefield.hexa       ← mini — closed-form n_e/L_d   ( 4/ 4)
+│   ├── numerics_lwfa_parity.hexa     ← mini — vs DESY/SLAC LWFA refs ( 7/ 7)
+│   ├── calc_sigma_cascade.hexa       ← parent — E_0..E_6 chain      ( 8/ 8)
+│   ├── numerics_sigma_cascade.hexa   ← parent — relativistic γ      (10/10)
+│   ├── numerics_lhc_parity.hexa      ← parent — vs LEP/Tev/LHC/FCC  (10/10)
+│   ├── calc_classical.hexa           ← classical — Lagrange/Hamilton(11/11)
+│   ├── numerics_classical.hexa       ← classical — symplectic leap. ( 9/ 9)
+│   ├── numerics_cross_pillar.hexa    ← mini ↔ parent ↔ classical    ( 8/ 8)
+│   └── falsifier_check.hexa          ← F-PCERN-1/2/3 + closure %    (11/11)
 ├── build/
 │   ├── Makefile                  ← pandoc + xelatex 3-PDF rebuild
 │   ├── header.tex                ← LaTeX include (CJK + monospace; soft-guarded)
