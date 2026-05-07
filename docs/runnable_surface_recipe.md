@@ -308,6 +308,7 @@ iter N 의 commit + push 가 끝나면 에이전트는:
 - ✗ "iter N 완료. 사용자 confirm 후 iter N+1 진행"
 - ✗ "다음 후보 [목록]. 어느 것으로?" + AskUserQuestion
 - ✗ "계속 할까요?" / "shall I proceed?"
+- ✗ (saturation 후) "할 게 없으니 .github/workflows/X.yml 추가" — **over-saturation 강제 chunk 금지**
 
 #### 합법 phrasing
 
@@ -385,6 +386,35 @@ iter 1 시작.
 ```
 v1.1.0 RSC saturated — T1+T2 closure complete, T3 awaits Stage-1+ build
 ```
+
+### §9.1 saturation 후에도 cron/loop 가 계속 firing 하면?
+
+**health-check 만 돌리고 끝.** 새 chunk 강제로 만들지 않음.
+
+Cron 이 살아있어도 saturation 이후 firing 의 적절한 동작:
+
+```
+on cron-fire (post-saturation):
+  run verify/saturation_check.hexa     # 14/14 PASS expected
+  print "RSC still saturated · no chunk needed"
+  return                               # 새 chunk 금지
+```
+
+**위반 예 (절대 하지 말 것):**
+
+- ✗ saturation 후 "할 게 없으니 `.github/workflows/verify.yml` 추가"
+- ✗ saturation 후 "4th T2 추가" / "코드 정리 chunk"
+- ✗ saturation 후 README/CHANGELOG 단순 polish 를 chunk 로 위장
+
+**합법적 예외 (post-saturation 에 chunk 추가가 정당한 경우):**
+
+1. saturation_check 가 PASS → FAIL 로 떨어짐 (실제 regression)
+2. 사용자가 명시적으로 새 작업 지시 ("CI workflow 만들어", "README 다듬어")
+3. T3 (Stage-1+) 가 진짜로 시작됨 — 새 .roadmap 항목 추가됨
+
+이 셋 외에는 **절대로** chunk 자동 추가 금지. 디폴트는 health-check
+1번 + 종료. cron 이 5분 마다 firing 해도 매번 "saturation 유지" 보고
+1줄로 끝.
 
 ---
 
