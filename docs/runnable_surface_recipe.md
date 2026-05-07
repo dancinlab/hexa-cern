@@ -288,6 +288,46 @@ hexa-cern 측정값 (15 iterations 기준):
 5분 cron 은 이 budget 보다 짧음 → 권장 안 됨. 적정 cadence 는 **20–30 분
 heartbeat** (dynamic ScheduleWakeup 1500–1800s 와 일치).
 
+### §7.7 ⚠ no-ask 규칙 (에이전트가 iter 사이에 묻지 않음)
+
+**RSC 루프 모드에서 에이전트는 iteration 사이에 사용자 confirm 을
+요청하지 않는다.** "다음: iter N+1 (chunk_X.hexa). 진행할까요?" 형태의
+출력은 **위반** — 루프의 self-driving 전제를 깬다.
+
+iter N 의 commit + push 가 끝나면 에이전트는:
+
+1. §7.2 의 4 stop 조건 중 하나가 만족되는지 자동 검사
+2. 모두 미만족 → **즉시** §7.4 우선순위 표에서 다음 chunk 선택 →
+   §2 7-step 재시작 (사용자 입력 대기 없음)
+3. 한 stop 조건 만족 → 종료 (loop end / saturation / regression-fail
+   메시지 emit)
+
+#### 위반 phrasing (사용 금지)
+
+- ✗ "다음 chunk: numerics_X.hexa. 진행할까요?"
+- ✗ "iter N 완료. 사용자 confirm 후 iter N+1 진행"
+- ✗ "다음 후보 [목록]. 어느 것으로?" + AskUserQuestion
+- ✗ "계속 할까요?" / "shall I proceed?"
+
+#### 합법 phrasing
+
+- ✓ "iter N 완료 (commit XXX). iter N+1 시작 — chunk: numerics_X.hexa"
+  바로 다음 줄에 파일 작성 시작
+- ✓ "saturation reached (sat-1 + sat-2) — RSC loop end"  (오직 stop 시)
+- ✓ "regression-fail in iter N — rolling back chunk + retrying with Y"  (regression 처리)
+
+#### 예외 (한 번의 AskUserQuestion 허용)
+
+다음 셋 중 하나라도 해당하면 한 번의 AskUserQuestion 가능:
+
+- §7.4 우선순위 표 모든 슬롯이 채워졌고 (sat-2 직전), 비-recipe 영역
+  chunk 후보가 여러 개 있음 (사용자 의도 필요)
+- regression-fail 이 일어났는데 roll-back vs fix-forward 결정이
+  사용자 정책에 달림
+- 사용자가 명시적으로 "ask before next" 라고 지시했음
+
+위 셋 외에는 **무조건 자동 진행**.
+
 ---
 
 ## §8 새 hexa-* 세션 kickoff (paste-ready)
@@ -300,6 +340,10 @@ hexa-<프로젝트> 의 runnable surface 를
 
 작업 모드: closure-depth accumulation 무한 루프 (recipe §7).
 
+⚠ NO-ASK 규칙 (recipe §7.7): 에이전트는 iter 사이에 절대 confirm 을
+   요청하지 않는다. "진행할까요?" / "다음 chunk 어떻게?" 류 질문 금지.
+   §7.2 stop 조건 만족 시까지 자동 진행. 예외는 §7.7 의 3 항목만.
+
 1. 현재 verify/build/tests 인벤토리 점검 (이미 있는 것 확인)
 2. recipe §7.4 우선순위 표에서 미작성 슬롯 한 개를 7-step 사이클로
    추가 (1 chunk = 1 commit)
@@ -309,8 +353,8 @@ hexa-<프로젝트> 의 runnable surface 를
    - saturation (sat-1 + sat-2) 도달 → 루프 종료
    - regression-fail 발생 → 해당 chunk roll-back 후 다음 chunk
    - 사용자 stop 입력 → 즉시 종료
-6. 위 조건 미충족 시 ScheduleWakeup 1500–1800s 로 다음 iter 예약
-   (또는 사용자가 `keep going cycle` 입력 시 즉시 다음 iter)
+6. 위 조건 미충족 시 **즉시 iter N+1 시작** (사용자 입력 대기 없음).
+   필요시 ScheduleWakeup 1500–1800s 로 cache-warm 다음 iter 예약.
 
 목표: F-<PROJECT>-1/2/3 모두 67% closure (T1 + T2 ×3 stack 권장).
 참고 SSOT: .roadmap.<project> §A.4 falsifier preregister.
@@ -320,7 +364,7 @@ hexa-<프로젝트> 의 runnable surface 를
 iter 1 시작.
 ```
 
-마지막 줄 `iter 1 시작.` 이 새 세션 에이전트가 즉시 §2 의 7-step 을 1번 실행하라는 신호.
+마지막 줄 `iter 1 시작.` 이 새 세션 에이전트가 즉시 §2 의 7-step 을 1번 실행하라는 신호. iter 1 이 끝나면 위 6번 흐름에 따라 iter 2 가 자동으로 이어진다 — 추가 사용자 입력 없이.
 
 ---
 
