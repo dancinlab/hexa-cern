@@ -36,6 +36,9 @@ let HDL_README      = ROOT + "/firmware/hdl/README.md"
 let MCU_CARGO       = ROOT + "/firmware/mcu/Cargo.toml"
 let MCU_MAIN        = ROOT + "/firmware/mcu/src/main.rs"
 let MCU_README      = ROOT + "/firmware/mcu/README.md"
+let FW_MAKEFILE     = ROOT + "/firmware/Makefile"
+let FW_README       = ROOT + "/firmware/README.md"
+let HDL_TB          = ROOT + "/firmware/hdl/testbench/timing_ctrl_tb.v"
 
 fn _read(p: str) -> str {
     if file_exists(p) == false { return "" }
@@ -181,6 +184,41 @@ fn check_release_frozen() {
     _check(ok, "roadmap §A.2: v1.0.0 RELEASED line present", "")
 }
 
+// Check 15 — §A.6.1 step D 3/3 build scaffolding: Makefile + Verilog
+//             testbench + firmware/README.md  (closes step D)
+fn check_step_d_build_scaffold() {
+    let mk = _read(FW_MAKEFILE)
+    let fw_rd = _read(FW_README)
+    let tb = _read(HDL_TB)
+    let ok_mk_exists = mk.len() > 0
+    let ok_mk_targets = _has(mk, "sim-hexa") && _has(mk, "sim-iverilog") &&
+                        _has(mk, "cargo-check") && _has(mk, "lint") &&
+                        _has(mk, "build-bitstream") && _has(mk, "flash-mcu")
+    let ok_mk_status = _has(mk, "buildable") && _has(mk, "needs toolchain") &&
+                       _has(mk, "needs board")
+    let ok_fw_rd_exists = fw_rd.len() > 0
+    let ok_fw_rd_tree = _has(fw_rd, "firmware/sim") && _has(fw_rd, "firmware/hdl") &&
+                        _has(fw_rd, "firmware/mcu")
+    let ok_fw_rd_ssot = _has(fw_rd, "single-source-of-truth") || _has(fw_rd, "Single-source-of-truth")
+    let ok_tb_exists = tb.len() > 0
+    let ok_tb_module = _has(tb, "module timing_ctrl_tb") && _has(tb, "TB PASS") && _has(tb, "TB FAIL")
+    let ok_tb_phases = _has(tb, "phase 1") && _has(tb, "phase 2") && _has(tb, "interlock")
+    let ok = ok_mk_exists && ok_mk_targets && ok_mk_status &&
+             ok_fw_rd_exists && ok_fw_rd_tree && ok_fw_rd_ssot &&
+             ok_tb_exists && ok_tb_module && ok_tb_phases
+    _check(ok,
+           "firmware/{Makefile,README,hdl/testbench} step-D build scaffold present",
+           "mk=" + str(ok_mk_exists) +
+           " targets=" + str(ok_mk_targets) +
+           " status=" + str(ok_mk_status) +
+           " fwrd=" + str(ok_fw_rd_exists) +
+           " tree=" + str(ok_fw_rd_tree) +
+           " ssot=" + str(ok_fw_rd_ssot) +
+           " tb=" + str(ok_tb_exists) +
+           " tb_mod=" + str(ok_tb_module) +
+           " tb_ph=" + str(ok_tb_phases))
+}
+
 // Check 14 — §A.6.1 step D 2/3 Rust MCU skeleton (Cargo.toml + main.rs +
 //             README) present + cross-anchored to .hexa sims and HDL.
 fn check_step_d_mcu_skeleton() {
@@ -286,6 +324,7 @@ fn main() {
     check_benchtop_v0_design()
     check_step_d_hdl_skeleton()
     check_step_d_mcu_skeleton()
+    check_step_d_build_scaffold()
 
     println("========================================================================")
     let pass_n = RUN - FAIL
