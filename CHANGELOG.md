@@ -9,6 +9,33 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased] — v1.1.0-pre on `main`
 
+### Added (2026-05-07 — twelfth iteration)
+
+- `verify/numerics_liouville.hexa` — F-PCERN-2's second T2 stub.
+  Demonstrates the deeper symplectic invariant: the Jacobian
+  determinant of the leapfrog flow map is exactly 1, meaning
+  phase-space volume is preserved (Liouville's theorem at
+  discrete time). Computed via central finite differences on
+  64-step quadrants and full-period propagation.
+  - phase 1 (pump):    |det(J) − 1| = 2.7e-10
+  - phase 2 (bubble):  |det(J) − 1| = 6.3e-10
+  - phase 3 (capture): |det(J) − 1| = 7.0e-10
+  - phase 4 (extract): |det(J) − 1| = 1.3e-09
+  - full period:       |det(J) − 1| = 1.3e-09
+  - offset IC (0.5, 0.7): |det(J) − 1| = 8.4e-10
+  All within central-diff truncation noise floor (1e-8).
+  8/8 PASS first try.
+  Together with `numerics_classical` (energy drift), this covers
+  both characteristic symplectic invariants (energy & volume) for
+  F-PCERN-2's T2 closure.
+- `cli/hexa-cern.hexa verify` — new `numerics-liouville` sub. The
+  `verify all` aggregator now runs **15/15** scripts (was 14/14).
+- `verify/falsifier_check.hexa` — F-PCERN-2 T2 array now lists
+  both `numerics_classical` and `numerics_liouville`. All three
+  falsifiers now have 2 T2 scripts (symmetric).
+- `verify/lint_numerics.hexa` — NUMERICS_SCRIPTS inventory list
+  extended to 8 entries.
+
 ### Added (2026-05-07 — eleventh iteration)
 
 - `verify/lint_numerics.hexa` — meta-lint that grep-audits every

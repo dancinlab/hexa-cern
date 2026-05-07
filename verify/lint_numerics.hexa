@@ -72,6 +72,7 @@ let NUMERICS_SCRIPTS = [
     "numerics_classical.hexa",
     "numerics_cross_pillar.hexa",
     "numerics_lattice_arithmetic.hexa",
+    "numerics_liouville.hexa",
 ]
 
 // Required substrings that every numerics_*.hexa file must contain.
