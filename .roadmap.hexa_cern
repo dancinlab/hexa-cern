@@ -4,7 +4,7 @@
 > deadlines, pointers. Sister of `hexa-fusion` / `hexa-ufo` / `hexa-antimatter` /
 > `hexa-rtsc` under `dancinlab` org.
 
-**Last sync**: 2026-05-07 · **Current release**: v1.0.0 (v1.1.0-pre on `main`) · **Branch**: `main`
+**Last sync**: 2026-05-08 · **Current release**: v1.0.0 (v1.1.0 RSC code-layer FINAL on `main`) · **Branch**: `main`
 
 ---
 
@@ -36,10 +36,10 @@ DoD:
 | Version | Date | Status | Highlights |
 |---------|------|--------|------------|
 | v1.0.0 | 2026-05-06 | RELEASED | 3-pillar 시드 (mini + parent + classical) + cli placeholder + cern_baseline 비교 표 |
-| v1.1.0-pre | 2026-05-07 | UNRELEASED on `main` | `.hexa` runnable surface — verify/ 6 scripts, build/ 3 PDFs, tests/ 4 cases, cli `verify` subcmd. n=6 lattice 23/23 PASS. Empirical wakefield/cascade/classical still UNVERIFIED (F-PCERN-1/2/3). |
-| v1.1.0 | ~2026-08 (TARGET) | planned | `mini` .hexa CLI wired with simulation parity (laser pulse → electron energy numerical solver) |
-| v1.2.0 | ~2026-10 | planned | `parent` σ-cascade 6-order 분석 spec |
-| v2.0.0 | ~2027-Q1 | ASPIRATIONAL | 1 GeV/m wakefield 외부 collab 실험적 검증 |
+| v1.1.0-pre | 2026-05-07 | superseded | `.hexa` runnable surface seed — verify/ 6 scripts. |
+| v1.1.0 | 2026-05-08 | RSC code-layer FINAL on `main` | 16+ verify/ scripts (T1 ×3 + T2 ×11 + T3 ×3 + meta ×3). All 3 falsifiers 100% bookkeeping closure. saturation_check 17/17 → `__HEXA_CERN_RSC_SATURATED__ STOP`. cli verify all 22/22. tests 4/4 (individually). |
+| v1.2.0 | ~2026-10 | planned | `parent` σ-cascade 6-order 분석 spec 보강 (T1/T2 within RSC, T3 still bookkeeping). |
+| v2.0.0 | ~2027-Q1 | ASPIRATIONAL | Stage-1+ benchtop raw-data fit. **Out of RSC code-layer**; see §A.6. |
 
 ## §A.3 Cycle history
 
@@ -67,3 +67,26 @@ DoD:
 - mini → parent → classical 3-pillar 의 .hexa CLI dispatch order.
 - hexa-antimatter cross-link (PET-cyclotron 실증 가속기 cousin 으로 연계 강도).
 - hexa-ufo Stage-3 propulsion 의존 spec 시점.
+- §A.6 Step-1 외부 collab 후보 (DESY / SLAC / KEK) 중 1 곳 선정 시점.
+
+## §A.6 Stage-1+ hardware path  (post-RSC, **out of code-layer scope**)
+
+RSC (verify/* `.hexa`) 가 닫을 수 없는 영역. v1.1.0 100% closure 이후
+v2.0.0 까지의 하드웨어/외부-bound 단계. 본 path 는 `.hexa` 가 아니라
+funding · 외부 검증 · 실제 빔 실험으로 진행.
+
+| step | 내용 | 시점 (목표) | RSC 가능? | 결과물 |
+|:----:|:----|:-----------|:---------:|:-------|
+| 1 | 외부 collab 결정 (DESY / SLAC / KEK 중 1 곳) | 2026-Q3 | ✗ | MOU / 합의서 |
+| 2 | Funding round (PW-class fiber 레이저 + 48 T RT-SC + 진단계) | 2026-Q4 | ✗ | grant / 투자 commitment |
+| 3 | Stage-1 시뮬레이션 parity (full LWFA solver + 빔 동역학 numerical) | ~2026-08 | **부분 가능** (.hexa T2 보강) | numerics_lwfa_relativistic.hexa 류, simulation parity 보고서 |
+| 4 | Stage-2/3 실제 benchtop 빌드 + 빔 실증 (years out) | ~2027-Q1+ | ✗ | 펌웨어 · HDL · PCB · BOM · 캘리브레이션 로그 · raw shot 데이터 |
+
+Step 3 까지가 본 repo 가 직접 다룰 수 있는 마지막 layer. Step 1 / 2 / 4
+는 hardware-ops · 외부-stakeholder · multi-month 작업으로 cron / loop
+firing 으로 닫히지 않음. 본 §A.6 는 `tracking only` — 진행 시 Cycle 항목
+(§A.3) 에 cross-referenced.
+
+**현재 (2026-05-08) 상태**: 모든 step 미착수. v2.0.0 = 종이 위 설계.
+mini/doc/mini-accelerator.md §X.4 "FIRST-IN-WORLD proposal" 4 줄 spec
+이 빌드 후보 BOM 의 출발점.
