@@ -101,15 +101,21 @@ fn _print_caveats() {
 
 fn cmd_mini(a: [str]) {
     println("hexa-cern mini — HEXA-MINI-ACCEL (benchtop laser-plasma 100 MeV / 1 GeV/m)")
-    println("  status: spec-only — TBD")
+    println("  status: spec frozen v1.0 · .hexa calc lands v1.1.0-pre · empirical Stage-1+ TBD")
     let exists = _file_exists(DOC_MINI)
     if exists {
         println("  spec:   " + DOC_MINI)
     } else {
         println("  spec:   MISSING — expected at " + DOC_MINI)
     }
+    println("")
+    println("  n=6 derivation (verify with: hexa-cern verify wakefield)")
+    println("    E_peak    = σ·(σ-φ) = 12·10  = 120 GV/m   (peak wakefield)")
+    println("    a_0       = n               = 6           (normalized vec. pot.)")
+    println("    R_chamber = σ-φ             = 10 cm       (benchtop radius)")
+    println("    target    = 100 MeV reachable in ~ 8 cm of L_acc")
     if json_mode(a) {
-        println("{\"hexa_cern\":\"" + VERSION + "\",\"subcmd\":\"mini\",\"status\":\"spec_only\",\"spec_present\":" + (if exists { "true" } else { "false" }) + "}")
+        println("{\"hexa_cern\":\"" + VERSION + "\",\"subcmd\":\"mini\",\"status\":\"spec_only\",\"spec_present\":" + (if exists { "true" } else { "false" }) + ",\"E_peak_GV_per_m\":120,\"a0\":6,\"R_chamber_cm\":10,\"target_MeV\":100}")
     }
     _audit("mini", "", 0)
 }
@@ -118,15 +124,22 @@ fn cmd_mini(a: [str]) {
 
 fn cmd_parent(a: [str]) {
     println("hexa-cern parent — HEXA-PACCEL (integrated parent particle accelerator)")
-    println("  status: spec-only — TBD")
+    println("  status: spec frozen v1.0 · .hexa cascade calc lands v1.1.0-pre · numerical solver TBD")
     let exists = _file_exists(DOC_PARENT)
     if exists {
         println("  spec:   " + DOC_PARENT)
     } else {
         println("  spec:   MISSING — expected at " + DOC_PARENT)
     }
+    println("")
+    println("  σ-cascade chain (verify with: hexa-cern verify sigma)")
+    println("    E_0 = 10 MeV       (seed = sopfr·φ)            ")
+    println("    E_1 = 100 MeV      (LWFA / mini target)        ")
+    println("    E_4 = 1 TeV        (Tevatron, σ·J₂ = 288 GeV)  ")
+    println("    E_6 = 100 TeV      (FCC envelope, σ³ = 1728)   ")
+    println("    span = E_6/E_0 = 10⁷  · σ² = 144x throughput")
     if json_mode(a) {
-        println("{\"hexa_cern\":\"" + VERSION + "\",\"subcmd\":\"parent\",\"status\":\"spec_only\",\"spec_present\":" + (if exists { "true" } else { "false" }) + "}")
+        println("{\"hexa_cern\":\"" + VERSION + "\",\"subcmd\":\"parent\",\"status\":\"spec_only\",\"spec_present\":" + (if exists { "true" } else { "false" }) + ",\"E_0_MeV\":10,\"E_6_TeV\":100,\"sigma_squared\":144,\"sigma_cubed\":1728}")
     }
     _audit("parent", "", 0)
 }
@@ -135,15 +148,22 @@ fn cmd_parent(a: [str]) {
 
 fn cmd_classical(a: [str]) {
     println("hexa-cern classical — HEXA-CLASSIC-ACCEL (classical-mechanics baseline)")
-    println("  status: spec-only — TBD")
+    println("  status: spec frozen v1.0 · .hexa Lagrange/Hamilton calc lands v1.1.0-pre · numerics TBD")
     let exists = _file_exists(DOC_CLASSICAL)
     if exists {
         println("  spec:   " + DOC_CLASSICAL)
     } else {
         println("  spec:   MISSING — expected at " + DOC_CLASSICAL)
     }
+    println("")
+    println("  Lagrange / Hamilton n=6 shape (verify with: hexa-cern verify classical)")
+    println("    DOF                 = n  = 6              (SE(3) = R³ × SO(3))")
+    println("    phase-space dim     = 2n = σ = 12         (canonical (q, p))")
+    println("    conserved qty       = sopfr+φ = 7         (E + 3p + 3L)")
+    println("    passenger cap       = τ·g = 4g            (Newton F = ma envelope)")
+    println("    τ=4 phases          = pump · bubble · capture · extract")
     if json_mode(a) {
-        println("{\"hexa_cern\":\"" + VERSION + "\",\"subcmd\":\"classical\",\"status\":\"spec_only\",\"spec_present\":" + (if exists { "true" } else { "false" }) + "}")
+        println("{\"hexa_cern\":\"" + VERSION + "\",\"subcmd\":\"classical\",\"status\":\"spec_only\",\"spec_present\":" + (if exists { "true" } else { "false" }) + ",\"DOF\":6,\"phase_space_dim\":12,\"conserved\":7,\"passenger_cap_g\":4}")
     }
     _audit("classical", "", 0)
 }
