@@ -75,7 +75,7 @@ fn _check(ok: bool, label: str, detail: str) {
 let F1_ID            = "F-PCERN-1"
 let F1_RETRACT       = "σ-cascade 6-order LHC parity claim retracted"
 let F1_T1_SCRIPTS    = ["calc_sigma_cascade.hexa"]
-let F1_T2_SCRIPTS    = ["numerics_sigma_cascade.hexa", "numerics_lhc_parity.hexa"]
+let F1_T2_SCRIPTS    = ["numerics_sigma_cascade.hexa", "numerics_lhc_parity.hexa", "numerics_bending.hexa"]
 let F1_T3_DESCRIPTION = "live LHC operational feed matches closed-form chain"
 
 let F2_ID            = "F-PCERN-2"

@@ -26,6 +26,7 @@ let CASES = [
     "numerics_lwfa_solver.hexa|__HEXA_CERN_NUMERICS_LWFA_SOLVER__ PASS",
     "calc_sigma_cascade.hexa|__HEXA_CERN_SIGMA_CASCADE__ PASS",
     "numerics_sigma_cascade.hexa|__HEXA_CERN_NUMERICS_SIGMA_CASCADE__ PASS",
+    "numerics_bending.hexa|__HEXA_CERN_NUMERICS_BENDING__ PASS",
     "calc_classical.hexa|__HEXA_CERN_CLASSICAL__ PASS",
     "numerics_classical.hexa|__HEXA_CERN_NUMERICS_CLASSICAL__ PASS",
     "numerics_liouville.hexa|__HEXA_CERN_NUMERICS_LIOUVILLE__ PASS",

@@ -188,6 +188,7 @@ let VERIFY_SUBS = [
     "numerics-solver",
     "sigma",
     "numerics-sigma",
+    "numerics-bending",
     "classical",
     "numerics-classical",
     "numerics-liouville",
@@ -208,6 +209,7 @@ fn _verify_script(sub: str) -> str {
     if sub == "numerics-solver"    { return VERIFY_DIR + "/numerics_lwfa_solver.hexa" }
     if sub == "sigma"              { return VERIFY_DIR + "/calc_sigma_cascade.hexa" }
     if sub == "numerics-sigma"     { return VERIFY_DIR + "/numerics_sigma_cascade.hexa" }
+    if sub == "numerics-bending"   { return VERIFY_DIR + "/numerics_bending.hexa" }
     if sub == "classical"          { return VERIFY_DIR + "/calc_classical.hexa" }
     if sub == "numerics-classical" { return VERIFY_DIR + "/numerics_classical.hexa" }
     if sub == "numerics-liouville" { return VERIFY_DIR + "/numerics_liouville.hexa" }
@@ -266,6 +268,7 @@ fn cmd_verify(a: [str]) {
         println("  numerics-solver     mini pillar — Verlet LWFA ODE solver (electron in wakefield)")
         println("  sigma               parent pillar — σ-cascade chain (E_0..E_6)")
         println("  numerics-sigma      parent pillar — relativistic γ progression numerics")
+        println("  numerics-bending    parent pillar — collider bending-radius R = E/(ecB)")
         println("  classical           classical pillar — Lagrange/Hamilton τ=4 phase")
         println("  numerics-classical  classical pillar — symplectic leapfrog (τ=4 quadrants)")
         println("  numerics-liouville  classical pillar — Liouville volume preservation (det(J)=1)")
@@ -396,7 +399,7 @@ fn cmd_help() {
     println("  verify [<sub>]  n=6 invariant + per-pillar calculators")
     println("                    sub: all (default) | lattice | cross-doc")
     println("                       | wakefield | numerics-wakefield | numerics-solver")
-    println("                       | sigma | numerics-sigma")
+    println("                       | sigma | numerics-sigma | numerics-bending")
     println("                       | classical | numerics-classical | numerics-liouville")
     println("                       | numerics-se3 | numerics-cross | numerics-lhc | numerics-lwfa")
     println("                       | numerics-lattice | lint-numerics | falsifier")

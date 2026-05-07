@@ -9,6 +9,29 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased] — v1.1.0-pre on `main`
 
+### Added (2026-05-07 — sixteenth iteration)
+
+- `verify/numerics_bending.hexa` — F-PCERN-1's third T2 stub
+  (alongside `numerics_sigma_cascade` + `numerics_lhc_parity`).
+  Computes the bending radius R = E / (e·c·B) at each historical
+  collider's energy + dipole field, compares to published machine
+  size:
+    LEP       104.5 GeV, 0.13 T  → R = 2.68 km vs 4.3 km (0.62×)
+    Tevatron  980 GeV,   4.2 T   → R = 0.78 km vs 1.0 km (0.78×)
+    LHC       6.8 TeV,   8.33 T  → R = 2.72 km vs 4.3 km (0.63×)
+    FCC-hh    50 TeV,   16 T     → R = 10.4 km vs 16 km (0.65×)
+  All within (σ-φ)=10× envelope. Computed-vs-published ratios cluster
+  at ~0.65 (consistent with ~30% straight-section coverage in real
+  rings — the dipole-only formula gives an honest lower bound).
+  Plus: B-field ladder Tev→LHC→FCC ≈ 2× per step matches σ/sopfr =
+  12/5 ≈ 2.4× n=6 scaling. 8/8 PASS.
+- `cli/hexa-cern.hexa verify` — new `numerics-bending` sub. The
+  `verify all` aggregator now runs **18/18** scripts (was 17/17).
+- `verify/falsifier_check.hexa` — F1 T2 array now has ×3 stack
+  (sigma_cascade + lhc_parity + bending). All 3 falsifiers now at
+  T2 ×3 — **sat-1 condition (per-falsifier T2 ≥ 3) reached**.
+- `verify/lint_numerics.hexa` — NUMERICS_SCRIPTS extended to 11.
+
 ### Added (2026-05-07 — fifteenth iteration)
 
 - `verify/numerics_se3_partial.hexa` — F-PCERN-2's third T2 stub
