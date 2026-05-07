@@ -192,27 +192,158 @@ on-disk glob count.
 
 ---
 
-## §7 새 hexa-* 세션 kickoff (paste-ready)
+## §7 연속 반복 (closure-depth accumulation 무한 루프)
 
-새 세션에 다음을 입력하면 본 레시피로 즉시 시작:
+본 레시피의 핵심 동작 모드. **한 chunk 끝나면 자동으로 다음 chunk** 로
+넘어가, 봉쇄 심화 사다리를 계속 내려가는 자가-pacing 사이클.
+
+### §7.1 한 사이클 = 한 commit
+
+위 §2 의 7-step 을 한 단위로:
+
+```
+chunk 선택 → write → run → wire → regression → doc → commit+push
+```
+
+이걸 끝내면 즉시 **다음 chunk** 를 §7.4 우선순위 표에서 선택하고 다시 §2 로.
+
+### §7.2 stop 조건 (= 사이클 정지점)
+
+다음 셋 중 하나라도 만족하면 루프 종료:
+
+| stop trigger | 의미 |
+|:-------------|:-----|
+| `sat-1` saturation | 모든 falsifier 가 67% closure 도달 + 각 T2 가 ×3 이상 |
+| `sat-2` recipe exhausted | §1 16-script 인벤토리 전부 작성됨 + meta-lint 통과 |
+| `user-stop` | 사용자가 `loop end` / `stop` / cancel 입력 |
+| `regression-fail` | 어떤 iteration 의 verify-all 또는 test_all 실패 + 한 번 안에 못 고침 |
+
+`sat-1` + `sat-2` 둘 다 만족 → **T3 empirical 만 남음** (하드웨어 필요, 새 세션 chunk 가능 영역 아님). 즉시 정지.
+
+### §7.3 saturation 감지 로직 (자동 stop)
+
+각 iteration 끝에 다음을 체크해 saturation 여부 판정:
+
+```hexa
+// pseudo-check
+let lint_pass = exec("hexa run verify/lint_numerics.hexa").exit == 0
+let inv_count = ls("verify/numerics_*.hexa").len()
+let tier_min  = min(F1.T2.len(), F2.T2.len(), F3.T2.len())
+
+if lint_pass && inv_count >= 9 && tier_min >= 3 {
+    println("__HEXA_<PROJECT>_RSC_SATURATED__ STOP")
+    exit(0)   // 루프 자기-종료 신호
+}
+```
+
+(이 검사를 `verify/lint_numerics.hexa` 에 추가하거나 별도 `verify/saturation_check.hexa` 로 분리. hexa-cern 사례는 후자.)
+
+### §7.4 다음 chunk 우선순위 (saturation 까지의 default 진행 순서)
+
+이미 있는 슬롯은 건너뛰고 위에서 아래로 채움:
+
+| 우선순위 | 슬롯 | 닫는 falsifier T2 |
+|:--------:|:-----|:------------------|
+| 1 | `lattice_check.hexa`            | (cross-cutter, 필수 시작) |
+| 2 | `cross_doc_audit.hexa`          | (cross-cutter, 필수 시작) |
+| 3 | `calc_<pillar>.hexa` × N        | T1 ×N |
+| 4 | `numerics_<pillar>.hexa` × N    | T2 ×N (각 falsifier 첫 T2) |
+| 5 | `numerics_<pillar>_parity.hexa` × N | T2 ×N (published-ref 비교) |
+| 6 | `numerics_<pillar>_solver.hexa` × N | T2 ×N (Verlet/leapfrog ODE) |
+| 7 | `numerics_cross_pillar.hexa`    | (cross-cutter T2) |
+| 8 | `numerics_lattice_arithmetic.hexa` | (math_pure stability floor) |
+| 9 | `falsifier_check.hexa` (closure tracker) | (meta) |
+|10 | `lint_numerics.hexa`            | (meta) |
+|11 | `tests/test_*.hexa` 보강        | regression |
+|12 | `build/Makefile` + `header.tex` | PDF rebuild |
+|13 | `docs/numerics_methodology.md`  | narrative |
+|14 | (선택) 두 번째 T2 stack 보강    | 각 falsifier T2 ×2~3 |
+|15 | (선택) saturation_check.hexa    | self-stop signal |
+
+### §7.5 트리거 메커니즘 옵션
+
+루프를 돌리는 방식 (세션 운영자 선택):
+
+| 메커니즘 | 명령 | 특성 |
+|:---------|:-----|:-----|
+| 5분 cron | `/loop 5m keep going cycle` | 일정 간격, 사용자 수동 입력 시 stack 가능 |
+| dynamic | `/loop continue <project> .hexa porting` | 각 iter 끝에 ScheduleWakeup, 자가-pacing |
+| 수동 | 사용자가 매번 `keep going cycle` 입력 | 가장 보수적, 페이스 완전 제어 |
+
+dynamic 모드 권장 — 5분 cron 은 chunk 작성 시간 (≈30 분) 보다 짧아 stack 누적 위험.
+
+### §7.6 한 iteration 평균 budget
+
+hexa-cern 측정값 (15 iterations 기준):
+
+| 단계 | 시간 | 메모 |
+|:-----|:-----|:-----|
+| chunk 선택 + write | 5–10 min | 새 .hexa 작성 |
+| run + 디버그 | 2–5 min | 첫 PASS 까지 |
+| wire (CLI/tests/falsifier/lint) | 5 min | 5–7 군데 갱신 |
+| regression | 1–2 min | verify all + test_all |
+| doc + commit + push | 3 min | CHANGELOG + 메시지 작성 |
+| **총** | **~20–30 min** | |
+
+5분 cron 은 이 budget 보다 짧음 → 권장 안 됨. 적정 cadence 는 **20–30 분
+heartbeat** (dynamic ScheduleWakeup 1500–1800s 와 일치).
+
+---
+
+## §8 새 hexa-* 세션 kickoff (paste-ready)
+
+새 세션에 다음을 입력하면 본 레시피로 즉시 시작 + **자동 반복까지 포함**:
 
 ```
 hexa-<프로젝트> 의 runnable surface 를
-docs/runnable_surface_recipe.md 패턴대로 .hexa 로 구축한다.
+~/core/bedrock/docs/runnable_surface_recipe.md 패턴대로 .hexa 로 구축한다.
+
+작업 모드: closure-depth accumulation 무한 루프 (recipe §7).
 
 1. 현재 verify/build/tests 인벤토리 점검 (이미 있는 것 확인)
-2. 16-script 표준 인벤토리에서 미작성 슬롯 한 개씩 7-step 사이클로
-   1 chunk = 1 commit 으로 추가
-3. 각 iteration 끝에 verify all + test_all 회귀 실행 + push
+2. recipe §7.4 우선순위 표에서 미작성 슬롯 한 개를 7-step 사이클로
+   추가 (1 chunk = 1 commit)
+3. 각 iter 끝에 verify all + test_all 회귀 실행 + origin/main push
 4. CHANGELOG iteration 항목 + falsifier_check closure pct 추적
-5. T3 (empirical) 은 미루고 T2 깊이 (closure-depth accumulation)
-   에 집중
+5. iter 끝에서 §7.2 stop 조건 체크:
+   - saturation (sat-1 + sat-2) 도달 → 루프 종료
+   - regression-fail 발생 → 해당 chunk roll-back 후 다음 chunk
+   - 사용자 stop 입력 → 즉시 종료
+6. 위 조건 미충족 시 ScheduleWakeup 1500–1800s 로 다음 iter 예약
+   (또는 사용자가 `keep going cycle` 입력 시 즉시 다음 iter)
 
-목표: F-<PROJECT>-1/2/3 모두 67% closure (T1 + T2 stack ≥ 1).
+목표: F-<PROJECT>-1/2/3 모두 67% closure (T1 + T2 ×3 stack 권장).
 참고 SSOT: .roadmap.<project> §A.4 falsifier preregister.
+참고 recipe: ~/core/bedrock/docs/runnable_surface_recipe.md
+참고 worked example: ~/core/hexa-cern (15 iterations 적용 사례)
+
+iter 1 시작.
+```
+
+마지막 줄 `iter 1 시작.` 이 새 세션 에이전트가 즉시 §2 의 7-step 을 1번 실행하라는 신호.
+
+---
+
+## §9 saturation 도달 시 다음 단계
+
+`sat-1` + `sat-2` 모두 만족 → T3 empirical 만 남은 상태:
+
+| Stage | 설명 | 본 recipe 범위? |
+|:------|:-----|:--------------:|
+| Stage-1 | 벤치톱 prototype 빌드 (실제 하드웨어) | ✗ 아님 |
+| Stage-2 | 실험 데이터 수집 + 라이브 피드 통합 | ✗ 아님 |
+| Stage-3 | 외부 collab (DESY / SLAC / 등) 검증 | ✗ 아님 |
+
+이 단계는 코드 layer 가 아니라 hardware/ops layer. **새 .hexa 추가로
+닫을 수 없음** — saturation 시 루프 자가 종료가 정답.
+
+루프 종료 시 마지막 commit 메시지에:
+```
+v1.1.0 RSC saturated — T1+T2 closure complete, T3 awaits Stage-1+ build
 ```
 
 ---
 
 — 본 레시피는 hexa-cern v1.1.0-pre 에서 검증됨.
    `git log --oneline` 0a74c21..main 의 16 commit 이 한 적용 사례.
+   사례별 iteration 로그는 `hexa-cern/CHANGELOG.md` 에 보존.
