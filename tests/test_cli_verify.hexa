@@ -43,11 +43,12 @@ fn main() {
         println("__HEXA_CERN_TEST_CLI_VERIFY__ PASS")
         exit(0)
     }
-    // Expect aggregate "PASS:  22/22" (all 3 falsifiers 100% via T3 empirical scripts)
-    let has_aggregate = out.find("PASS:  22/22") >= 0
+    // Expect aggregate "PASS:  23/23"  (T1 + 4× T2 for F-PCERN-3 with the
+    // relativistic LWFA leapfrog from §A.6.1 step B + 22 prior verifiers)
+    let has_aggregate = out.find("PASS:  23/23") >= 0
     let pass = code == 0 && has_aggregate
     if pass {
-        println("[test_cli_verify] PASS — verify all reports 22/22 PASS, exit 0")
+        println("[test_cli_verify] PASS — verify all reports 23/23 PASS, exit 0")
         println("__HEXA_CERN_TEST_CLI_VERIFY__ PASS")
         exit(0)
     }

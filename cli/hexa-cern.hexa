@@ -186,6 +186,7 @@ let VERIFY_SUBS = [
     "wakefield",
     "numerics-wakefield",
     "numerics-solver",
+    "numerics-relativistic",
     "sigma",
     "numerics-sigma",
     "numerics-bending",
@@ -211,6 +212,7 @@ fn _verify_script(sub: str) -> str {
     if sub == "wakefield"          { return VERIFY_DIR + "/calc_wakefield.hexa" }
     if sub == "numerics-wakefield" { return VERIFY_DIR + "/numerics_wakefield.hexa" }
     if sub == "numerics-solver"    { return VERIFY_DIR + "/numerics_lwfa_solver.hexa" }
+    if sub == "numerics-relativistic" { return VERIFY_DIR + "/numerics_lwfa_relativistic.hexa" }
     if sub == "sigma"              { return VERIFY_DIR + "/calc_sigma_cascade.hexa" }
     if sub == "numerics-sigma"     { return VERIFY_DIR + "/numerics_sigma_cascade.hexa" }
     if sub == "numerics-bending"   { return VERIFY_DIR + "/numerics_bending.hexa" }
@@ -280,6 +282,7 @@ fn cmd_verify(a: [str]) {
         println("  wakefield           mini pillar — laser-wakefield n=6 derivation")
         println("  numerics-wakefield  mini pillar — closed-form plasma numerics (n_e, L_d)")
         println("  numerics-solver     mini pillar — Verlet LWFA ODE solver (electron in wakefield)")
+        println("  numerics-relativistic mini pillar — KDK leapfrog relativistic LWFA (γ → 200, §A.6.1 step B)")
         println("  sigma               parent pillar — σ-cascade chain (E_0..E_6)")
         println("  numerics-sigma      parent pillar — relativistic γ progression numerics")
         println("  numerics-bending    parent pillar — collider bending-radius R = E/(ecB)")
@@ -416,7 +419,7 @@ fn cmd_help() {
     println("  selftest        full 3-pillar sentinel sweep")
     println("  verify [<sub>]  n=6 invariant + per-pillar calculators")
     println("                    sub: all (default) | lattice | cross-doc")
-    println("                       | wakefield | numerics-wakefield | numerics-solver")
+    println("                       | wakefield | numerics-wakefield | numerics-solver | numerics-relativistic")
     println("                       | sigma | numerics-sigma | numerics-bending")
     println("                       | classical | numerics-classical | numerics-liouville")
     println("                       | numerics-se3 | numerics-cross | numerics-lhc | numerics-lwfa")

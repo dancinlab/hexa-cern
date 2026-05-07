@@ -24,6 +24,7 @@ let CASES = [
     "calc_wakefield.hexa|__HEXA_CERN_WAKEFIELD__ PASS",
     "numerics_wakefield.hexa|__HEXA_CERN_NUMERICS_WAKEFIELD__ PASS",
     "numerics_lwfa_solver.hexa|__HEXA_CERN_NUMERICS_LWFA_SOLVER__ PASS",
+    "numerics_lwfa_relativistic.hexa|__HEXA_CERN_NUMERICS_LWFA_RELATIVISTIC__ PASS",
     "calc_sigma_cascade.hexa|__HEXA_CERN_SIGMA_CASCADE__ PASS",
     "numerics_sigma_cascade.hexa|__HEXA_CERN_NUMERICS_SIGMA_CASCADE__ PASS",
     "numerics_bending.hexa|__HEXA_CERN_NUMERICS_BENDING__ PASS",

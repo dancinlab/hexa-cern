@@ -112,7 +112,9 @@ A → B → C 는 "v2.0.0 빌드 직전" 까지 본 repo 가 자체적으로 닫
 - A + B + C → +1 주 (sim-펌웨어 데모 가능)
 - D → 보류 권장 (보드 미존재 → 검증 불가; toolchain heavy)
 
-A / B 는 본 repo 회귀 (saturation_check 17/17, falsifier_check 18/18,
-cli verify all 22/22) 를 깨지 않음. C 는 처음으로 `.hexa` 외 파일이
+A / B 는 본 repo 회귀 invariants 를 깨지 않음 — saturation_check 17/17
+PASS 유지, falsifier_check 100% closure 유지, cli verify all ≥ 22 (새
+T2 추가 시 count 증가, monotone non-decreasing). 절대 PASS→FAIL 전환
+없음. C 는 처음으로 `.hexa` 외 파일이
 들어가는 단계 — 별도 디렉토리 (`firmware/sim/`) 로 격리. D 는 별도 repo
 또는 `firmware/` 의 별 sub-tree 분리 권장.
