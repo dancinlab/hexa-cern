@@ -1,0 +1,36 @@
+# hexa-cern/firmware/mcu/.cargo/config.toml — toolchain knobs
+#
+# §A.6.1 step D 2/3 — Rust embedded build target settings.
+#
+# **STATUS: SKELETON ONLY — needs `rustup target add` to be runnable.**
+
+[build]
+# Cortex-M7 with FPU (STM32H7 class). ARMv7E-M, hardfloat ABI.
+target = "thumbv7em-none-eabihf"
+
+[target.thumbv7em-none-eabihf]
+# When the board lands, uncomment the runner that matches the debugger
+# stack actually in use.  Until then, only `cargo check` is meaningful.
+#
+# probe-rs (preferred for STM32H7):
+# runner = "probe-rs run --chip STM32H743ZITx"
+#
+# openocd + gdb fallback:
+# runner = ["arm-none-eabi-gdb", "-q", "-x", "openocd.gdb"]
+
+rustflags = [
+    # Linker script — vendor-provided (memory.x). Skeleton has none yet.
+    "-C", "link-arg=-Tlink.x",
+    # Output map file useful for size analysis + debug symbol path.
+    "-C", "link-arg=-Map=target/firmware.map",
+]
+
+[unstable]
+# Avoid unstable flags by default; enable per-build if a feature requires.
+build-std = []
+
+# alias for typical workflow once the board exists
+[alias]
+rb = "run --release"
+ck = "check --target thumbv7em-none-eabihf"
+sz = "size --release"

@@ -1,0 +1,57 @@
+# hexa-cern/firmware/mcu/Cargo.toml — §A.6.1 step D 2/3
+#
+# Rust embedded firmware skeleton for the §benchtop_v0_design.md B2/B3
+# laser-driver + DAC/ADC pipeline.  Targets STM32H7 (Cortex-M7 @ 480 MHz)
+# per the §3 F2 BOM line ("MCU laser-driver board").
+#
+# **STATUS: SKELETON ONLY — NOT BUILDABLE WITHOUT TARGET BOARD**
+#
+# This Cargo.toml + src/main.rs compile (with the correct toolchain
+# installed: rustup target add thumbv7em-none-eabihf) but produce no
+# usable binary until:
+#   1. a real STM32H7 dev-board is selected and acquired (§A.6 step 1+2)
+#   2. memory.x is added (vendor-provided linker script)
+#   3. probe-rs / openocd is configured for flashing
+#
+# Until then, this is an architectural commitment to the Rust-embedded
+# stack (vs C / C++ / MicroPython) for the laser-driver MCU, with all
+# the safety / no-panic / unbounded-stack guarantees that implies.
+
+[package]
+name        = "hexa-cern-laser-mcu"
+version     = "0.1.0-skeleton"
+edition     = "2021"
+description = "Skeleton firmware for the LWFA benchtop laser-driver MCU"
+license     = "Apache-2.0 OR MIT"
+authors     = ["dancinlife <hexa-cern@dancinlab.org>"]
+
+# Target: Cortex-M7 with single-precision FPU (STM32H7 / NXP i.MX RT)
+# Set in .cargo/config.toml; this section just documents the assumption.
+# build-target = "thumbv7em-none-eabihf"
+
+[dependencies]
+# core embedded runtime
+cortex-m       = { version = "0.7",  features = ["critical-section-single-core"] }
+cortex-m-rt    = "0.7"
+panic-halt     = "0.2"
+
+# safety: a hard fault triggers panic-halt → infinite loop. In production
+# the watchdog (§safety §9) catches this and resets the MCU.
+
+# logging via RTT (Real-Time Transfer) for board-side debug
+# rtt-target  = "0.4"   # uncomment when board is real
+# panic-rtt-target = "0.1"
+
+# RTIC for deterministic concurrency (preferred over manual NVIC mgmt)
+# rtic        = "2.0"   # uncomment when first peripheral driver lands
+
+[profile.release]
+opt-level     = "s"      # optimize for size; flash is finite
+lto           = true     # whole-program optimisation
+codegen-units = 1
+debug         = true     # keep symbols for in-field crash analysis
+panic         = "abort"  # no unwinding (stack-bounded by panic-halt)
+
+[profile.dev]
+opt-level     = 1        # `0` triggers stack overflow on H7 in many libs
+debug         = true
