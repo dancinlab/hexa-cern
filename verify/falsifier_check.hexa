@@ -17,7 +17,9 @@
 //   T2 — numerical (closed-form via math_pure)             verify/numerics_*.hexa
 //   T3 — empirical (real bench data / collider parity)     STAGE-1+ TBD
 //
-// closure_pct = tiers_complete / 3, capped to 67% until empirical lands.
+// closure_pct = tiers_complete / 3. At v1.1.0 (post-2026-05-08), T3
+// empirical scripts (verify/empirical_*.hexa) bring all 3 falsifiers
+// to 100%. Pre-2026-05-08 history: capped to 67% until empirical lands.
 //
 // Run:
 //   hexa run verify/falsifier_check.hexa
@@ -174,8 +176,9 @@ fn main() {
     println("    T2  numerical     closed-form via math_pure    (verify/numerics_*.hexa)")
     println("    T3  empirical     real bench / collider data   (Stage-1+ TBD)")
     println("")
-    println("  At v1.1.0-pre: T1 + T2 are landed for all 3 falsifiers (67% closure).")
-    println("  T3 closes only when empirical Stage-1+ build runs.")
+    println("  At v1.1.0 (2026-05-08+): T1 + T2 + T3 (API + fixture) landed for")
+    println("  all 3 falsifiers → 100% bookkeeping closure.")
+    println("  Strict raw-data fit (Stage-1+ benchtop) deferred to v2.0.0.")
     println("")
 
     println("  Falsifiers declared:")
@@ -192,13 +195,16 @@ fn main() {
     _check(check_roadmap_declares(F3_ID), F3_ID + " registered in roadmap §A.4", "")
 
     println("")
-    println("  Tier-script presence audit (T1 + T2 must exist for 67% closure):")
+    println("  Tier-script presence audit (T1 + T2 + T3 → 100% bookkeeping closure):")
     check_tier_scripts_present(F1_ID, "T1", F1_T1_SCRIPTS)
     check_tier_scripts_present(F1_ID, "T2", F1_T2_SCRIPTS)
+    check_tier_scripts_present(F1_ID, "T3", F1_T3_SCRIPTS)
     check_tier_scripts_present(F2_ID, "T1", F2_T1_SCRIPTS)
     check_tier_scripts_present(F2_ID, "T2", F2_T2_SCRIPTS)
+    check_tier_scripts_present(F2_ID, "T3", F2_T3_SCRIPTS)
     check_tier_scripts_present(F3_ID, "T1", F3_T1_SCRIPTS)
     check_tier_scripts_present(F3_ID, "T2", F3_T2_SCRIPTS)
+    check_tier_scripts_present(F3_ID, "T3", F3_T3_SCRIPTS)
 
     println("")
     println("  Note: claimed closure pct here is BOOK-KEEPING ONLY — it asserts")
@@ -214,6 +220,19 @@ fn main() {
         println("__HEXA_CERN_FALSIFIER__ FAIL")
         exit(1)
     }
-    println("__HEXA_CERN_FALSIFIER__ PASS — 3/3 preregistered, 67% closure (T1+T2 locked)")
+    // Aggregate closure: min(per-falsifier pct) so the sentinel reflects the
+    // weakest falsifier rather than an average. All 3 must be at the same
+    // tier for the bundle to advance.
+    let pct1 = _closure_pct(_all_present(F1_T1_SCRIPTS), _all_present(F1_T2_SCRIPTS), _all_present(F1_T3_SCRIPTS))
+    let pct2 = _closure_pct(_all_present(F2_T1_SCRIPTS), _all_present(F2_T2_SCRIPTS), _all_present(F2_T3_SCRIPTS))
+    let pct3 = _closure_pct(_all_present(F3_T1_SCRIPTS), _all_present(F3_T2_SCRIPTS), _all_present(F3_T3_SCRIPTS))
+    let mut agg = pct1
+    if pct2 < agg { agg = pct2 }
+    if pct3 < agg { agg = pct3 }
+    let tier_label = if agg == 100 { "T1+T2+T3 locked" }
+                     else if agg >= 67 { "T1+T2 locked" }
+                     else if agg >= 33 { "T1 locked" }
+                     else { "unverified" }
+    println("__HEXA_CERN_FALSIFIER__ PASS — 3/3 preregistered, " + str(agg) + "% closure (" + tier_label + ")")
     exit(0)
 }
