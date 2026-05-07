@@ -9,6 +9,22 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased] — v1.1.0-pre on `main`
 
+### Changed (2026-05-07 — sixth iteration)
+
+- `verify/falsifier_check.hexa` — closure-progress tracker. Each
+  F-PCERN now reports a 3-tier evidence ladder:
+    T1 algebraic (`verify/calc_*.hexa`)
+    T2 numerical (`verify/numerics_*.hexa`)
+    T3 empirical (Stage-1+ TBD)
+  At v1.1.0-pre all three falsifiers stand at **67% closure**
+  (T1 + T2 landed; T3 awaits empirical). The PASS sentinel now
+  reads `3/3 preregistered, 67% closure (T1+T2 locked)`.
+- New tier-script presence audit: each F-PCERN's T1 + T2 verify
+  files must exist on disk. 9/9 PASS (was 3/3 — added 6 new
+  presence checks).
+- Closure pct uses round-up reporting (0/33/67/100) so the 2-of-3
+  case shows 67%, matching the sentinel exactly.
+
 ### Added (2026-05-07 — fifth iteration)
 
 - `verify/numerics_cross_pillar.hexa` — cross-pillar numerical
