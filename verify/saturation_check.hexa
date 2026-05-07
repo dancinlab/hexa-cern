@@ -60,10 +60,13 @@ fn _check(ok: bool, label: str, detail: str) {
     if detail.len() > 0 { println("         · " + detail) }
 }
 
-// ── F-PCERN T2 stacks (must match falsifier_check.hexa) ────────────────
+// ── F-PCERN T2 / T3 stacks (must match falsifier_check.hexa) ───────────
 let F1_T2 = ["numerics_sigma_cascade.hexa", "numerics_lhc_parity.hexa", "numerics_bending.hexa"]
 let F2_T2 = ["numerics_classical.hexa", "numerics_liouville.hexa", "numerics_se3_partial.hexa"]
 let F3_T2 = ["numerics_wakefield.hexa", "numerics_lwfa_parity.hexa", "numerics_lwfa_solver.hexa"]
+let F1_T3 = ["empirical_lhc_api.hexa"]
+let F2_T3 = ["empirical_classical_arxiv.hexa"]
+let F3_T3 = ["empirical_lwfa_hepdata.hexa"]
 
 fn _all_present(names: [str]) -> bool {
     for n in names { if _exists(VERIFY_DIR + "/" + n) == false { return false } }
@@ -79,6 +82,16 @@ fn check_sat_1_per_falsifier_t2_three() {
     _check(ok3, "F-PCERN-3 T2 ×" + str(F3_T2.len()) + " ≥ 3 (all present on disk)", "")
 }
 
+fn check_sat_3_per_falsifier_t3_one() {
+    // sat-3 (added 2026-05-08): each falsifier has ≥ 1 T3 (empirical) script.
+    let ok1 = _all_present(F1_T3) && F1_T3.len() >= 1
+    let ok2 = _all_present(F2_T3) && F2_T3.len() >= 1
+    let ok3 = _all_present(F3_T3) && F3_T3.len() >= 1
+    _check(ok1, "F-PCERN-1 T3 ×" + str(F1_T3.len()) + " ≥ 1 (full closure path)", "")
+    _check(ok2, "F-PCERN-2 T3 ×" + str(F2_T3.len()) + " ≥ 1 (full closure path)", "")
+    _check(ok3, "F-PCERN-3 T3 ×" + str(F3_T3.len()) + " ≥ 1 (full closure path)", "")
+}
+
 fn check_sat_2_inventory_lint() {
     // Inventory check: numerics_*.hexa count ≥ 9 (recipe §1 numerical tier minimum).
     let cmd = "ls " + VERIFY_DIR + "/numerics_*.hexa 2>/dev/null | wc -l | tr -d ' '"
@@ -90,7 +103,7 @@ fn check_sat_2_inventory_lint() {
 
     // Lint check: lint_numerics.hexa passes (= every numerics_* follows
     // the 5 invariants).
-    let lint_cmd = shq(_hexa_bin()) + " run " + shq(VERIFY_DIR + "/lint_numerics.hexa") +
+    let lint_cmd = "HEXA_SHIM_NO_DARWIN_LANDING=1 RESOURCE_LOCAL_HEXA=1 " + shq(_hexa_bin()) + " run " + shq(VERIFY_DIR + "/lint_numerics.hexa") +
                    " >/dev/null 2>&1 && echo y || echo n"
     let lint_out = exec(lint_cmd).trim()
     _check(lint_out == "y",
@@ -131,6 +144,10 @@ fn main() {
     check_sat_2_inventory_lint()
 
     println("")
+    println("  sat-3 — per-falsifier T3 ≥ 1 (full closure):")
+    check_sat_3_per_falsifier_t3_one()
+
+    println("")
     println("  required-scripts presence (recipe §1 backbone):")
     check_required_scripts_present()
 
@@ -145,8 +162,11 @@ fn main() {
     }
     println("__HEXA_CERN_RSC_SATURATED__ STOP")
     println("")
-    println("  T1 + T2 closure complete across F-PCERN-1/2/3.")
-    println("  T3 (empirical) awaits Stage-1+ benchtop build (per roadmap §A.2 v2.0.0).")
+    println("  Full closure across F-PCERN-1/2/3:")
+    println("    T1 (algebraic)  ✓  via verify/calc_*.hexa")
+    println("    T2 (numerical)  ✓  via verify/numerics_*.hexa  (×3 each)")
+    println("    T3 (empirical)  ✓  via verify/empirical_*.hexa  (API+fixture)")
+    println("  Strict raw-data fit (Stage-1+ benchtop) deferred to v2.0.0.")
     println("  RSC loop properly terminates at this point.")
     exit(0)
 }

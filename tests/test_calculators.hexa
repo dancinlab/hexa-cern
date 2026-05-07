@@ -38,6 +38,8 @@ let CASES = [
     "lint_numerics.hexa|__HEXA_CERN_LINT_NUMERICS__ PASS",
     "saturation_check.hexa|__HEXA_CERN_RSC_SATURATED__ STOP",
     "empirical_lhc_api.hexa|__HEXA_CERN_EMPIRICAL_LHC_API__ PASS",
+    "empirical_lwfa_hepdata.hexa|__HEXA_CERN_EMPIRICAL_LWFA_HEPDATA__ PASS",
+    "empirical_classical_arxiv.hexa|__HEXA_CERN_EMPIRICAL_CLASSICAL_ARXIV__ PASS",
     "falsifier_check.hexa|__HEXA_CERN_FALSIFIER__ PASS",
 ]
 
@@ -51,7 +53,9 @@ fn run_one(case: str) -> bool {
     let fname = parts[0]
     let sentinel = parts[1]
     let path = ROOT + "/verify/" + fname
-    let cmd = "PETITE_CERN_ROOT=" + shq(ROOT) + " " + shq(HEXA) + " run " + shq(path)
+    // HEXA_SHIM_NO_DARWIN_LANDING=1 RESOURCE_LOCAL_HEXA=1: bypass resource-toolkit remote routing.
+    let cmd = "HEXA_SHIM_NO_DARWIN_LANDING=1 RESOURCE_LOCAL_HEXA=1 PETITE_CERN_ROOT=" + shq(ROOT) +
+              " " + shq(HEXA) + " run " + shq(path)
     let r = exec_with_status(cmd)
     let out = to_string(r[0])
     let code = r[1]

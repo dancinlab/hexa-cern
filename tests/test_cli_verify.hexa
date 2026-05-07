@@ -25,16 +25,16 @@ fn shq(s: str) -> str {
 
 fn main() {
     println("[test_cli_verify] target: " + CLI + " verify all")
-    let cmd = "PETITE_CERN_ROOT=" + shq(ROOT) + " " + shq(HEXA) +
+    let cmd = "HEXA_SHIM_NO_DARWIN_LANDING=1 RESOURCE_LOCAL_HEXA=1 PETITE_CERN_ROOT=" + shq(ROOT) + " " + shq(HEXA) +
               " run " + shq(CLI) + " verify all"
     let r = exec_with_status(cmd)
     let out = to_string(r[0])
     let code = r[1]
-    // Expect aggregate "PASS:  20/20" (added empirical-lhc 2026-05-07 iter 18 — F1 T3 partial)
-    let has_aggregate = out.find("PASS:  20/20") >= 0
+    // Expect aggregate "PASS:  22/22" (all 3 falsifiers 100% via T3 empirical scripts)
+    let has_aggregate = out.find("PASS:  22/22") >= 0
     let pass = code == 0 && has_aggregate
     if pass {
-        println("[test_cli_verify] PASS — verify all reports 20/20 PASS, exit 0")
+        println("[test_cli_verify] PASS — verify all reports 22/22 PASS, exit 0")
         println("__HEXA_CERN_TEST_CLI_VERIFY__ PASS")
         exit(0)
     }

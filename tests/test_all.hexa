@@ -37,7 +37,11 @@ fn run_one(case: str) -> bool {
     let fname = parts[0]
     let sentinel = parts[1]
     let path = ROOT + "/tests/" + fname
-    let cmd = "PETITE_CERN_ROOT=" + shq(ROOT) + " " + shq(HEXA) + " run " + shq(path)
+    // HEXA_SHIM_NO_DARWIN_LANDING=1 RESOURCE_LOCAL_HEXA=1 bypasses the resource-toolkit remote routing
+    // (hexa shim 2026-05-08 routes `hexa run` to ubu-1 by default; we
+    // need local execution for hexa-cern's filesystem-bound verifies).
+    let cmd = "HEXA_SHIM_NO_DARWIN_LANDING=1 RESOURCE_LOCAL_HEXA=1 PETITE_CERN_ROOT=" + shq(ROOT) +
+              " " + shq(HEXA) + " run " + shq(path)
     let r = exec_with_status(cmd)
     let out = to_string(r[0])
     let code = r[1]

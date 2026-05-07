@@ -200,6 +200,8 @@ let VERIFY_SUBS = [
     "lint-numerics",
     "saturation",
     "empirical-lhc",
+    "empirical-lwfa",
+    "empirical-classical",
     "falsifier",
 ]
 
@@ -223,6 +225,8 @@ fn _verify_script(sub: str) -> str {
     if sub == "lint-numerics"      { return VERIFY_DIR + "/lint_numerics.hexa" }
     if sub == "saturation"         { return VERIFY_DIR + "/saturation_check.hexa" }
     if sub == "empirical-lhc"      { return VERIFY_DIR + "/empirical_lhc_api.hexa" }
+    if sub == "empirical-lwfa"     { return VERIFY_DIR + "/empirical_lwfa_hepdata.hexa" }
+    if sub == "empirical-classical"{ return VERIFY_DIR + "/empirical_classical_arxiv.hexa" }
     if sub == "falsifier"          { return VERIFY_DIR + "/falsifier_check.hexa" }
     return ""
 }
@@ -243,7 +247,7 @@ fn _run_one_verifier(sub: str) -> int {
         eprintln("hexa-cern verify: script missing: " + path)
         return 2
     }
-    let cmd = "PETITE_CERN_ROOT=" + shq(PC) + " " +
+    let cmd = "HEXA_SHIM_NO_DARWIN_LANDING=1 RESOURCE_LOCAL_HEXA=1 PETITE_CERN_ROOT=" + shq(PC) + " " +
               shq(_hexa_bin()) + " run " + shq(path)
     let result = exec_with_status(cmd)
     let stdout = to_string(result[0])
@@ -284,6 +288,8 @@ fn cmd_verify(a: [str]) {
         println("  lint-numerics       meta-lint: every numerics_*.hexa follows regression conventions")
         println("  saturation          RSC saturation check (sat-1 + sat-2 → STOP signal)")
         println("  empirical-lhc       F-PCERN-1 T3 partial: CERN Open Data API archival feed")
+        println("  empirical-lwfa      F-PCERN-3 T3 partial: Inspire-HEP LWFA paper milestones")
+        println("  empirical-classical F-PCERN-2 T3 partial: arXiv classical-mechanics milestones")
         println("  falsifier           F-PCERN-1/2/3 preregister checklist")
         println("")
         println("exit:")
@@ -409,7 +415,8 @@ fn cmd_help() {
     println("                       | classical | numerics-classical | numerics-liouville")
     println("                       | numerics-se3 | numerics-cross | numerics-lhc | numerics-lwfa")
     println("                       | numerics-lattice | lint-numerics | saturation")
-    println("                       | empirical-lhc | falsifier")
+    println("                       | empirical-lhc | empirical-lwfa | empirical-classical")
+    println("                       | falsifier")
     println("")
     println("global flags:")
     println("  --version       show version")

@@ -83,10 +83,17 @@ let SIGMA_PHI = 10.0                    // (σ-φ) = 10× envelope tolerance
 
 // ── API endpoint ────────────────────────────────────────────────────────
 let API_URL = "https://opendata.cern.ch/api/records/?experiment=ATLAS&type=Dataset&size=1"
+let FIXTURE_PATH_REL = "/verify/fixtures/atlas_records.json"
 
 fn fetch_api() -> str {
     let cmd = "curl -s --max-time 12 '" + API_URL + "' 2>/dev/null"
     return exec(cmd)
+}
+
+fn read_fixture() -> str {
+    let p = ROOT + FIXTURE_PATH_REL
+    if file_exists(p) == false { return "" }
+    return read_file(p)
 }
 
 // Parse an "<N>TeV" or "<N>.<N>TeV" token at a given offset → return TeV value.
@@ -269,9 +276,9 @@ fn main() {
     check_parent_doc_anchors_lhc()
 
     println("")
-    if values.len() > 0 {
-        println("  ATLAS collision energies found in API:")
-        for v in values { println("    · " + str(v) + " TeV (COM) → " + str(v/2.0) + " TeV per-beam") }
+    if chosen.len() > 0 {
+        println("  ATLAS collision energies found (source: " + source + "):")
+        for v in chosen { println("    · " + str(v) + " TeV (COM) → " + str(v/2.0) + " TeV per-beam") }
     }
 
     println("")

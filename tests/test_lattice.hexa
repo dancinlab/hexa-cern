@@ -24,7 +24,7 @@ fn shq(s: str) -> str {
 
 fn main() {
     println("[test_lattice] script: " + SCRIPT)
-    let cmd = "PETITE_CERN_ROOT=" + shq(ROOT) + " " + shq(HEXA) + " run " + shq(SCRIPT)
+    let cmd = "HEXA_SHIM_NO_DARWIN_LANDING=1 RESOURCE_LOCAL_HEXA=1 PETITE_CERN_ROOT=" + shq(ROOT) + " " + shq(HEXA) + " run " + shq(SCRIPT)
     let r = exec_with_status(cmd)
     let out = to_string(r[0])
     let code = r[1]
