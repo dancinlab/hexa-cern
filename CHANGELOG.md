@@ -7,7 +7,65 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-## [Unreleased] — v1.1.0 on `main`  (RSC code-layer FINAL)
+## [Unreleased] — v1.1.0 on `main`  (RSC code-layer FINAL · §A.6.1 ladder DELIVERED)
+
+### Added (2026-05-08 — twentyfirst..twentyninth iterations · §A.6.1 A→B→C→D in-repo ladder delivered)
+
+§A.6.1 (post-RSC, pre-v2.0.0 in-repo ladder) is now fully traversed.
+The four steps A → B → C → D landed in 11 commits; their on-disk
+footprint:
+
+| step | role                                       | new files                              | aggregate     |
+|:----:|:-------------------------------------------|:---------------------------------------|:--------------|
+| A    | paper design (BOM/IF/budget/safety)        | `mini/doc/benchtop_v0_design.md`      | verify-all 22→22 (docs-layer) |
+| B 1  | relativistic LWFA solver (γ→200)           | `verify/numerics_lwfa_relativistic.hexa` | 22→23 |
+| B 2  | beam dynamics (betatron + ε preservation)  | `verify/numerics_beam_dynamics.hexa`  | 23→24 |
+| B 3  | Lu/Esarey/TD scaling-law parity            | `verify/numerics_lwfa_scaling.hexa`   | 24→25 |
+| C 1  | sim-firmware: clock + trigger              | `firmware/sim/timing_chain.hexa`      | 25→26 |
+| C 2  | sim-firmware: 16-bit DAC × 4 channels      | `firmware/sim/dac_chain.hexa`          | 26→27 |
+| C 3  | sim-firmware: BPM + diamond ADCs           | `firmware/sim/adc_chain.hexa`          | 27→28 |
+| C 4  | sim-firmware: closed PI loop               | `firmware/sim/control_loop.hexa`       | 28→29 |
+| D 1  | Verilog FPGA timing-ctrl skeleton          | `firmware/hdl/timing_ctrl.v` + README | 29→29 (cross_doc audited) |
+| D 2  | Rust embedded MCU skeleton                 | `firmware/mcu/{Cargo,config,main.rs,README}` | 29→29 (cross_doc audited) |
+| D 3  | build scaffolding (Makefile + testbench)   | `firmware/{Makefile,README}` + `firmware/hdl/testbench/timing_ctrl_tb.v` | 29→29 (cross_doc audited) |
+
+**Closure invariants intact** through all 11 commits:
+
+| invariant                  | start    | end      | drift?       |
+|:---------------------------|:---------|:---------|:-------------|
+| `falsifier_check`          | 18/18 PASS  100% closure | 20/20 PASS  100% closure | + sub-checks only |
+| `saturation_check`         | 17/17 PASS  RSC_SATURATED STOP | 17/17 PASS  RSC_SATURATED STOP | unchanged |
+| `cross_doc_audit`          | 12/12 PASS    | 15/15 PASS    | + 3 sub-checks |
+| `lint_numerics`            | 56/56 PASS · 11 numerics | 71/71 PASS · 14 numerics | + 3 numerics |
+| `cli/hexa-cern verify all` | 22/22 PASS    | 29/29 PASS   | +7 (3 RSC numerics + 4 firmware-sim) |
+| `tests/test_calculators`   | 21 cases       | 28 cases     | +7 (mirrors verify-all) |
+| `tests/test_*.hexa` each   | 4/4 individual PASS | 4/4 individual PASS | unchanged |
+
+**Step D files are skeleton-tagged.**  None of the .v / .toml / .rs files
+produce a flashable binary or bitstream until §A.6 step 1 (DESY/SLAC/KEK
+collab decision) + step 2 (funding round) + memory.x / vendor toolchain
+land. They encode the architectural commitment now so the build is
+shovel-ready when funding does.
+
+#### Single-source-of-truth across .hexa / Verilog / Rust
+
+The constants `CLK_HZ`, `TICK_HZ`, `D_TRIG_CYCLES`, `GATE_CYCLES`
+appear with identical values in three layers:
+
+  - `firmware/sim/timing_chain.hexa`        (numerical model)
+  - `firmware/hdl/timing_ctrl.v`             (synthesizable RTL)
+  - `firmware/mcu/src/main.rs`               (typestate-safe Rust)
+
+`verify/cross_doc_audit.hexa` checks 13/14 audit the HDL + MCU sides
+for structural correctness; lint_numerics audits the .hexa side.
+
+#### Path forward
+
+§A.6.1 is now exhausted as an in-repo program. Remaining work depends
+on external bodies + funding (§A.6 step 1/2/4) and is **out of scope
+for the .hexa runnable surface**. Cron / loop firings post-§A.6.1
+default to health-check only (`verify/saturation_check.hexa` →
+`__HEXA_CERN_RSC_SATURATED__ STOP`).
 
 ### Added (2026-05-08 — twentieth iteration · v1.1.0 final · 100% closure surfaced)
 
