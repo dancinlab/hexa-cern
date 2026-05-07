@@ -9,6 +9,20 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased] — v1.1.0-pre on `main`
 
+### Added (2026-05-07 — third iteration)
+
+- `verify/numerics_sigma_cascade.hexa` — second numerical solver stub
+  (parent pillar). Computes Lorentz γ at each E_k stage using
+  m_e c² = 0.511 MeV, then verifies:
+  - γ strictly monotone across all 7 stages.
+  - γ_6 / γ_2 ≈ 10⁵ within 0.1% (ultrarelativistic regime check).
+  - γ_0 rest-mass tail = m_e c²/E_0 ≈ 5% (boundary regime, surfaces
+    why we use γ_2 not γ_0 as the lower anchor).
+  - log10(E_6/E_0) = 7, σ²=144, σ³=1728, ultrarelativistic by E_2.
+  - 10/10 PASS.
+- `cli/hexa-cern.hexa verify` — new `numerics-sigma` sub. The
+  `verify all` aggregator now runs **8/8** scripts (was 7/7).
+
 ### Added (2026-05-07 — second iteration)
 
 - `verify/numerics_wakefield.hexa` — first numerical solver stub. Uses
