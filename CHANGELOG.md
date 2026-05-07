@@ -9,6 +9,21 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased] — v1.1.0-pre on `main`
 
+### Added (2026-05-07 — fourth iteration)
+
+- `verify/numerics_classical.hexa` — third numerical solver stub
+  (classical pillar). Velocity-Verlet (leapfrog) symplectic integrator
+  on a 1-DOF harmonic oscillator H = ½(p² + ω²q²) with ω = 1, run
+  over **one full period** divided into τ = 4 phase quadrants
+  (pump · bubble · capture · extract).
+  - 1024 leapfrog steps total (256 per quadrant), Δt = π/512.
+  - 1-period |Δstate| = 9.9·10⁻⁶ (well under O(Δt²) bound 1.6·10⁻⁴).
+  - max |ΔE/E| = 9.4·10⁻⁶ (symplectic shadow Hamiltonian holds).
+  - All 4 phase quadrants land within 5·10⁻⁶ of canonical (q,p).
+  - 9/9 PASS first try.
+- `cli/hexa-cern.hexa verify` — new `numerics-classical` sub. The
+  `verify all` aggregator now runs **9/9** scripts (was 8/8).
+
 ### Added (2026-05-07 — third iteration)
 
 - `verify/numerics_sigma_cascade.hexa` — second numerical solver stub

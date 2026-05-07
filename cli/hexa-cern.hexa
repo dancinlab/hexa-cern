@@ -188,6 +188,7 @@ let VERIFY_SUBS = [
     "sigma",
     "numerics-sigma",
     "classical",
+    "numerics-classical",
     "falsifier",
 ]
 
@@ -199,6 +200,7 @@ fn _verify_script(sub: str) -> str {
     if sub == "sigma"              { return VERIFY_DIR + "/calc_sigma_cascade.hexa" }
     if sub == "numerics-sigma"     { return VERIFY_DIR + "/numerics_sigma_cascade.hexa" }
     if sub == "classical"          { return VERIFY_DIR + "/calc_classical.hexa" }
+    if sub == "numerics-classical" { return VERIFY_DIR + "/numerics_classical.hexa" }
     if sub == "falsifier"          { return VERIFY_DIR + "/falsifier_check.hexa" }
     return ""
 }
@@ -248,6 +250,7 @@ fn cmd_verify(a: [str]) {
         println("  sigma               parent pillar — σ-cascade chain (E_0..E_6)")
         println("  numerics-sigma      parent pillar — relativistic γ progression numerics")
         println("  classical           classical pillar — Lagrange/Hamilton τ=4 phase")
+        println("  numerics-classical  classical pillar — symplectic leapfrog (τ=4 quadrants)")
         println("  falsifier           F-PCERN-1/2/3 preregister checklist")
         println("")
         println("exit:")
@@ -370,7 +373,8 @@ fn cmd_help() {
     println("                    sub: all (default) | lattice | cross-doc")
     println("                       | wakefield | numerics-wakefield")
     println("                       | sigma | numerics-sigma")
-    println("                       | classical | falsifier")
+    println("                       | classical | numerics-classical")
+    println("                       | falsifier")
     println("")
     println("global flags:")
     println("  --version       show version")
