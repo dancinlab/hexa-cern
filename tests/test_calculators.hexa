@@ -27,6 +27,7 @@ let CASES = [
     "numerics_sigma_cascade.hexa|__HEXA_CERN_NUMERICS_SIGMA_CASCADE__ PASS",
     "calc_classical.hexa|__HEXA_CERN_CLASSICAL__ PASS",
     "numerics_classical.hexa|__HEXA_CERN_NUMERICS_CLASSICAL__ PASS",
+    "numerics_cross_pillar.hexa|__HEXA_CERN_NUMERICS_CROSS_PILLAR__ PASS",
     "falsifier_check.hexa|__HEXA_CERN_FALSIFIER__ PASS",
 ]
 

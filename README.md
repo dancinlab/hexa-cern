@@ -101,12 +101,13 @@ The `verify/` surface (all `.hexa`) audits n=6 closure + per-pillar derivations:
 | `verify/numerics_sigma_cascade.hexa` | parent — relativistic γ progression numerics (γ_6/γ_2 ≈ 10⁵, ultrarel) | 10/10 PASS |
 | `verify/calc_classical.hexa`       | classical — DOF = n = 6, phase-space dim = σ = 12        | 11/11 PASS |
 | `verify/numerics_classical.hexa`   | classical — symplectic leapfrog (τ=4 quadrants, 1-DOF, |Δstate| ≈ 10⁻⁵) | 9/9 PASS |
+| `verify/numerics_cross_pillar.hexa` | cross-pillar numerical consistency (mini ↔ parent ↔ classical, λ_p / λ_laser, γ@100 MeV) | 8/8 PASS |
 | `verify/falsifier_check.hexa`      | F-PCERN-1/2/3 preregister checklist                       | 3/3 registered (UNVERIFIED v1.0) |
 
 Run them all with the unified CLI subcommand:
 
 ```bash
-hexa-cern verify all      # 9/9 PASS expected
+hexa-cern verify all      # 10/10 PASS expected
 ```
 
 Or build the 3 pillar PDFs:
@@ -133,7 +134,7 @@ hx install hexa-cern
 git clone https://github.com/need-singularity/hexa-cern
 cd hexa-cern
 hexa run cli/hexa-cern.hexa status
-hexa run cli/hexa-cern.hexa verify all   # 9/9 PASS expected
+hexa run cli/hexa-cern.hexa verify all   # 10/10 PASS expected
 ```
 
 After `hx install hexa-cern`, the shim lands at `~/.hx/bin/hexa-cern`.

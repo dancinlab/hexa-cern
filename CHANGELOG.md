@@ -9,6 +9,23 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased] — v1.1.0-pre on `main`
 
+### Added (2026-05-07 — fifth iteration)
+
+- `verify/numerics_cross_pillar.hexa` — cross-pillar numerical
+  consistency check. Each per-pillar numerics stub validates its own
+  physics in isolation; this script links them on shared anchors:
+  - mini.target (100 MeV) ≡ parent.E_1 (100 MeV)  — identical scalar
+  - γ at 100 MeV ≈ 196.69, identical across pillars (rest-mass tail
+    free-of-bug check)
+  - classical 1-DOF stub phase-space (dim 2) ⊆ Hamilton σ = 12
+  - plasma λ_p (26.8 µm) in LWFA bubble window (1–100 µm)
+  - λ_p / λ_laser ≈ 33.4 (driver / wake scale separation, matches
+    numerics_wakefield's ω_0/ω_p ratio exactly)
+  - n=6 lattice constants identical across all pillar numerics
+  - 8/8 PASS first try.
+- `cli/hexa-cern.hexa verify` — new `numerics-cross` sub. The
+  `verify all` aggregator now runs **10/10** scripts (was 9/9).
+
 ### Added (2026-05-07 — fourth iteration)
 
 - `verify/numerics_classical.hexa` — third numerical solver stub
