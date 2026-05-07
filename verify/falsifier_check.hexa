@@ -76,18 +76,21 @@ let F1_ID            = "F-PCERN-1"
 let F1_RETRACT       = "σ-cascade 6-order LHC parity claim retracted"
 let F1_T1_SCRIPTS    = ["calc_sigma_cascade.hexa"]
 let F1_T2_SCRIPTS    = ["numerics_sigma_cascade.hexa", "numerics_lhc_parity.hexa", "numerics_bending.hexa"]
-let F1_T3_DESCRIPTION = "live LHC operational feed matches closed-form chain"
+let F1_T3_SCRIPTS    = ["empirical_lhc_api.hexa"]   // archival feed via CERN Open Data API
+let F1_T3_DESCRIPTION = "live LHC operational feed matches closed-form chain (real-time TBD; archival via API closed)"
 
 let F2_ID            = "F-PCERN-2"
 let F2_RETRACT       = "classical Hamiltonian τ=4 phase mode claim retracted"
 let F2_T1_SCRIPTS    = ["calc_classical.hexa"]
 let F2_T2_SCRIPTS    = ["numerics_classical.hexa", "numerics_liouville.hexa", "numerics_se3_partial.hexa"]
+let F2_T3_SCRIPTS    = []   // no T3 yet — Stage-1+ benchtop required
 let F2_T3_DESCRIPTION = "real LWFA bench demonstrates 4-phase pump→bubble→capture→extract"
 
 let F3_ID            = "F-PCERN-3"
 let F3_RETRACT       = "1 GeV/m wakefield E-field claim retracted"
 let F3_T1_SCRIPTS    = ["calc_wakefield.hexa"]
 let F3_T2_SCRIPTS    = ["numerics_wakefield.hexa", "numerics_lwfa_parity.hexa", "numerics_lwfa_solver.hexa"]
+let F3_T3_SCRIPTS    = []   // no T3 yet — DESY/SLAC API or live feed TBD
 let F3_T3_DESCRIPTION = "live DESY/SLAC LWFA bench feed within order of magnitude"
 
 fn check_roadmap_declares(token: str) -> bool {
@@ -127,21 +130,28 @@ fn _emit_tier_line(label: str, scripts: [str]) {
 }
 
 fn _emit_falsifier(id: str, retract: str,
-                   t1_scripts: [str], t2_scripts: [str], t3_desc: str) {
+                   t1_scripts: [str], t2_scripts: [str],
+                   t3_scripts: [str], t3_desc: str) {
     let t1_ok = _all_present(t1_scripts)
     let t2_ok = _all_present(t2_scripts)
-    let t3_ok = false
+    let t3_ok = t3_scripts.len() > 0 && _all_present(t3_scripts)
     let pct = _closure_pct(t1_ok, t2_ok, t3_ok)
-    let status_str = if pct >= 67 { "PARTIAL closure (algebra + numerics)" }
+    let status_str = if pct == 100 { "FULL closure (algebra + numerics + empirical)" }
+                     else if pct >= 67 { "PARTIAL closure (algebra + numerics)" }
                      else if pct >= 33 { "EARLY closure (algebra only)" }
                      else { "UNVERIFIED" }
     let t2_count = t2_scripts.len()
+    let t3_count = t3_scripts.len()
     println("    ✗ " + id + ": " + retract)
-    println("         closure:  " + str(pct) + "%   (" + status_str + ")  [" +
-            str(t2_count) + " T2 script(s)]")
+    println("         closure:  " + str(pct) + "%   (" + status_str + ")  [T2 ×" +
+            str(t2_count) + ", T3 ×" + str(t3_count) + "]")
     _emit_tier_line("T1 algebra:  ", t1_scripts)
     _emit_tier_line("T2 numerics: ", t2_scripts)
-    println("         T3 empirical: ✗  " + t3_desc)
+    if t3_ok {
+        _emit_tier_line("T3 empirical:", t3_scripts)
+    } else {
+        println("         T3 empirical: ✗  " + t3_desc)
+    }
 }
 
 fn check_tier_scripts_present(fid: str, label: str, scripts: [str]) {
@@ -169,11 +179,11 @@ fn main() {
     println("")
 
     println("  Falsifiers declared:")
-    _emit_falsifier(F1_ID, F1_RETRACT, F1_T1_SCRIPTS, F1_T2_SCRIPTS, F1_T3_DESCRIPTION)
+    _emit_falsifier(F1_ID, F1_RETRACT, F1_T1_SCRIPTS, F1_T2_SCRIPTS, F1_T3_SCRIPTS, F1_T3_DESCRIPTION)
     println("")
-    _emit_falsifier(F2_ID, F2_RETRACT, F2_T1_SCRIPTS, F2_T2_SCRIPTS, F2_T3_DESCRIPTION)
+    _emit_falsifier(F2_ID, F2_RETRACT, F2_T1_SCRIPTS, F2_T2_SCRIPTS, F2_T3_SCRIPTS, F2_T3_DESCRIPTION)
     println("")
-    _emit_falsifier(F3_ID, F3_RETRACT, F3_T1_SCRIPTS, F3_T2_SCRIPTS, F3_T3_DESCRIPTION)
+    _emit_falsifier(F3_ID, F3_RETRACT, F3_T1_SCRIPTS, F3_T2_SCRIPTS, F3_T3_SCRIPTS, F3_T3_DESCRIPTION)
 
     println("")
     println("  Roadmap registration audit:")

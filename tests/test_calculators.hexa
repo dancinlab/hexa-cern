@@ -37,6 +37,7 @@ let CASES = [
     "numerics_lattice_arithmetic.hexa|__HEXA_CERN_NUMERICS_LATTICE_ARITHMETIC__ PASS",
     "lint_numerics.hexa|__HEXA_CERN_LINT_NUMERICS__ PASS",
     "saturation_check.hexa|__HEXA_CERN_RSC_SATURATED__ STOP",
+    "empirical_lhc_api.hexa|__HEXA_CERN_EMPIRICAL_LHC_API__ PASS",
     "falsifier_check.hexa|__HEXA_CERN_FALSIFIER__ PASS",
 ]
 

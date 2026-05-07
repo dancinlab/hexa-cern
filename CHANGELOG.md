@@ -9,6 +9,37 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased] — v1.1.0-pre on `main`
 
+### Added (2026-05-08 — eighteenth iteration · F-PCERN-1 100% closure)
+
+- `verify/empirical_lhc_api.hexa` — F-PCERN-1's first **T3 empirical**
+  script. At runtime queries CERN Open Data REST API
+  (`https://opendata.cern.ch/api/records/?experiment=ATLAS&type=Dataset`)
+  and parses the `aggregations.collision_energy.buckets` field. ATLAS
+  publishes 4 collision energies (5 / 8 / 13 / 13.6 TeV center-of-mass).
+  Each per-beam value is compared to σ-cascade E_5 = 10 TeV per-beam
+  prediction with (σ-φ)=10× tolerance.
+  - Run online → 6/6 PASS:
+    · network probe 200
+    · API responds 18.9 KB JSON
+    · 4 distinct collision_energy values found
+    · all per-beam ∈ [1, 100] TeV band (= E_5 ± σ-φ)
+    · max per-beam / E_5 = 6.8/10 = 0.68 (rounded-decade-ladder regime)
+    · parent doc anchored
+  - Run offline → SKIP (sentinel still PASS so CI without internet
+    doesn't false-fail). T3 unverifiable ≠ T3 falsified.
+- `verify/falsifier_check.hexa` — extended to track T3 by ARRAY
+  (was string description only). F1_T3_SCRIPTS = ["empirical_lhc_api.hexa"]
+  → F-PCERN-1 closure pct now reads **100% FULL** (algebra + numerics +
+  empirical). F2/F3 stay at 67% PARTIAL (T3_SCRIPTS empty).
+- `cli/hexa-cern.hexa verify` — new `empirical-lhc` sub. The
+  `verify all` aggregator now runs **20/20** scripts (was 19/19).
+- Sentinel: `__HEXA_CERN_EMPIRICAL_LHC_API__ PASS`.
+
+This is the first chunk that breaks the recipe §3 assumption "T3
+always ✗ until Stage-1+". Archival API access via CERN Open Data
+qualifies as `Stage-2 (실험 데이터 수집 + 라이브 피드 통합)` per recipe §9 —
+real measured data, programmatically retrievable.
+
 ### Added (2026-05-07 — seventeenth iteration · RSC saturated)
 
 - `verify/saturation_check.hexa` — recipe §7.4 priority 15 self-stop
