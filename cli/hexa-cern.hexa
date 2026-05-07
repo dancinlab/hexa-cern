@@ -193,6 +193,7 @@ let VERIFY_SUBS = [
     "numerics-lhc",
     "numerics-lwfa",
     "numerics-lattice",
+    "lint-numerics",
     "falsifier",
 ]
 
@@ -209,6 +210,7 @@ fn _verify_script(sub: str) -> str {
     if sub == "numerics-lhc"       { return VERIFY_DIR + "/numerics_lhc_parity.hexa" }
     if sub == "numerics-lwfa"      { return VERIFY_DIR + "/numerics_lwfa_parity.hexa" }
     if sub == "numerics-lattice"   { return VERIFY_DIR + "/numerics_lattice_arithmetic.hexa" }
+    if sub == "lint-numerics"      { return VERIFY_DIR + "/lint_numerics.hexa" }
     if sub == "falsifier"          { return VERIFY_DIR + "/falsifier_check.hexa" }
     return ""
 }
@@ -263,6 +265,7 @@ fn cmd_verify(a: [str]) {
         println("  numerics-lhc        F-PCERN-1 collider parity numerics (LEP/Tevatron/LHC/FCC)")
         println("  numerics-lwfa       F-PCERN-3 LWFA parity numerics (BELLA/FACET/ATHENA/FLASHFwd)")
         println("  numerics-lattice    n=6 lattice float-arithmetic cross-check (math_pure stability)")
+        println("  lint-numerics       meta-lint: every numerics_*.hexa follows regression conventions")
         println("  falsifier           F-PCERN-1/2/3 preregister checklist")
         println("")
         println("exit:")
@@ -387,7 +390,7 @@ fn cmd_help() {
     println("                       | sigma | numerics-sigma")
     println("                       | classical | numerics-classical")
     println("                       | numerics-cross | numerics-lhc | numerics-lwfa")
-    println("                       | numerics-lattice | falsifier")
+    println("                       | numerics-lattice | lint-numerics | falsifier")
     println("")
     println("global flags:")
     println("  --version       show version")

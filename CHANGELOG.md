@@ -9,6 +9,24 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased] — v1.1.0-pre on `main`
 
+### Added (2026-05-07 — eleventh iteration)
+
+- `verify/lint_numerics.hexa` — meta-lint that grep-audits every
+  `verify/numerics_*.hexa` for 5 regression-discipline invariants:
+    1. `use "self/runtime/math_pure"` (no raw float math sneaks in)
+    2. `__HEXA_CERN_<NAME>__ PASS` sentinel emitted
+    3. `FALSIFIERS` list declared
+    4. `exit(0)` on PASS path
+    5. `RUN` / `FAIL` accounting counters present
+  Plus an inventory completeness check (NUMERICS_SCRIPTS list count
+  must match the on-disk `numerics_*.hexa` glob count). 36/36 PASS:
+  35 invariant checks (5 × 7 scripts) + 1 inventory check.
+  - File originally `numerics_methodology.hexa`; renamed to `lint_numerics.hexa`
+    so it doesn't trip its own inventory check (it's a LINT, not a
+    numerical solver).
+- `cli/hexa-cern.hexa verify` — new `lint-numerics` sub. The
+  `verify all` aggregator now runs **14/14** scripts (was 13/13).
+
 ### Added (2026-05-07 — tenth iteration)
 
 - `verify/numerics_lattice_arithmetic.hexa` — float-arithmetic

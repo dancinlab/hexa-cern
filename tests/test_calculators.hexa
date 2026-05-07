@@ -31,6 +31,7 @@ let CASES = [
     "numerics_lhc_parity.hexa|__HEXA_CERN_NUMERICS_LHC_PARITY__ PASS",
     "numerics_lwfa_parity.hexa|__HEXA_CERN_NUMERICS_LWFA_PARITY__ PASS",
     "numerics_lattice_arithmetic.hexa|__HEXA_CERN_NUMERICS_LATTICE_ARITHMETIC__ PASS",
+    "lint_numerics.hexa|__HEXA_CERN_LINT_NUMERICS__ PASS",
     "falsifier_check.hexa|__HEXA_CERN_FALSIFIER__ PASS",
 ]
 
