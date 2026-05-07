@@ -68,7 +68,7 @@ fn _check(ok: bool, label: str, detail: str) {
 // ── F-PCERN T2 / T3 stacks (must match falsifier_check.hexa) ───────────
 let F1_T2 = ["numerics_sigma_cascade.hexa", "numerics_lhc_parity.hexa", "numerics_bending.hexa"]
 let F2_T2 = ["numerics_classical.hexa", "numerics_liouville.hexa", "numerics_se3_partial.hexa"]
-let F3_T2 = ["numerics_wakefield.hexa", "numerics_lwfa_parity.hexa", "numerics_lwfa_solver.hexa", "numerics_lwfa_relativistic.hexa"]
+let F3_T2 = ["numerics_wakefield.hexa", "numerics_lwfa_parity.hexa", "numerics_lwfa_solver.hexa", "numerics_lwfa_relativistic.hexa", "numerics_beam_dynamics.hexa"]
 let F1_T3 = ["empirical_lhc_api.hexa"]
 let F2_T3 = ["empirical_classical_arxiv.hexa"]
 let F3_T3 = ["empirical_lwfa_hepdata.hexa"]
