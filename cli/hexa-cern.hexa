@@ -209,6 +209,7 @@ let VERIFY_SUBS = [
     "firmware-timing",
     "firmware-dac",
     "firmware-adc",
+    "firmware-control",
 ]
 
 fn _verify_script(sub: str) -> str {
@@ -240,6 +241,7 @@ fn _verify_script(sub: str) -> str {
     if sub == "firmware-timing"    { return PC + "/firmware/sim/timing_chain.hexa" }
     if sub == "firmware-dac"       { return PC + "/firmware/sim/dac_chain.hexa" }
     if sub == "firmware-adc"       { return PC + "/firmware/sim/adc_chain.hexa" }
+    if sub == "firmware-control"   { return PC + "/firmware/sim/control_loop.hexa" }
     return ""
 }
 
@@ -315,6 +317,7 @@ fn cmd_verify(a: [str]) {
         println("  firmware-timing     §A.6.1 step C 1/4 — firmware/sim master clock + trigger sim")
         println("  firmware-dac        §A.6.1 step C 2/4 — firmware/sim 16-bit DAC chain (HV/coil/pump/valve)")
         println("  firmware-adc        §A.6.1 step C 3/4 — firmware/sim ADC chain (BPM 16b/1GS/s + diamond 14b/100MS/s)")
+        println("  firmware-control    §A.6.1 step C 4/4 — firmware/sim closed PID loop (setpoint + disturbance)")
         println("")
         println("exit:")
         println("  0  all selected verifiers PASS")
@@ -440,7 +443,7 @@ fn cmd_help() {
     println("                       | numerics-se3 | numerics-cross | numerics-lhc | numerics-lwfa")
     println("                       | numerics-lattice | lint-numerics | saturation")
     println("                       | empirical-lhc | empirical-lwfa | empirical-classical")
-    println("                       | falsifier | firmware-timing | firmware-dac | firmware-adc")
+    println("                       | falsifier | firmware-timing | firmware-dac | firmware-adc | firmware-control")
     println("")
     println("global flags:")
     println("  --version       show version")

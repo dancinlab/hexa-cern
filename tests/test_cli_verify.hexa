@@ -43,12 +43,12 @@ fn main() {
         println("__HEXA_CERN_TEST_CLI_VERIFY__ PASS")
         exit(0)
     }
-    // Expect aggregate "PASS:  28/28"  (§A.6.1 step C chunk 3 added the
-    // ADC chain sub — adc_chain. Aggregate 27 → 28.)
-    let has_aggregate = out.find("PASS:  28/28") >= 0
+    // Expect aggregate "PASS:  29/29"  (§A.6.1 step C chunk 4 added the
+    // closed-loop PID controller — completes step C. Aggregate 28 → 29.)
+    let has_aggregate = out.find("PASS:  29/29") >= 0
     let pass = code == 0 && has_aggregate
     if pass {
-        println("[test_cli_verify] PASS — verify all reports 28/28 PASS, exit 0")
+        println("[test_cli_verify] PASS — verify all reports 29/29 PASS, exit 0")
         println("__HEXA_CERN_TEST_CLI_VERIFY__ PASS")
         exit(0)
     }
