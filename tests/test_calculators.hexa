@@ -45,6 +45,7 @@ let CASES = [
     "empirical_classical_arxiv.hexa|__HEXA_CERN_EMPIRICAL_CLASSICAL_ARXIV__ PASS",
     "falsifier_check.hexa|__HEXA_CERN_FALSIFIER__ PASS",
     "firmware/sim/timing_chain.hexa|__HEXA_CERN_FW_TIMING_CHAIN__ PASS",
+    "firmware/sim/dac_chain.hexa|__HEXA_CERN_FW_DAC_CHAIN__ PASS",
 ]
 
 fn shq(s: str) -> str {

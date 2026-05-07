@@ -207,6 +207,7 @@ let VERIFY_SUBS = [
     "empirical-classical",
     "falsifier",
     "firmware-timing",
+    "firmware-dac",
 ]
 
 fn _verify_script(sub: str) -> str {
@@ -236,6 +237,7 @@ fn _verify_script(sub: str) -> str {
     if sub == "empirical-classical"{ return VERIFY_DIR + "/empirical_classical_arxiv.hexa" }
     if sub == "falsifier"          { return VERIFY_DIR + "/falsifier_check.hexa" }
     if sub == "firmware-timing"    { return PC + "/firmware/sim/timing_chain.hexa" }
+    if sub == "firmware-dac"       { return PC + "/firmware/sim/dac_chain.hexa" }
     return ""
 }
 
@@ -309,6 +311,7 @@ fn cmd_verify(a: [str]) {
         println("  empirical-classical F-PCERN-2 T3 partial: arXiv classical-mechanics milestones")
         println("  falsifier           F-PCERN-1/2/3 preregister checklist")
         println("  firmware-timing     §A.6.1 step C 1/4 — firmware/sim master clock + trigger sim")
+        println("  firmware-dac        §A.6.1 step C 2/4 — firmware/sim 16-bit DAC chain (HV/coil/pump/valve)")
         println("")
         println("exit:")
         println("  0  all selected verifiers PASS")
@@ -434,7 +437,7 @@ fn cmd_help() {
     println("                       | numerics-se3 | numerics-cross | numerics-lhc | numerics-lwfa")
     println("                       | numerics-lattice | lint-numerics | saturation")
     println("                       | empirical-lhc | empirical-lwfa | empirical-classical")
-    println("                       | falsifier | firmware-timing")
+    println("                       | falsifier | firmware-timing | firmware-dac")
     println("")
     println("global flags:")
     println("  --version       show version")

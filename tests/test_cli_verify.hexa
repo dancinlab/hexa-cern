@@ -43,12 +43,12 @@ fn main() {
         println("__HEXA_CERN_TEST_CLI_VERIFY__ PASS")
         exit(0)
     }
-    // Expect aggregate "PASS:  26/26"  (§A.6.1 step C chunk 1 added the
-    // first firmware/sim/* sub — timing_chain. Aggregate 25 → 26.)
-    let has_aggregate = out.find("PASS:  26/26") >= 0
+    // Expect aggregate "PASS:  27/27"  (§A.6.1 step C chunk 2 added the
+    // 16-bit DAC chain sub — dac_chain. Aggregate 26 → 27.)
+    let has_aggregate = out.find("PASS:  27/27") >= 0
     let pass = code == 0 && has_aggregate
     if pass {
-        println("[test_cli_verify] PASS — verify all reports 26/26 PASS, exit 0")
+        println("[test_cli_verify] PASS — verify all reports 27/27 PASS, exit 0")
         println("__HEXA_CERN_TEST_CLI_VERIFY__ PASS")
         exit(0)
     }
