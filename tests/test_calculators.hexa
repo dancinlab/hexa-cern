@@ -23,6 +23,7 @@ let CASES = [
     "cross_doc_audit.hexa|__HEXA_CERN_CROSS_DOC__ PASS",
     "calc_wakefield.hexa|__HEXA_CERN_WAKEFIELD__ PASS",
     "numerics_wakefield.hexa|__HEXA_CERN_NUMERICS_WAKEFIELD__ PASS",
+    "numerics_lwfa_solver.hexa|__HEXA_CERN_NUMERICS_LWFA_SOLVER__ PASS",
     "calc_sigma_cascade.hexa|__HEXA_CERN_SIGMA_CASCADE__ PASS",
     "numerics_sigma_cascade.hexa|__HEXA_CERN_NUMERICS_SIGMA_CASCADE__ PASS",
     "calc_classical.hexa|__HEXA_CERN_CLASSICAL__ PASS",

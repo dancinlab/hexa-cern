@@ -9,6 +9,34 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased] — v1.1.0-pre on `main`
 
+### Added (2026-05-07 — thirteenth iteration)
+
+- `verify/numerics_lwfa_solver.hexa` — first step toward the v1.1.0
+  target ("mini .hexa CLI wired (laser pulse → electron energy
+  계산)" per `.roadmap.hexa_cern §A.2`). A 1-D Verlet integrator
+  propagates an electron through a sinusoidal plasma-wakefield
+  E_z(q, t) = E_peak·sin(k_p·(q − v_g·t)) and accumulates ΔE
+  step-by-step over a 1 mm path with 1024 Verlet steps.
+  - Field model uses E_peak = 120 GV/m (n=6 derivation σ·(σ-φ))
+    and k_p derived from the cold-plasma wave-breaking relation
+    ω_p = e·E_peak / (m_e·c) — same chain numerics_wakefield uses.
+  - Solver result: electron advances 430 µm, ΔE ≈ 7 keV (well
+    below the 120 MeV closed-form ceiling; honest because a
+    non-trapped electron in a sinusoidal field doesn't accumulate
+    much net work — phase trapping for sustained acceleration is
+    a v1.2.0+ feature).
+  - 7/7 PASS: solver terminates, q advances, ΔE ≥ 0, ΔE ≤
+    closed-form ceiling, E_z periodic in λ_p, λ_p in LWFA window,
+    mini doc anchored.
+  - λ_p = 26.76 µm  matches `numerics_wakefield`'s cold-plasma
+    derivation exactly (independent re-derivation, same answer).
+- `cli/hexa-cern.hexa verify` — new `numerics-solver` sub. The
+  `verify all` aggregator now runs **16/16** scripts (was 15/15).
+- `verify/falsifier_check.hexa` — F-PCERN-3 T2 array now lists
+  3 scripts (numerics_wakefield + numerics_lwfa_parity +
+  numerics_lwfa_solver) — F-PCERN-3 has the deepest T2 stack.
+- `verify/lint_numerics.hexa` — NUMERICS_SCRIPTS extended to 9.
+
 ### Added (2026-05-07 — twelfth iteration)
 
 - `verify/numerics_liouville.hexa` — F-PCERN-2's second T2 stub.

@@ -87,7 +87,7 @@ let F2_T3_DESCRIPTION = "real LWFA bench demonstrates 4-phase pump→bubble→ca
 let F3_ID            = "F-PCERN-3"
 let F3_RETRACT       = "1 GeV/m wakefield E-field claim retracted"
 let F3_T1_SCRIPTS    = ["calc_wakefield.hexa"]
-let F3_T2_SCRIPTS    = ["numerics_wakefield.hexa", "numerics_lwfa_parity.hexa"]
+let F3_T2_SCRIPTS    = ["numerics_wakefield.hexa", "numerics_lwfa_parity.hexa", "numerics_lwfa_solver.hexa"]
 let F3_T3_DESCRIPTION = "live DESY/SLAC LWFA bench feed within order of magnitude"
 
 fn check_roadmap_declares(token: str) -> bool {
