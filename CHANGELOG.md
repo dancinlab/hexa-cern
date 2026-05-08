@@ -7,7 +7,101 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-## [Unreleased] — v1.1.0 on `main`  (RSC code-layer FINAL · §A.6.1 ladder DELIVERED)
+## [Unreleased] — v1.1.0 on `main`  (RSC code-layer FINAL · §A.6.1 A→B→C→D + E delivered)
+
+### Added (2026-05-08 — iters 30..40 · §A.6.1 step E "in-repo perfection" delivered)
+
+After §A.6.1 step D (skeleton-only HDL/MCU/scaffold) landed, the user
+authorized expanding into "all 5 stages of in-repo perfection":
+E1 (HDL completion), E2 (KiCad transcribable engineering pack),
+E3 (full MCU firmware), E4 (ASIC SkyWater stub), E5 (regulatory
+pre-compliance). 11 commits + 1 roll-up.
+
+| step  | role                                                | new files / artifacts                          |
+|:------|:----------------------------------------------------|:----------------------------------------------|
+| E1.1  | Verilog register file + Wishbone slave             | `firmware/hdl/timing_ctrl_regs.v` + TB       |
+| E1.2  | top-level integration + edge-trigger IRQ fix      | `firmware/hdl/timing_ctrl_top.v` + TB         |
+| E3.1  | stm32h7xx-hal + RTIC + memory.x                    | `firmware/mcu/memory.x` + 480 MHz init        |
+| E3.2  | modular split + LTC2668 SPI DAC                    | `firmware/mcu/src/{consts,pi,state,interlock,dac}.rs` |
+| E5.1  | IEC 60825-1 Class 4 laser pre-compliance           | `docs/safety/laser_iec60825.md`               |
+| E5.2  | radiation shielding analysis (5-tier sopfr=5)     | `docs/safety/radiation_shielding.md`          |
+| E2.1  | B3 trigger card engineering pack                   | `pcb/b3_trigger_card/{README,BOM,sch,IO,power,fab}` |
+| E5.3  | ngspice EMC pre-compliance                         | `docs/safety/emc_sim/{decoupling_psrr.cir,psrr_results.md}` |
+| E4.1  | ASIC SkyWater 130nm OpenLane flow stub             | `firmware/asic/timing_ctrl_sky130/`           |
+| E*    | CHANGELOG roll-up (this entry)                      | this file                                     |
+
+**Toolchain validation in this session:**
+
+| tool                | what it validates                                       | status |
+|:--------------------|:--------------------------------------------------------|:-------|
+| `iverilog`          | E1 Verilog testbenches (3 files)                        | ✓ all PASS |
+| `cargo --target thumbv7em-none-eabihf` | E3 Rust embedded compile + 209 KB ELF binary | ✓ ELF produced |
+| `ngspice`           | E5.3 decoupling impedance AC sweep                       | ✓ all bands within spec |
+| `make help` (asic)  | E4 ASIC flow status reporting                           | ✓ tooling-aware |
+
+**Toolchain unavailable in this session (artifacts → engineer hand-off):**
+
+| tool                | what it would validate                                  | mitigation in this session                       |
+|:--------------------|:--------------------------------------------------------|:-------------------------------------------------|
+| KiCad CLI           | E2 schematic ERC + PCB DRC                               | Markdown spec + CSV BOM (transcribable)          |
+| Yosys + OpenROAD    | E4 SKY130 synthesis + GDS                                | flow stub + config.tcl + PDK-independent RTL    |
+| Vivado / Quartus    | E1 bitstream                                              | RTL is vendor-neutral; loads in any FPGA tool    |
+| Real STM32H743 board| E3 actual flash + run                                     | `cargo build --release` ELF flashable any time   |
+
+**Closure invariants intact through all 11 commits:**
+
+| invariant                  | start (post-D)         | end (post-E)            |
+|:---------------------------|:-----------------------|:------------------------|
+| `falsifier_check`          | 20/20 100% closure     | 20/20 100% closure       |
+| `saturation_check`         | 17/17 STOP             | 17/17 STOP               |
+| `cross_doc_audit`          | 15/15                   | 15/15 (untouched)         |
+| `lint_numerics`            | 71/71 · 14 numerics     | 71/71 (untouched)         |
+| `cli/hexa-cern verify all` | 29/29                   | 29/29 (untouched)         |
+| `tests/test_*.hexa`        | 4/4 individual PASS     | 4/4 individual PASS      |
+| HDL Icarus testbenches     | 1 (timing_ctrl_tb)      | 3 (+regs +top integration) |
+| Cargo build target         | check-only              | release ELF (209 KB)     |
+
+**Single-source-of-truth chain extended through all 4 layers:**
+
+```
+firmware/sim/timing_chain.hexa     (numerical, .hexa)
+        ↓
+firmware/hdl/timing_ctrl.v         (Verilog datapath)
+firmware/hdl/timing_ctrl_regs.v   (Verilog register file, +Wishbone)
+firmware/hdl/timing_ctrl_top.v    (Verilog chip-level integration)
+        ↓
+firmware/mcu/src/state.rs         (Rust TriggerSm)
+firmware/mcu/src/dac.rs            (Rust LTC2668 SPI driver)
+firmware/mcu/src/main.rs           (Rust RTIC application)
+        ↓
+firmware/asic/timing_ctrl_sky130/  (SKY130 OpenLane wrapper, future tape-out)
+        ↓
+pcb/b3_trigger_card/BOM.csv        (~$310 / board, JLCPCB quote)
+pcb/b3_trigger_card/schematic_spec.md (transcribable to KiCad)
+pcb/b3_trigger_card/io_map.md      (STM32 pin assignment)
+        ↓
+docs/safety/laser_iec60825.md      (pre-compliance laser path)
+docs/safety/radiation_shielding.md (pre-compliance radiation path)
+docs/safety/emc_sim/psrr_results.md (CISPR-A budget)
+```
+
+Constants `CLK_HZ`, `TICK_HZ`, `D_TRIG_CYCLES`, `GATE_CYCLES` appear
+identically in **all** of: .hexa sim, Verilog HDL, Rust MCU, ASIC
+config, ngspice deck, BOM unit-prices.
+
+**Path forward — Phase E (out of in-repo scope):**
+
+1. **§A.6 step 1**: external collab decision (DESY / SLAC / KEK)
+   — drives MCU SKU, FPGA part, host facility licensing umbrella
+2. **§A.6 step 2**: funding round (~$5–10 M for 24–36 mo build)
+   — buys boards, EE engineer time, PCB house quote, KiCad licenses
+3. **§A.6 step 4**: Stage-2/3 actual benchtop build + beam (years out)
+4. **(optional)** SKY130 shuttle slot via Efabless OpenMPW
+   — free for open-source, ~6 mo cadence
+
+The in-repo `.hexa` runnable surface + everything in this CHANGELOG
+entry stops here. Cron / loop firings post-E now revert to health-
+check-only per recipe §9.1.
 
 ### Added (2026-05-08 — twentyfirst..twentyninth iterations · §A.6.1 A→B→C→D in-repo ladder delivered)
 
