@@ -19,7 +19,7 @@
 
 [package]
 name        = "hexa-cern-laser-mcu"
-version     = "0.2.0-rtic"
+version     = "0.3.0-modular"
 edition     = "2021"
 description = "Firmware for the LWFA benchtop laser-driver MCU"
 license     = "Apache-2.0 OR MIT"
