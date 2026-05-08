@@ -22,5 +22,10 @@ dist/
 build/out/
 *.pdf
 
+# Rust embedded firmware build artifacts
+firmware/mcu/target/
+firmware/target/
+firmware/mcu/Cargo.lock
+
 # .claude harness scratch
 .claude/

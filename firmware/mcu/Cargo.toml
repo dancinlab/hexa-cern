@@ -1,49 +1,59 @@
-# hexa-cern/firmware/mcu/Cargo.toml — §A.6.1 step D 2/3
+# hexa-cern/firmware/mcu/Cargo.toml — §A.6.1 step E3.1
 #
-# Rust embedded firmware skeleton for the §benchtop_v0_design.md B2/B3
-# laser-driver + DAC/ADC pipeline.  Targets STM32H7 (Cortex-M7 @ 480 MHz)
-# per the §3 F2 BOM line ("MCU laser-driver board").
+# Rust embedded firmware for the §benchtop_v0_design.md B2/B3
+# laser-driver + DAC/ADC pipeline.  Targets STM32H743ZIT6 (Cortex-M7
+# @ 480 MHz, 2 MB flash, 1 MB SRAM) per §3 F2 BOM.
 #
-# **STATUS: SKELETON ONLY — NOT BUILDABLE WITHOUT TARGET BOARD**
+# Build (host):
+#   rustup target add thumbv7em-none-eabihf   # one-time
+#   cargo check --target thumbv7em-none-eabihf
+#   cargo build --release
 #
-# This Cargo.toml + src/main.rs compile (with the correct toolchain
-# installed: rustup target add thumbv7em-none-eabihf) but produce no
-# usable binary until:
-#   1. a real STM32H7 dev-board is selected and acquired (§A.6 step 1+2)
-#   2. memory.x is added (vendor-provided linker script)
-#   3. probe-rs / openocd is configured for flashing
+# Flash (board, post §A.6 step 1+2):
+#   probe-rs run --chip STM32H743ZITx
 #
-# Until then, this is an architectural commitment to the Rust-embedded
-# stack (vs C / C++ / MicroPython) for the laser-driver MCU, with all
-# the safety / no-panic / unbounded-stack guarantees that implies.
+# This Cargo.toml has been promoted from skeleton (D 2/3) to full
+# stm32h7xx-hal + RTIC integration (E3.1). `cargo check` is now the
+# de-facto continuous-integration gate; once a board is acquired,
+# `cargo build --release` produces a flashable binary directly.
 
 [package]
 name        = "hexa-cern-laser-mcu"
-version     = "0.1.0-skeleton"
+version     = "0.2.0-rtic"
 edition     = "2021"
-description = "Skeleton firmware for the LWFA benchtop laser-driver MCU"
+description = "Firmware for the LWFA benchtop laser-driver MCU"
 license     = "Apache-2.0 OR MIT"
 authors     = ["dancinlife <hexa-cern@dancinlab.org>"]
-
-# Target: Cortex-M7 with single-precision FPU (STM32H7 / NXP i.MX RT)
-# Set in .cargo/config.toml; this section just documents the assumption.
-# build-target = "thumbv7em-none-eabihf"
+rust-version = "1.75"
 
 [dependencies]
 # core embedded runtime
 cortex-m       = { version = "0.7",  features = ["critical-section-single-core"] }
 cortex-m-rt    = "0.7"
+
+# Safety net: any panic → infinite loop. Watchdog (IWDG) catches it
+# and resets the MCU (§benchtop §9 safety contract).
 panic-halt     = "0.2"
 
-# safety: a hard fault triggers panic-halt → infinite loop. In production
-# the watchdog (§safety §9) catches this and resets the MCU.
+# embedded-hal: stable trait surface for SPI / GPIO / timer drivers.
+embedded-hal   = "1.0"
 
-# logging via RTT (Real-Time Transfer) for board-side debug
-# rtt-target  = "0.4"   # uncomment when board is real
+# nb: nonblocking-IO traits used by hal v0.2-style drivers — needed
+# transitively by stm32h7xx-hal until it fully migrates to e-h 1.0.
+nb             = "1.1"
+
+# stm32h7xx-hal: STM32H7 PAC + HAL.  Feature-gated to STM32H743 SKU.
+# We pin the SKU here; supporting other H7 variants is a build-feature
+# matrix problem deferred to host facility.
+stm32h7xx-hal  = { version = "0.16", features = ["stm32h743", "rt"] }
+
+# rtic 2.x — deterministic concurrency framework.
+rtic           = { version = "2.1", features = ["thumbv7-backend"] }
+rtic-monotonics = { version = "2.0", features = ["cortex-m-systick"] }
+
+# (RTT / probe-rs logging is left commented; flips on when board lands.)
+# rtt-target       = "0.5"
 # panic-rtt-target = "0.1"
-
-# RTIC for deterministic concurrency (preferred over manual NVIC mgmt)
-# rtic        = "2.0"   # uncomment when first peripheral driver lands
 
 [profile.release]
 opt-level     = "s"      # optimize for size; flash is finite

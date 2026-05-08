@@ -32,7 +32,7 @@ help:    ## list targets and their status
 	@echo "  make sim-hexa            ✓  run all firmware/sim/*.hexa  (numerical)"
 	@echo "  make sim-iverilog        ⚠  simulate firmware/hdl/*.v with Icarus"
 	@echo "                              ($(if $(IVERILOG),iverilog OK,iverilog NOT FOUND))"
-	@echo "  make cargo-check         ⚠  cargo check firmware/mcu/  ($(if $(CARGO),cargo OK,cargo NOT FOUND))"
+	@echo "  make cargo-check         ⚠  cargo check + build firmware/mcu/  ($(if $(CARGO),cargo OK,cargo NOT FOUND))"
 	@echo "  make lint                ✓  basic syntax sweep (.hexa/.v/.rs)"
 	@echo "  make build-bitstream     ✗  Vivado/Quartus + board pinout (placeholder)"
 	@echo "  make flash-mcu           ✗  probe-rs + dev-board (placeholder)"
@@ -73,13 +73,17 @@ else
 endif
 
 .PHONY: cargo-check
-cargo-check:    ## cargo check the MCU skeleton (no flashing)
+cargo-check:    ## cargo check + build the MCU firmware (binary in target/)
 ifeq ($(CARGO),)
 	@echo "[cargo-check] cargo NOT INSTALLED — install rustup" >&2
 	@exit 2
 else
-	@cd mcu && $(CARGO) check --target thumbv7em-none-eabihf 2>&1 \
-	    || (echo "[cargo-check] note: link errors are EXPECTED — memory.x is missing in skeleton mode" && true)
+	@cd mcu && $(CARGO) check --target thumbv7em-none-eabihf
+	@echo "[cargo-check] check OK — running release build to produce binary"
+	@cd mcu && $(CARGO) build --release --target thumbv7em-none-eabihf
+	@echo "[cargo-check] binary at firmware/mcu/target/thumbv7em-none-eabihf/release/hexa-cern-laser-mcu"
+	@ls -la mcu/target/thumbv7em-none-eabihf/release/hexa-cern-laser-mcu
+	@file mcu/target/thumbv7em-none-eabihf/release/hexa-cern-laser-mcu
 endif
 
 .PHONY: lint

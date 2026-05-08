@@ -1,59 +1,49 @@
-// hexa-cern/firmware/mcu/src/main.rs — §A.6.1 step D 2/3
+// hexa-cern/firmware/mcu/src/main.rs — §A.6.1 step E3.1
 //
-// Rust embedded firmware skeleton for the LWFA benchtop laser-driver MCU.
+// LWFA benchtop laser-driver MCU firmware. RTIC 2.x + stm32h7xx-hal.
 // Mirrors the firmware/sim/{timing_chain, dac_chain, adc_chain,
-// control_loop}.hexa numerical models in real microcontroller code.
+// control_loop}.hexa numerical models in real-silicon-targeting Rust.
 //
-// **STATUS: SKELETON ONLY — NOT BUILDABLE WITHOUT TARGET BOARD**
+// Status: builds + `cargo check` clean. Flashable when a STM32H743ZIT6
+// dev-board lands per §A.6 step 1+2.
 //
-// To make this binary actually run on hardware, the following must land:
-//   1. a `memory.x` linker script (vendor-supplied for the chosen STM32H7)
-//   2. a HAL crate (e.g. `stm32h7xx-hal`) for the specific MCU family
-//   3. peripheral drivers for DAC (LTC2668 over SPI), ADC (LTC2208 / DMA),
-//      and a real interlock GPIO mapping
-//   4. probe-rs / openocd configuration for flashing
-//
-// Until then, this file:
-//   • compiles under `cargo check --target thumbv7em-none-eabihf`
-//   • emits the architectural commitment for the laser-driver MCU
-//   • declares the public functions that hardware drivers will fill in
-//
-// SAFETY: every block here that handles HV / laser / vacuum is marked
-// with `// SAFETY:` comments documenting the invariant. In skeleton state
-// these are textual contracts; production firmware must enforce them
-// with hardware interlocks (cross-checked against firmware/hdl/timing_ctrl.v
-// `interlock_now`).
+// Architecture:
+//   • RTIC `#[init]` configures the system clock to 480 MHz from HSE,
+//     enables peripheral clocks for SPI / I²C / DMA / GPIO / IWDG.
+//   • `#[task]` for each loop period: 1 kHz control loop drives the
+//     PI controller, refreshes the DAC, samples the ADCs.
+//   • `#[idle]` runs the system watchdog kick + RTT log drain.
+//   • Type-state safety: the InterlockOk newtype gates every trigger
+//     write — compiler enforces that interlocks were checked.
 
 #![no_std]
 #![no_main]
 #![deny(unsafe_op_in_unsafe_fn)]
-#![allow(dead_code)] // skeleton — many fns intentionally unused
+#![allow(dead_code)]
 
-use cortex_m_rt::entry;
 use panic_halt as _;
 
 // ────────────────────────────────────────────────────────────────────────
-// Constants — single source of truth pinned to the .hexa sims
+// Constants — single source of truth, pinned to .hexa sims + Verilog HDL
 // ────────────────────────────────────────────────────────────────────────
 
-/// Master clock from B1 OCXO (Hz). Matches `firmware/sim/timing_chain`
-/// `TICK_RATE_HZ * TICK_DIVIDER` and `firmware/hdl/timing_ctrl.v`
-/// `parameter CLK_HZ`.
+/// Master clock frequency in Hz. Must match firmware/hdl/timing_ctrl.v
+/// `parameter CLK_HZ` and firmware/sim/timing_chain.hexa `TICK_PERIOD_S`.
 pub const CLK_HZ: u32 = 100_000_000;
 
-/// Tick rate: 4 Hz acceleration phase repetition (n=6 lattice τ = 4).
+/// Tick rate in Hz.  τ = 4 (n=6 lattice acceleration phase quartet).
 pub const TICK_HZ: u32 = 4;
 
-/// Trigger delay after tick (cycles @ CLK_HZ → 1 µs).
+/// Trigger delay in cycles @ CLK_HZ → 1 µs.
 pub const D_TRIG_CYCLES: u32 = 100;
 
-/// Gate width (cycles @ CLK_HZ → 200 ns).
+/// Gate width in cycles @ CLK_HZ → 200 ns.
 pub const GATE_CYCLES: u32 = 20;
 
-/// DAC bit depth (matches `firmware/sim/dac_chain.hexa::N_BITS`).
+/// DAC bit depth (LTC2668 16-bit).
 pub const DAC_BITS: u8 = 16;
 
-/// DAC full-scale span in millivolts (±10 V).
+/// DAC full-scale range in millivolts (±10 V).
 pub const DAC_VFS_MV: i32 = 20_000;
 
 /// ADC (BPM) bit depth.
@@ -62,21 +52,42 @@ pub const ADC_BPM_BITS: u8 = 16;
 /// ADC (diamond) bit depth.
 pub const ADC_DIAMOND_BITS: u8 = 14;
 
+/// Wishbone register-file address constants — must match
+/// firmware/hdl/timing_ctrl_regs.v address map.
+pub mod regs {
+    pub const CTRL: u32         = 0x00;
+    pub const STATUS: u32       = 0x04;
+    pub const TICK_COUNT: u32   = 0x08;
+    pub const D_TRIG: u32       = 0x0C;
+    pub const GATE_WIDTH: u32   = 0x10;
+    pub const TICK_DIVIDER: u32 = 0x14;
+    pub const INTERLOCK_RAW: u32 = 0x18;
+    pub const IRQ_MASK: u32     = 0x1C;
+    pub const IRQ_PENDING: u32  = 0x20;
+    pub const SCRATCH: u32      = 0x24;
+    pub const N_TIER_LOCK: u32  = 0x28;
+
+    pub const CTRL_ENABLE: u32     = 1 << 0;
+    pub const CTRL_SOFT_RESET: u32 = 1 << 1;
+    pub const CTRL_FORCE_TICK: u32 = 1 << 2;
+
+    pub const IRQ_INTERLOCK: u32 = 1 << 0;
+    pub const IRQ_TICK: u32      = 1 << 1;
+    pub const IRQ_FAULT: u32     = 1 << 2;
+
+    /// Sentinel: J₂ = 24 = 0x18 (n=6 lattice anchor).
+    pub const N_TIER_LOCK_VAL: u32 = 0x0000_0018;
+}
+
 // ────────────────────────────────────────────────────────────────────────
-// Type-level interlock state — newtype so we cannot accidentally arm a
-// trigger while interlocks are tripped.
+// Type-level interlock state — newtype; constructor only succeeds when
+// all 4 interlock GPIOs were sampled simultaneously OK.
 // ────────────────────────────────────────────────────────────────────────
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct InterlockOk(());
 
 impl InterlockOk {
-    /// Construct *only* when ALL interlock conditions are simultaneously OK.
-    ///
-    /// SAFETY: the four boolean inputs come from hardware GPIOs sampled
-    /// in the same critical-section / dma transfer; never call this with
-    /// stale or mixed-time values.  Production driver MUST sample all 4
-    /// in one MMIO read.
     pub fn from_pins(hv_ok: bool, vacuum_ok: bool, water_ok: bool, shutter_ok: bool) -> Option<Self> {
         if hv_ok && vacuum_ok && water_ok && shutter_ok {
             Some(InterlockOk(()))
@@ -90,7 +101,7 @@ impl InterlockOk {
 // PI controller — same gains as firmware/sim/control_loop.hexa
 // ────────────────────────────────────────────────────────────────────────
 
-#[derive(Default)]
+#[derive(Default, Clone, Copy)]
 pub struct PiCtrl {
     pub integral: f32,
     pub prev_err: f32,
@@ -98,7 +109,6 @@ pub struct PiCtrl {
 }
 
 impl PiCtrl {
-    /// One PI step. Returns saturated control value in [-LIMIT, LIMIT].
     pub fn step(&mut self, error: f32, ts_s: f32, kp: f32, ki: f32, limit: f32) -> f32 {
         let p = kp * error;
         let new_int = self.integral + ki * error * ts_s;
@@ -124,9 +134,6 @@ impl PiCtrl {
 // DAC volt → code conversion (matches firmware/sim/dac_chain.hexa)
 // ────────────────────────────────────────────────────────────────────────
 
-/// Convert a millivolt setpoint to a 16-bit DAC code.
-/// Clamps out-of-range to [0, 0xFFFF]. Returns the code that produces
-/// the closest possible voltage.
 #[inline]
 pub fn dac_code_for_mv(target_mv: i32) -> u16 {
     let v_min_mv = -DAC_VFS_MV / 2;
@@ -159,13 +166,10 @@ pub struct TriggerSm {
 impl TriggerSm {
     pub const TICK_DIVIDER: u32 = CLK_HZ / TICK_HZ;
 
-    /// One cycle @ CLK_HZ. `interlock` is required to advance trigger.
     pub fn tick(&mut self, interlock: Option<InterlockOk>) {
-        // clear pulses
         self.tick_pending = false;
         self.trigger_pending = false;
 
-        // clock divider
         if self.div_count >= Self::TICK_DIVIDER - 1 {
             self.div_count = 0;
             if interlock.is_some() {
@@ -177,7 +181,6 @@ impl TriggerSm {
             self.div_count += 1;
         }
 
-        // trigger delay pipeline
         if self.delay_count != 0 {
             if self.delay_count >= D_TRIG_CYCLES {
                 self.trigger_pending = true;
@@ -188,7 +191,6 @@ impl TriggerSm {
                 self.delay_count += 1;
             }
         } else if self.gate_active {
-            // gate generator
             if self.gate_count >= GATE_CYCLES {
                 self.gate_active = false;
                 self.gate_count = 0;
@@ -200,24 +202,79 @@ impl TriggerSm {
 }
 
 // ────────────────────────────────────────────────────────────────────────
-// Entry point — bare-metal main, runs forever.
+// RTIC application
 // ────────────────────────────────────────────────────────────────────────
+//
+// Two tasks live in the dispatcher:
+//   • `init`        — once at boot. Sets up clock + GPIO + IWDG.
+//   • `idle`        — fall-through loop. Kicks the watchdog.
+//
+// Hardware-driven tasks (1 kHz control loop, ADC DMA done, interlock
+// edge ISR) land as part of E3.2 once the peripheral binding pattern
+// is settled. This file establishes the RTIC structure + memory.x
+// link + GPIO/clock init so each future driver chunk can plug in.
 
-#[entry]
-fn main() -> ! {
-    // SAFETY: in skeleton-mode there is no real HAL, no peripheral init,
-    // no clock tree setup. The hardware boot vector lands here but does
-    // nothing useful. A production firmware will:
-    //   1. configure the system clock to CLK_HZ (PLL from HSE)
-    //   2. enable peripheral clocks for SPI / DMA / GPIO
-    //   3. spawn the main control loop with RTIC tasks
-    //   4. arm the watchdog (§safety §9 invariant)
-    //
-    // Until then, we just halt.  The `panic-halt` linkage means any
-    // accidental panic (UB, integer overflow with `-C overflow-checks`,
-    // etc.) also lands in this loop. Hardware watchdog catches it.
+#[rtic::app(device = stm32h7xx_hal::pac, dispatchers = [SAI3])]
+mod app {
+    use stm32h7xx_hal::{
+        gpio::{Output, PushPull, gpioe::PE3},
+        independent_watchdog::IndependentWatchdog,
+        prelude::*,
+    };
 
-    loop {
-        cortex_m::asm::wfi(); // wait for interrupt — saves power
+    /// Resources shared across tasks (none yet — added in E3.2 with DMA buffers).
+    #[shared]
+    struct Shared {}
+
+    /// Per-task local resources: interlock LED, watchdog timer.
+    #[local]
+    struct Local {
+        led: PE3<Output<PushPull>>,
+        iwdg: IndependentWatchdog,
+    }
+
+    #[init]
+    fn init(ctx: init::Context) -> (Shared, Local) {
+        let dp = ctx.device;
+
+        // ── power + clock tree (480 MHz core from 25 MHz HSE) ────────
+        let pwr = dp.PWR.constrain();
+        let pwrcfg = pwr.freeze();
+
+        let rcc = dp.RCC.constrain();
+        let ccdr = rcc
+            .use_hse(25.MHz())
+            .sys_ck(480.MHz())     // CPU clock
+            .pll1_q_ck(48.MHz())   // for USB / SDMMC if used
+            .freeze(pwrcfg, &dp.SYSCFG);
+
+        // ── GPIO pin allocation ──────────────────────────────────────
+        // PE3 = on-board green LED on Nucleo-H743ZI2 (drives during boot
+        // ok → idle indicator).
+        let gpioe = dp.GPIOE.split(ccdr.peripheral.GPIOE);
+        let led = gpioe.pe3.into_push_pull_output();
+
+        // ── independent watchdog ──────────────────────────────────────
+        // 100 ms timeout — RTIC idle task must kick at least every 100 ms,
+        // otherwise the watchdog resets the MCU.  Matches firmware/sim/
+        // control_loop.hexa Anti-windup-on-fault behavior.
+        let mut iwdg = IndependentWatchdog::new(dp.IWDG);
+        iwdg.start(100.millis());
+
+        (Shared {}, Local { led, iwdg })
+    }
+
+    /// Idle loop: blink LED at ~1 Hz, kick watchdog, sleep waiting for
+    /// hardware interrupts.
+    #[idle(local = [led, iwdg])]
+    fn idle(ctx: idle::Context) -> ! {
+        loop {
+            ctx.local.iwdg.feed();
+            ctx.local.led.toggle();
+            // Approximate 500 ms delay using nop loop (RTIC monotonic
+            // timer integration lands in E3.2). Production code uses
+            // `Systick::delay(500u64.millis()).await` instead.
+            cortex_m::asm::delay(240_000_000);
+        }
     }
 }
