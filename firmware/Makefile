@@ -51,15 +51,20 @@ sim-hexa:    ## run all firmware/sim/*.hexa scripts
 	@echo "[sim-hexa] done"
 
 .PHONY: sim-iverilog
-sim-iverilog:    ## simulate timing_ctrl.v with Icarus + run testbench
+sim-iverilog:    ## simulate timing_ctrl.v + regs with Icarus + run testbenches
 ifeq ($(IVERILOG),)
 	@echo "[sim-iverilog] iverilog NOT INSTALLED — install icarus-verilog (apt/brew)" >&2
 	@exit 2
 else
 	@mkdir -p target
+	@echo "[sim-iverilog] timing_ctrl_tb.v"
 	$(IVERILOG) -g2012 -o target/timing_ctrl_sim \
 	    hdl/timing_ctrl.v hdl/testbench/timing_ctrl_tb.v
 	$(VVP) target/timing_ctrl_sim
+	@echo "[sim-iverilog] timing_ctrl_regs_tb.v"
+	$(IVERILOG) -g2012 -o target/regs_sim \
+	    hdl/timing_ctrl_regs.v hdl/testbench/timing_ctrl_regs_tb.v
+	$(VVP) target/regs_sim
 endif
 
 .PHONY: cargo-check
