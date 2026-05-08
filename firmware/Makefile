@@ -18,6 +18,7 @@ ENV_RUN := HEXA_SHIM_NO_DARWIN_LANDING=1 RESOURCE_LOCAL_HEXA=1 PETITE_CERN_ROOT=
 IVERILOG := $(shell command -v iverilog 2>/dev/null)
 VVP      := $(shell command -v vvp      2>/dev/null)
 CARGO    := $(shell command -v cargo    2>/dev/null)
+NGSPICE  := $(shell command -v ngspice  2>/dev/null)
 
 .DEFAULT_GOAL := help
 
@@ -34,6 +35,7 @@ help:    ## list targets and their status
 	@echo "                              ($(if $(IVERILOG),iverilog OK,iverilog NOT FOUND))"
 	@echo "  make cargo-check         ⚠  cargo check + build firmware/mcu/  ($(if $(CARGO),cargo OK,cargo NOT FOUND))"
 	@echo "  make lint                ✓  basic syntax sweep (.hexa/.v/.rs)"
+	@echo "  make sim-ngspice         ⚠  EMC pre-compliance ngspice run  ($(if $(NGSPICE),ngspice OK,ngspice NOT FOUND))"
 	@echo "  make build-bitstream     ✗  Vivado/Quartus + board pinout (placeholder)"
 	@echo "  make flash-mcu           ✗  probe-rs + dev-board (placeholder)"
 	@echo
@@ -106,6 +108,15 @@ lint:    ## basic syntax sweep (always available)
 	    grep -q 'SKELETON ONLY' mcu/src/main.rs && \
 	    echo "  ✓ mcu/src/main.rs" || { echo "  ✗ mcu/src/main.rs missing markers"; exit 1; }
 	@echo "[lint] all firmware files conform"
+
+.PHONY: sim-ngspice
+sim-ngspice:    ## EMC pre-compliance ngspice — decoupling impedance sweep
+ifeq ($(NGSPICE),)
+	@echo "[sim-ngspice] ngspice NOT INSTALLED — install ngspice (apt/brew)" >&2
+	@exit 2
+else
+	cd ../docs/safety/emc_sim && $(NGSPICE) -b decoupling_psrr.cir
+endif
 
 .PHONY: build-bitstream
 build-bitstream:    ## ✗ blocked on board choice + Vivado/Quartus install
