@@ -101,6 +101,7 @@ module timing_ctrl_regs #(
     reg [2:0]  irq_mask_r;
     reg [2:0]  irq_pending_r;
     reg [31:0] scratch_r;
+    reg        interlock_ok_d1;
 
     // soft_reset is auto-clearing (one-shot)
     reg        force_tick_oneshot;
@@ -117,6 +118,7 @@ module timing_ctrl_regs #(
             tick_div_r        <= (CLK_HZ / TICK_HZ);
             irq_mask_r        <= 3'b000;
             irq_pending_r     <= 3'b000;
+            interlock_ok_d1   <= 1'b1;     // assume OK at reset to avoid spurious edge
             scratch_r         <= 32'h0;
             wb_ack_o          <= 1'b0;
             wb_err_o          <= 1'b0;
@@ -140,9 +142,12 @@ module timing_ctrl_regs #(
             gate_width_o   <= gate_w_r;
             tick_divider_o <= tick_div_r;
 
-            // capture interrupts: edge-detect the relevant signals
-            if (tick_pulse_i)             irq_pending_r[1] <= 1'b1;
-            if (!interlock_ok_i)          irq_pending_r[0] <= 1'b1;
+            // capture interrupts: edge-detect the relevant signals so the
+            // pending bit can be cleared by W1C even if the underlying
+            // condition persists (e.g. interlock stays down).
+            interlock_ok_d1 <= interlock_ok_i;
+            if (tick_pulse_i)                                  irq_pending_r[1] <= 1'b1;
+            if (interlock_ok_d1 == 1'b1 && interlock_ok_i == 1'b0) irq_pending_r[0] <= 1'b1;
             // bit 2 (fault) reserved for future use
 
             // default Wishbone response

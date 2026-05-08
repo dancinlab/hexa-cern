@@ -65,6 +65,11 @@ else
 	$(IVERILOG) -g2012 -o target/regs_sim \
 	    hdl/timing_ctrl_regs.v hdl/testbench/timing_ctrl_regs_tb.v
 	$(VVP) target/regs_sim
+	@echo "[sim-iverilog] timing_ctrl_top_tb.v"
+	$(IVERILOG) -g2012 -o target/top_sim \
+	    hdl/timing_ctrl.v hdl/timing_ctrl_regs.v hdl/timing_ctrl_top.v \
+	    hdl/testbench/timing_ctrl_top_tb.v
+	$(VVP) target/top_sim
 endif
 
 .PHONY: cargo-check
