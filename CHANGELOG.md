@@ -9,6 +9,39 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased] — v1.1.0 on `main`  (RSC code-layer FINAL · §A.6.1 A→B→C→D + E delivered)
 
+### Added (2026-05-08 — first stdlib/hal consumer · cross-repo demonstration)
+
+- `firmware/mcu/trigger_host.hexa` (~205 lines) — **first stdlib/hal
+  consumer in hexa-cern**. Cross-repo demonstration of stdlib/hal
+  v1.11.0 reach (HW-12 lattice + GPGPU σ=12 + AI-native axis + 3-PDK
+  ai_native paper backends).
+
+  Pattern: `hexa-chip/firmware/mcu/{npu_host, corner_seq,
+  thermal_coord}.hexa` (Phase D iter 4 sister) — same handle-pool /
+  lifecycle / falsifier re-check shape.
+
+  Surface (paper-tier; FFI is downstream per stdlib/hal canon §7.5):
+    trigger_host_configure() -> int
+    trigger_host_arm(interlock_word) -> bool
+    trigger_host_fire() -> int   (returns gate width ns)
+    trigger_host_read_interlocks() -> int   (4-bit packed)
+    trigger_host_pi_step(setpoint_mv, measured_mv) -> int   (DAC code)
+    trigger_host_dac_write(ch, code) -> bool
+    trigger_host_adc_read(ch) -> int
+    trigger_host_meta() -> [str]
+    trigger_host_invariant_{sigma, phi, tau}() -> int
+
+  stdlib/hal imports (paper ledger; resolved via hx install hexa-lang):
+    core / gpio / intr / timer / adc / dac / uart / pwm
+    (8 σ-slots out of 12 = 67% coverage on stm32h7 backend)
+
+  Constants mirror `firmware/sim/{timing_chain, dac_chain, adc_chain,
+  control_loop}.hexa` for cross-doc audit consistency. Falsifier
+  ledger F-CERN-1..4 (cross-repo drift / σ-slot overflow / PI loop
+  Nyquist / gate-jitter spec).
+
+  PASS sentinel: `__HEXA_CERN_TRIGGER_HOST__ PASS`.
+
 ### Added (2026-05-08 — iters 30..40 · §A.6.1 step E "in-repo perfection" delivered)
 
 After §A.6.1 step D (skeleton-only HDL/MCU/scaffold) landed, the user
