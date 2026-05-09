@@ -2,7 +2,7 @@
 
 > hexa-cern — n=6 sigma-cascade 6-order benchtop accelerator (100 MeV / 1 GeV/m, mini + parent + classical 3-pillar).
 
-A petite, peer-of-Lumière standalone repo from the `dancinlab` org. Where Lumière takes the camera/character axes, **hexa-cern** takes the *accelerator* axis: three pillars distilled from the n6-architecture physics domain into a single MIT-licensed bundle.
+A petite, peer-of-Lumière standalone repo from the `dancinlab` org. Where Lumière takes the camera/character axes, **hexa-cern** takes the *accelerator* axis: three pillars distilled from the canon physics domain into a single MIT-licensed bundle.
 
 ---
 
@@ -70,7 +70,7 @@ Pillar specs live under `<pillar>/doc/`:
 
 v1.0.0 ships (frozen 2026-05-06):
 
-- 3 pillar specs (`.md`, extracted from `n6-architecture@c0f1f570`)
+- 3 pillar specs (`.md`, extracted from `canon@c0f1f570`)
 - a `cli/hexa-cern.hexa` dispatcher with 3 pillar verbs + status / selftest
 
 v1.1.0-pre adds (on `main`, 2026-05-07):
@@ -208,7 +208,7 @@ end-to-end (no Python, no shell-only logic).
 | cousin (PET cyclotron, antimatter)   | [`dancinlab/hexa-antimatter`](https://github.com/dancinlab/hexa-antimatter) | parallel acceleration use case      |
 | Stage-3 propulsion dependent         | [`dancinlab/hexa-ufo`](https://github.com/dancinlab/hexa-ufo)               | downstream propulsion consumer      |
 
-Provenance: extracted from [`n6-architecture`](https://github.com/dancinlab/n6-architecture) at SHA `c0f1f570` on 2026-05-06.
+Provenance: extracted from [`canon`](https://github.com/dancinlab/canon) at SHA `c0f1f570` on 2026-05-06.
 
 Sister repo (peer extraction): [`dancinlab/lumiere`](https://github.com/dancinlab/lumiere) — camera-filter + hexa-main-character apps-axis.
 

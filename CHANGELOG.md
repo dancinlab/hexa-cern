@@ -636,7 +636,7 @@ All new code is `.hexa` (zero `.py` added). Audits the v1.0.0 frozen specs witho
 ## [1.0.0] — 2026-05-06
 
 ### Added
-- Initial extraction from `n6-architecture@c0f1f570` (2026-05-06).
+- Initial extraction from `canon@c0f1f570` (2026-05-06).
 - 3-pillar bundle ships specs only:
   - `mini/doc/mini-accelerator.md`        — HEXA-MINI-ACCEL (benchtop laser-plasma 100 MeV / 1 GeV/m)
   - `parent/doc/particle-accelerator.md`  — HEXA-PACCEL (integrated parent accelerator)

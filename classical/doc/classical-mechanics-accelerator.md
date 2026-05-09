@@ -1,4 +1,4 @@
-<!-- @canonical: n6-architecture@0570a835:domains/physics/classical-mechanics-accelerator/classical-mechanics-accelerator.md -->
+<!-- @canonical: canon@d1640e62:domains/physics/classical-mechanics-accelerator/classical-mechanics-accelerator.md -->
 <!-- @extracted: 2026-05-06 -->
 <!-- @md5_at_extraction: 9b724ec9d1177a7587a66d542cb49e4c -->
 <!-- gold-standard: shared/harness/sample.md -->

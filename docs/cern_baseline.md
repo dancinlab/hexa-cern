@@ -2,7 +2,7 @@
 
 > Scope: design-target comparison only. **Specs only, .hexa CLI TBD.** σ-cascade 6-order figures are HEXA design ceilings, NOT measurements. Stage-1+ benchtop builds required for empirical validation.
 
-Provenance: extracted from `n6-architecture@c0f1f570` (`domains/physics/mini-accelerator/`, `particle-accelerator/`, `classical-mechanics-accelerator/`) on 2026-05-06.
+Provenance: extracted from `canon@c0f1f570` (`domains/physics/mini-accelerator/`, `particle-accelerator/`, `classical-mechanics-accelerator/`) on 2026-05-06.
 
 n=6 lattice constants used below: σ(6)=12, τ(6)=4, φ(6)=2.
 

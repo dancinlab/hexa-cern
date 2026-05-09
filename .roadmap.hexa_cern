@@ -43,7 +43,7 @@ DoD:
 
 ## §A.3 Cycle history
 
-- **Cycle 0 (2026-05-06)** — v1.0.0 initial extraction from n6-architecture@c0f1f570. Commit `ec15584`. 13 files.
+- **Cycle 0 (2026-05-06)** — v1.0.0 initial extraction from canon@c0f1f570. Commit `ec15584`. 13 files.
 - **Cycle 1 (2026-05-07)** — v1.1.0-pre `.hexa` runnable surface lands. Adds:
   - `verify/lattice_check.hexa` (23/23 PASS)
   - `verify/cross_doc_audit.hexa` (11/11 PASS)

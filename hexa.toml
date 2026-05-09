@@ -2,7 +2,7 @@
 #
 # Spec: shared/hexa-lang/hexa-toml-spec.json (version 1.0.0)
 # Distribution target: hx install hexa-cern
-# Provenance: extracted from n6-architecture/domains/physics/{mini,particle,classical-mechanics}-accelerator/
+# Provenance: extracted from canon/domains/physics/{mini,particle,classical-mechanics}-accelerator/
 #             on 2026-05-06 (n6-arch SHA c0f1f570)
 
 [package]
@@ -80,7 +80,7 @@ verify_pass_v110pre = "6/6 (lattice 23/23 + cross_doc 11/11 + wakefield 6/6 + si
 build_pdfs = 3
 tests_pass = "4/4 (selftest + lattice + calculators + cli_verify)"
 verdict = "SPECS_ONLY"
-extracted_from = "n6-architecture/domains/physics/{mini,particle,classical-mechanics}-accelerator/ @ c0f1f570"
+extracted_from = "canon/domains/physics/{mini,particle,classical-mechanics}-accelerator/ @ c0f1f570"
 
 # ── Scope honesty (raw#10 C3) ─────────────────────────────
 [scope]

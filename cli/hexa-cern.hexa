@@ -415,7 +415,7 @@ fn cmd_selftest(a: [str]) {
 
 fn cmd_version() {
     println("hexa-cern " + VERSION)
-    println("standalone hexa-cern benchtop accelerator bundle (HEXA family — extracted from n6-architecture@c0f1f570 on 2026-05-06)")
+    println("standalone hexa-cern benchtop accelerator bundle (HEXA family — extracted from canon@c0f1f570 on 2026-05-06)")
     println("license: MIT")
     println("repo:    https://github.com/dancinlab/hexa-cern")
 }

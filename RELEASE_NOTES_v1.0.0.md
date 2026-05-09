@@ -1,7 +1,7 @@
 # hexa-cern v1.0.0 — initial extraction 💫
 
 **Released:** 2026-05-06
-**Provenance:** `dancinlab/n6-architecture@c0f1f570` → `dancinlab/hexa-cern@v1.0.0`
+**Provenance:** `dancinlab/canon@c0f1f570` → `dancinlab/hexa-cern@v1.0.0`
 **Sister extraction:** `dancinlab/lumiere` (peer)
 **License:** MIT
 **Verdict:** SPECS_ONLY (3/3 pillar specs imported; .hexa CLI TBD)
@@ -10,11 +10,11 @@
 
 ## What ships
 
-A petite, peer-of-Lumière standalone bundle distilling the n6-architecture **accelerator** axis into a single MIT-licensed repo.
+A petite, peer-of-Lumière standalone bundle distilling the canon **accelerator** axis into a single MIT-licensed repo.
 
 ### 3 pillars (specs only)
 
-| pillar       | source (n6-architecture@c0f1f570)                                                       | role                                              |
+| pillar       | source (canon@c0f1f570)                                                       | role                                              |
 |:-------------|:----------------------------------------------------------------------------------------|:--------------------------------------------------|
 | `mini`       | `domains/physics/mini-accelerator/mini-accelerator.md`                                  | benchtop laser-plasma 100 MeV / 1 GeV/m           |
 | `parent`     | `domains/physics/particle-accelerator/particle-accelerator.md`                          | integrated parent particle accelerator            |
