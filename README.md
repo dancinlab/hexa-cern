@@ -1,5 +1,7 @@
 # 💫 hexa-cern
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20102596.svg)](https://doi.org/10.5281/zenodo.20102596)
+
 > hexa-cern — n=6 sigma-cascade 6-order benchtop accelerator (100 MeV / 1 GeV/m, mini + parent + classical 3-pillar).
 
 A petite, peer-of-Lumière standalone repo from the `dancinlab` org. Where Lumière takes the camera/character axes, **hexa-cern** takes the *accelerator* axis: three pillars distilled from the canon physics domain into a single MIT-licensed bundle.
