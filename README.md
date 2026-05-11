@@ -133,25 +133,31 @@ closure pct, math_pure conventions, recipe for adding new numerics).
 
 ## § Install
 
-```bash
-# package manager (recommended)
-hx install hexa-cern
+### Via `hx` (recommended)
 
-# or clone directly:
-git clone https://github.com/dancinlab/hexa-cern
-cd hexa-cern
-hexa run cli/hexa-cern.hexa status
-hexa run cli/hexa-cern.hexa verify all   # 12/12 PASS expected
+```bash
+# Install hexa-lang (ships `hexa` + `hx` package manager)
+curl -fsSL https://raw.githubusercontent.com/dancinlab/hexa-lang/main/install.sh | bash
+
+# Install hexa-cern
+hx install hexa-cern          # global, pulls latest from registry
+hx install hexa-cern@1.0.0    # pin specific version
+hexa-cern --version
 ```
 
-After `hx install hexa-cern`, the shim lands at `~/.hx/bin/hexa-cern`.
-Run `hexa-cern verify all` from anywhere — the CLI auto-resolves
-`PETITE_CERN_ROOT` from `~/.hx/packages/hexa-cern`.
+`hx install hexa-cern` pulls from <https://github.com/dancinlab/hexa-cern> and
+installs the standalone CLI under `$HX_HOME/bin/hexa-cern`. The hexa-lang
+package registry resolves any cross-substrate dependencies declared in
+`hexa.toml`.
 
-Cost (Mac local): **$0** — verify scripts are pure `.hexa` (file reads + arithmetic).
+### Optional deps
+
+`hexa-cern` is **pure hexa-lang stdlib** — zero Python deps, zero external.
+All default subcommands run with `hx install hexa-cern` alone. Cross-substrate
+extras (e.g. `qmirror` for ANU-QRNG + Aer state-vector simulator) are
+auto-resolved by `hx install` when declared in `hexa.toml`.
 
 ---
-
 ## § Repository layout
 
 ```
