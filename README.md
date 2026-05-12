@@ -131,31 +131,25 @@ closure pct, math_pure conventions, recipe for adding new numerics).
 
 ---
 
-## § Install
-
-### Via `hx` (recommended)
+## Install
 
 ```bash
-# Install hexa-lang (ships `hexa` + `hx` package manager)
-curl -fsSL https://raw.githubusercontent.com/dancinlab/hexa-lang/main/install.sh | bash
+# 1. Install hexa-lang (gives you `hexa` + `hx` package manager)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dancinlab/hexa-lang/main/install.sh)"
 
-# Install hexa-cern
-hx install hexa-cern          # global, pulls latest from registry
-hx install hexa-cern@1.0.0    # pin specific version
-hexa-cern --version
+# 2. Install hexa-cern
+hx install hexa-cern
 ```
 
-`hx install hexa-cern` pulls from <https://github.com/dancinlab/hexa-cern> and
-installs the standalone CLI under `$HX_HOME/bin/hexa-cern`. The hexa-lang
-package registry resolves any cross-substrate dependencies declared in
-`hexa.toml`.
+## Run
 
-### Optional deps
-
-`hexa-cern` is **pure hexa-lang stdlib** — zero Python deps, zero external.
-All default subcommands run with `hx install hexa-cern` alone. Cross-substrate
-extras (e.g. `qmirror` for ANU-QRNG + Aer state-vector simulator) are
-auto-resolved by `hx install` when declared in `hexa.toml`.
+```bash
+hexa-cern status          # 0/3-wired pillar table + verdict + caveats
+hexa-cern selftest        # full 3-pillar sentinel sweep
+hexa-cern verify          # n=6 invariant + per-pillar calculators
+hexa-cern --version       # show version
+hexa-cern --help          # full usage
+```
 
 ---
 ## § Repository layout
