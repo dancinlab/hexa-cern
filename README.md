@@ -8,7 +8,7 @@ A petite, peer-of-Lumière standalone repo from the `dancinlab` org. Where Lumi�
 
 ---
 
-## § Why — benchtop CERN
+## Why — benchtop CERN
 
 LHC fills a 27 km tunnel for 7 TeV. DESY runs a 1 GeV/m laser-plasma prototype on a research-lab footprint. **hexa-cern's design target is a benchtop σ-φ=10 GeV/m continuous-mode accelerator at 100 MeV total**, threaded by the n=6 perfect-number lattice (σ(6)=12, τ(6)=4, φ(6)=2).
 
@@ -27,40 +27,7 @@ This is the **why**: a CERN you can put on a bench, drawn from the same n=6 inva
 
 ---
 
-## § Verbs — 3 pillars
-
-```
-hexa-cern <pillar>            description                                  status
-─────────────────────────────────────────────────────────────────────────────────────
-hexa-cern mini                HEXA-MINI-ACCEL                              SPEC-ONLY
-                                benchtop laser-plasma 100 MeV / 1 GeV/m
-hexa-cern parent              HEXA-PACCEL                                  SPEC-ONLY
-                                integrated parent particle accelerator
-hexa-cern classical           HEXA-CLASSIC-ACCEL                           SPEC-ONLY
-                                classical-mechanics baseline reference
-```
-
-Plus utility subcmds:
-
-```
-hexa-cern status              0/3-wired pillar table + verdict + caveats
-hexa-cern selftest            3-pillar sentinel sweep
-hexa-cern verify [<sub>]      n=6 invariant + per-pillar calculator audits
-                                sub: all (default) | lattice | cross-doc
-                                   | wakefield | sigma | classical | falsifier
-hexa-cern --version           print version
-hexa-cern --help              full usage
-```
-
-Pillar specs live under `<pillar>/doc/`:
-
-- [`mini/doc/mini-accelerator.md`](mini/doc/mini-accelerator.md)
-- [`parent/doc/particle-accelerator.md`](parent/doc/particle-accelerator.md)
-- [`classical/doc/classical-mechanics-accelerator.md`](classical/doc/classical-mechanics-accelerator.md)
-
----
-
-## § Verification + Status
+## Verification + Status
 
 ### Status
 
@@ -152,7 +119,7 @@ hexa-cern --help          # full usage
 ```
 
 ---
-## § Repository layout
+## Repository layout
 
 ```
 hexa-cern/
@@ -202,7 +169,7 @@ end-to-end (no Python, no shell-only logic).
 
 ---
 
-## § Cross-link
+## Cross-link
 
 | dependency / cousin                  | repo                                                  | role                                |
 |-------------------------------------:|:------------------------------------------------------|:------------------------------------|
@@ -216,7 +183,7 @@ Sister repo (peer extraction): [`dancinlab/lumiere`](https://github.com/dancinla
 
 ---
 
-## § License
+## License
 
 MIT — see [`LICENSE`](LICENSE).
 
