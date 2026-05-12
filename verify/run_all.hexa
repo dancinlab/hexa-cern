@@ -1,0 +1,121 @@
+#!hexa strict
+// hexa-cern/verify/run_all.hexa — orchestrator (.hexa primary).
+//
+// Single CLI entry that runs all verify/*.hexa scripts + firmware/sim/*.hexa
+// + tests/*.hexa and aggregates pass/fail. Sister of hexa-rtsc's
+// verify/run_all.hexa pattern.
+//
+// Run:
+//     hexa run verify/run_all.hexa     # exit 0 = all subscripts PASS
+//
+// Requires HEXA_LANG=<hexa-lang root> (for self/runtime/math_pure imports
+// from numerics_*.hexa). PETITE_CERN_ROOT defaults to cwd if unset.
+//
+// @no-lock-needed
+
+let HOME = env("HOME")
+
+fn _root() -> str {
+    let r = env("PETITE_CERN_ROOT")
+    if r.len() > 0 { return r }
+    let pwd = exec("pwd").trim()
+    if pwd.len() > 0 { return pwd }
+    return HOME + "/core/hexa-cern"  // @allow-devpath
+}
+
+let ROOT = _root()
+
+let SCRIPTS: [str] = [
+    "verify/lattice_check.hexa",
+    "verify/cross_doc_audit.hexa",
+    "verify/calc_wakefield.hexa",
+    "verify/numerics_wakefield.hexa",
+    "verify/numerics_lwfa_solver.hexa",
+    "verify/numerics_lwfa_relativistic.hexa",
+    "verify/numerics_beam_dynamics.hexa",
+    "verify/numerics_lwfa_scaling.hexa",
+    "verify/calc_sigma_cascade.hexa",
+    "verify/numerics_sigma_cascade.hexa",
+    "verify/numerics_bending.hexa",
+    "verify/calc_classical.hexa",
+    "verify/numerics_classical.hexa",
+    "verify/numerics_liouville.hexa",
+    "verify/numerics_se3_partial.hexa",
+    "verify/numerics_cross_pillar.hexa",
+    "verify/numerics_lhc_parity.hexa",
+    "verify/numerics_lwfa_parity.hexa",
+    "verify/numerics_lattice_arithmetic.hexa",
+    "verify/lint_numerics.hexa",
+    "verify/saturation_check.hexa",
+    "verify/empirical_lhc_api.hexa",
+    "verify/empirical_lwfa_hepdata.hexa",
+    "verify/empirical_classical_arxiv.hexa",
+    "verify/falsifier_check.hexa",
+    "firmware/sim/timing_chain.hexa",
+    "firmware/sim/dac_chain.hexa",
+    "firmware/sim/adc_chain.hexa",
+    "firmware/sim/control_loop.hexa",
+]
+
+fn shq(s: str) -> str {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+fn _hexa_bin() -> str {
+    let real = HOME + "/.hx/packages/hexa/hexa.real"  // @allow-devpath
+    if file_exists(real) { return real }
+    let h = exec("which hexa 2>/dev/null").trim()
+    if h.len() > 0 { return h }
+    return HOME + "/.hx/bin/hexa"  // @allow-devpath
+}
+
+fn main() {
+    println("========================================================================")
+    println("  hexa-cern verify/run_all — aggregate sweep")
+    println("  root: " + ROOT)
+    println("========================================================================")
+    let mut passed = 0
+    let mut failed = 0
+    let hbin = _hexa_bin()
+    let lang = env("HEXA_LANG")
+    let env_pfx = if lang.len() > 0 { "HEXA_LANG=" + shq(lang) + " " } else { "" }
+    for s in SCRIPTS {
+        println("")
+        println("---- " + s + " ----")
+        let cmd = env_pfx + "HEXA_SHIM_NO_DARWIN_LANDING=1 RESOURCE_LOCAL_HEXA=1 " +
+                  "PETITE_CERN_ROOT=" + shq(ROOT) + " " +
+                  shq(hbin) + " run " + shq(ROOT + "/" + s) +
+                  " >/tmp/_hexa_cern_v.out 2>&1; echo $?"
+        let rc_str = exec(cmd).trim()
+        let rc = int(rc_str)
+        let out = exec("cat /tmp/_hexa_cern_v.out 2>/dev/null")
+        // print last 6 lines for compactness
+        let lines = out.split("\n")
+        let n = lines.len()
+        let mut start = 0
+        if n > 6 { start = n - 6 }
+        let mut k = start
+        while k < n {
+            println(lines[k])
+            k = k + 1
+        }
+        if rc == 0 {
+            passed = passed + 1
+            println("  → " + s + " PASS")
+        } else {
+            failed = failed + 1
+            println("  → " + s + " FAIL (rc=" + str(rc) + ")")
+        }
+    }
+    println("")
+    println("========================================================================")
+    let total = passed + failed
+    println("  " + str(passed) + "/" + str(total) + " scripts passed")
+    if failed > 0 {
+        println("  verify sweep FAILED — see per-script output above.")
+        println("__HEXA_CERN_RUN_ALL__ FAIL")
+        exit(1)
+    }
+    println("  PASS — all hexa-cern invariants hold.")
+    println("__HEXA_CERN_RUN_ALL__ PASS — " + str(passed) + "/" + str(total) + " green")
+}

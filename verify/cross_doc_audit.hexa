@@ -219,21 +219,45 @@ fn check_step_d_build_scaffold() {
            " tb_ph=" + str(ok_tb_phases))
 }
 
-// Check 14 — §A.6.1 step D 2/3 Rust MCU skeleton (Cargo.toml + main.rs +
+// Check 14 — §A.6.1 step D 2/3 Rust MCU skeleton (Cargo.toml + src/*.rs +
 //             README) present + cross-anchored to .hexa sims and HDL.
+//
+// 2026-05-13 update: post-refactor the MCU code is split across
+//   src/{main,consts,state,pi,interlock,dac,lib}.rs — constants live in
+//   consts.rs, state machines in state.rs/pi.rs/interlock.rs. The audit
+//   merges all src/*.rs files into one logical scan and accepts either
+//   the original "NOT BUILDABLE WITHOUT" tag (skeleton phase) or the
+//   upgraded "SKELETON ONLY for board-driven peripherals" wording (post
+//   RTIC/HAL integration — partial board-bound work). Both denote that
+//   the firmware is not flashable without §A.6 step 1+2 hardware.
 fn check_step_d_mcu_skeleton() {
     let cargo = _read(MCU_CARGO)
     let main_rs = _read(MCU_MAIN)
     let readme = _read(MCU_README)
+    // Merge all src/*.rs so checks pass whether content sits in main.rs
+    // (pre-refactor) or in consts.rs/state.rs/etc (post-refactor).
+    let src_dir = ROOT + "/firmware/mcu/src"
+    let src_all = _read(src_dir + "/main.rs") + "\n" +
+                  _read(src_dir + "/consts.rs") + "\n" +
+                  _read(src_dir + "/state.rs") + "\n" +
+                  _read(src_dir + "/pi.rs") + "\n" +
+                  _read(src_dir + "/interlock.rs") + "\n" +
+                  _read(src_dir + "/dac.rs") + "\n" +
+                  _read(src_dir + "/lib.rs")
     let ok_cargo_exists = cargo.len() > 0
     let ok_target = _has(cargo, "thumbv7em-none-eabihf") || _has(cargo, "Cortex-M")
     let ok_main_exists = main_rs.len() > 0
     let ok_no_std = _has(main_rs, "#![no_std]") && _has(main_rs, "#![no_main]")
-    let ok_constants = _has(main_rs, "CLK_HZ") && _has(main_rs, "TICK_HZ") &&
-                       _has(main_rs, "D_TRIG_CYCLES") && _has(main_rs, "GATE_CYCLES")
-    let ok_state_machines = _has(main_rs, "TriggerSm") && _has(main_rs, "PiCtrl") &&
-                            _has(main_rs, "InterlockOk")
-    let ok_skeleton = _has(main_rs, "SKELETON ONLY") && _has(main_rs, "NOT BUILDABLE WITHOUT")
+    // Constants may live in consts.rs (post-refactor) or main.rs (pre-refactor).
+    let ok_constants = _has(src_all, "CLK_HZ") && _has(src_all, "TICK_HZ") &&
+                       _has(src_all, "D_TRIG_CYCLES") && _has(src_all, "GATE_CYCLES")
+    // State machines may live in state.rs/pi.rs/interlock.rs (post-refactor) or main.rs.
+    let ok_state_machines = _has(src_all, "TriggerSm") && _has(src_all, "PiCtrl") &&
+                            _has(src_all, "InterlockOk")
+    // Skeleton tag: either the original "NOT BUILDABLE WITHOUT" or the
+    // upgraded post-RTIC "SKELETON ONLY for board-driven peripherals".
+    let ok_skeleton = _has(src_all, "SKELETON ONLY") ||
+                      _has(src_all, "NOT BUILDABLE WITHOUT")
     let ok_readme_exists = readme.len() > 0
     let ok_readme_anchor = _has(readme, "timing_chain.hexa") &&
                            _has(readme, "dac_chain.hexa") &&

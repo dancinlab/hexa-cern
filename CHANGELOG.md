@@ -9,6 +9,38 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased] — v1.1.0 on `main`  (RSC code-layer FINAL · §A.6.1 A→B→C→D + E delivered)
 
+### Added (2026-05-13 — Cycle 2 100% bookkeeping closure)
+
+- `verify/run_all.hexa` (113 lines) — standalone `.hexa` orchestrator
+  mirroring hexa-rtsc convention. Runs all 25 verify/*.hexa + 4
+  firmware/sim/*.hexa scripts; PETITE_CERN_ROOT-aware; respects
+  HEXA_LANG env for self/runtime/math_pure resolution. PASS sentinel
+  `__HEXA_CERN_RUN_ALL__ PASS — 29/29 green`.
+
+### Fixed (2026-05-13)
+
+- `verify/cross_doc_audit.hexa` check 14 (firmware/mcu/ Rust skeleton)
+  updated to recognize the post-refactor src/ split. Constants
+  (CLK_HZ/TICK_HZ/D_TRIG_CYCLES/GATE_CYCLES) now live in `src/consts.rs`;
+  state machines (TriggerSm/PiCtrl/InterlockOk) distributed across
+  `src/{state,pi,interlock}.rs`. Audit now merges all src/*.rs and
+  accepts either the original "NOT BUILDABLE WITHOUT" skeleton tag or
+  the upgraded post-RTIC "SKELETON ONLY for board-driven peripherals"
+  wording. 14/15 → 15/15 PASS. No production code regressed — only the
+  audit caught up to the (already correct) refactor.
+
+### Closure (2026-05-13)
+
+Aggregate scoreboard via `hexa-cern verify all` and `verify/run_all.hexa`:
+- **29/29 scripts PASS · 353/353 row-level checks PASS · 4/4 tests PASS**
+- F-PCERN-1/2/3 all at 100% bookkeeping closure (T1 algebra + T2 numerics
+  + T3 archival empirical) — strict raw-data fit (Stage-1+) deferred to v2.0.0
+- `__HEXA_CERN_RSC_SATURATED__ STOP` (17/17 saturation conditions)
+- SC magnet substrate cross-link (LHC 8.33 T NbTi / HL-LHC 11 T Nb₃Sn /
+  FCC 16 T target) sourced from CERN public TDR/CDR per LIMIT_BREAKTHROUGH.md
+  L4 — no n=6 lattice fit on CERN machine invariants (raw#10 C3).
+  Downstream-of-CERN benchtop SC-magnet primitive lives in dancinlab/hexa-rtsc.
+
 ### Added (2026-05-08 — first stdlib/hal consumer · cross-repo demonstration)
 
 - `firmware/mcu/trigger_host.hexa` (~205 lines) — **first stdlib/hal

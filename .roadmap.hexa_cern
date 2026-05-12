@@ -4,7 +4,7 @@
 > deadlines, pointers. Sister of `hexa-fusion` / `hexa-ufo` / `hexa-antimatter` /
 > `hexa-rtsc` under `dancinlab` org.
 
-**Last sync**: 2026-05-08 · **Current release**: v1.0.0 (v1.1.0 RSC code-layer FINAL on `main`) · **Branch**: `main`
+**Last sync**: 2026-05-13 · **Current release**: v1.0.0 (v1.1.0 RSC code-layer FINAL on `main`) · **Branch**: `main`
 
 ---
 
@@ -55,6 +55,20 @@ DoD:
   - `build/Makefile` + `build/header.tex` (3-PDF rebuild — all 3 PDFs build clean)
   - `tests/test_{lattice,calculators,cli_verify,all}.hexa` (4/4 PASS)
   - 0 `.py` added — all new code is `.hexa`.
+
+- **Cycle 2 (2026-05-13)** — 100% bookkeeping closure achieved on main. Adds:
+  - `verify/run_all.hexa` (orchestrator, mirrors hexa-rtsc convention) — 29/29 PASS
+  - `verify/cross_doc_audit.hexa` updated to recognize firmware/mcu/ post-refactor
+    (consts/state-machines now distributed across src/{consts,state,pi,interlock,dac,lib}.rs,
+    audit merges all src/*.rs and accepts either skeleton tag) — 14/15 → 15/15
+  - Aggregate scoreboard (cli verify all + run_all): **29/29 scripts, 353/353 rows PASS**
+  - `__HEXA_CERN_RSC_SATURATED__ STOP` reaffirmed (17/17 saturation conditions)
+  - F-PCERN-1/2/3 closure: 100% bookkeeping (T1 algebra + T2 numerics + T3 empirical-archival)
+  - SC magnet substrate (LHC 8.33 T NbTi · HL-LHC 11 T Nb₃Sn · FCC 16 T target) — sourced
+    from CERN public TDR/CDR (LIMIT_BREAKTHROUGH.md L4); cross-link to dancinlab/hexa-rtsc
+    for downstream-of-CERN benchtop SC-magnet primitive. No n=6 lattice fit on CERN
+    machine invariants (raw#10 C3).
+  - Honesty caveats preserved: Stage-1+ empirical bench remains UNVERIFIED until §A.6.
 
 ## §A.4 Falsifier preregister
 
