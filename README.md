@@ -49,23 +49,30 @@ This is the **why**: a CERN you can put on a bench, drawn from the same n=6 inva
 
 ---
 
-## Verification + Status
+## Status
 
-### Status
+- **v1.1.0 RSC code-layer FINAL on `main`** (2026-05-13)
+- **29/29 verify scripts PASS · 353/353 row-level checks PASS · 4/4 tests PASS**
+- **100% bookkeeping closure** across F-PCERN-1/2/3 (T1+T2+T3 locked)
+- **`__HEXA_CERN_RSC_SATURATED__ STOP`** signal active (17/17 saturation conditions met)
+- **3 pillars**: HEXA-MINI-ACCEL (벤치톱 100 MeV / 1 GeV/m laser-plasma) + HEXA-PACCEL (integrated parent) + HEXA-CLASSIC-ACCEL
+- **n=6 invariant**: σ(6)=12 · τ(6)=4 · φ(6)=2 · J₂=24 · σ·φ = n·τ = 24
+- **Zero `.py`** in the runnable surface — 100% `.hexa` end-to-end (verify + tests + firmware sim)
+- **LHC 7 TeV/27km** & **DESY 1 GeV/m** baselines compared paper-only; **empirical raw-data fit (Stage-1+ benchtop) UNVERIFIED until hardware lands**
+- **Closure is *bookkeeping*** — closed-form algebra + closed-form numerics + archival paper-existence; *not* bench measurement
+- Real-limits authority: [`LIMIT_BREAKTHROUGH.md`](LIMIT_BREAKTHROUGH.md) (CERN public TDR/CDR values L1..L12; no n=6 lattice fit on CERN vendor numbers)
+- Parent: [`dancinlab/echoes`](https://github.com/dancinlab/echoes); GitHub canonical at <https://github.com/dancinlab/hexa-cern>
+
+What it does **not** ship: actual particle acceleration, Geant4/MAD-X bridge, real-time beam diagnostics, LHC/DESY data ingestion. The σ-cascade 6-order claim is a **design-target ceiling**, not a measurement.
+
+---
+
+## Verification
 
 > **v1.1.0 RSC code-layer FINAL on `main` (2026-05-13): 29/29 verify
 > scripts PASS · 353/353 row-level checks PASS · 4/4 tests PASS ·
 > 100% bookkeeping closure across F-PCERN-1/2/3 (T1+T2+T3 locked) ·
 > `__HEXA_CERN_RSC_SATURATED__ STOP` signal active.**
->
-> 3-pillar bundle: HEXA-MINI-ACCEL (벤치톱 100 MeV / 1 GeV/m laser-plasma)
-> + HEXA-PACCEL (integrated parent) + HEXA-CLASSIC-ACCEL. LHC 7 TeV/27km
-> & DESY 1 GeV/m 기준선에 대한 n=6 σ-cascade 6-order 비교가 paper-only로
-> 명시. **Empirical raw-data fit (Stage-1+ benchtop) UNVERIFIED until
-> hardware lands.** 100% closure here is *bookkeeping* — closed-form
-> algebra + closed-form numerics + archival paper-existence — not bench
-> measurement. Real-limits authority is `LIMIT_BREAKTHROUGH.md` (CERN
-> public TDR/CDR values for L1..L12; no n=6 lattice fit on CERN
 
 v1.0.0 ships (frozen 2026-05-06):
 
@@ -83,10 +90,6 @@ v1.1.0-pre adds (on `main`, 2026-05-07):
 **Zero `.py` was added** — the runnable surface is 100% `.hexa`. This is
 deliberate: hexa-cern is a hexa-family member, and the migration target
 across `dancinlab` repos is .hexa-native tooling.
-
-What it does **not** ship: actual particle acceleration, Geant4/MAD-X bridge, real-time beam diagnostics, LHC/DESY data ingestion. The σ-cascade 6-order claim is a **design-target ceiling**, not a measurement.
-
-### Verification
 
 The `verify/` surface (all `.hexa`) audits n=6 closure + per-pillar derivations.
 **Current state (2026-05-13)**: **29/29 scripts PASS, 353/353 row-level
