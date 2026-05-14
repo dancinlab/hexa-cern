@@ -1,3 +1,25 @@
+<p align="center">
+  <img src="docs/logo.svg" width="140" alt="hexa-cern">
+</p>
+
+<h1 align="center">🔬 hexa-cern</h1>
+
+<p align="center"><strong>HEXA-CERN family</strong> — particle physics · benchtop accelerator · σ-cascade · n=6 substrate</p>
+
+<p align="center">
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-blue"></a>
+  <a href="https://doi.org/10.5281/zenodo.20102596"><img alt="DOI" src="https://zenodo.org/badge/DOI/10.5281/zenodo.20102596.svg"></a>
+  <img alt="Spec" src="https://img.shields.io/badge/spec-v1.1.0--pre-success">
+  <img alt="Pillars" src="https://img.shields.io/badge/pillars-3-informational">
+  <img alt="Verify" src="https://img.shields.io/badge/verify-29%2F29%20PASS-brightgreen">
+  <img alt="Checks" src="https://img.shields.io/badge/checks-353%2F353%20PASS-brightgreen">
+  <img alt="Family" src="https://img.shields.io/badge/family-HEXA--rtsc%20·%20HEXA--antimatter%20·%20HEXA--ufo-blueviolet">
+</p>
+
+<p align="center">particle-physics · accelerator · laser-plasma · LWFA · σ-cascade · LHC · DESY · n=6 lattice · benchtop</p>
+
+---
+
 # 💫 hexa-cern
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20102596.svg)](https://doi.org/10.5281/zenodo.20102596)
@@ -44,7 +66,6 @@ This is the **why**: a CERN you can put on a bench, drawn from the same n=6 inva
 > algebra + closed-form numerics + archival paper-existence — not bench
 > measurement. Real-limits authority is `LIMIT_BREAKTHROUGH.md` (CERN
 > public TDR/CDR values for L1..L12; no n=6 lattice fit on CERN
-> machine invariants per raw#10 C3).
 
 v1.0.0 ships (frozen 2026-05-06):
 
@@ -157,7 +178,7 @@ HEXA_LANG=$HOME/core/hexa-lang hexa run verify/run_all.hexa
 ```
 
 ---
-## Repository layout
+## Repo layout
 
 ```
 hexa-cern/
@@ -215,7 +236,7 @@ end-to-end (no Python, no shell-only logic).
 | cousin (PET cyclotron, antimatter)   | [`dancinlab/hexa-antimatter`](https://github.com/dancinlab/hexa-antimatter) | parallel acceleration use case      |
 | Stage-3 propulsion dependent         | [`dancinlab/hexa-ufo`](https://github.com/dancinlab/hexa-ufo)               | downstream propulsion consumer      |
 
-Provenance: extracted from [`canon`](https://github.com/dancinlab/canon) at SHA `c0f1f570` on 2026-05-06.
+Provenance: extracted from [`canon`](https://github.com/dancinlab/echoes) at SHA `c0f1f570` on 2026-05-06.
 
 Sister repo (peer extraction): [`dancinlab/lumiere`](https://github.com/dancinlab/lumiere) — camera-filter + hexa-main-character apps-axis.
 
