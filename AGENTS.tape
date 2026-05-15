@@ -46,7 +46,7 @@
 @I id001 := "hexa-cern" :: identity-claim [d=2026-05-14 active]
   kind = "HEXA-CERN family — particle physics"
   brief = "HEXA-CERN family · particle physics"
-  parent = "dancinlab/echoes"
+  parent = "dancinlab"
 
 @L l1 := "repo-layout" :: structure [active]
   .roadmap.hexa_cern -> "file"
